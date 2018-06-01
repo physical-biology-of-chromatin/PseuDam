@@ -1,6 +1,7 @@
 /*
 * cutadapt :
 * Imputs : fastq files
+* Output : fastq files
 */
 
 /*                      Illumina adaptor removal                             */
