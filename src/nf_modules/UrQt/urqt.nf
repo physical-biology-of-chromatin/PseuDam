@@ -62,6 +62,7 @@ process trimming {
 
   script:
 """
+
 UrQt --t 20 --m ${task.cpus} --gz \
 --in ${reads} \
 --out ${reads.baseName}_trim.fastq.gz \
