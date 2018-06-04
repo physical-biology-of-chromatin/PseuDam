@@ -21,6 +21,7 @@ Channel
 process trimming {
   tag "$pair_id"
   cpus 4
+  publishDir "results/fastq/trimming/", mode: 'copy'
 
   input:
   set pair_id, file(reads) from fastq_files
@@ -53,6 +54,7 @@ Channel
 process trimming {
   tag "$reads.baseName"
   cpus 4
+  publishDir "results/fastq/trimming/", mode: 'copy'
 
   input:
   file reads from fastq_files

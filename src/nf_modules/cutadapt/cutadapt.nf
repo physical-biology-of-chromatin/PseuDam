@@ -21,6 +21,7 @@ Channel
 
 process adaptor_removal {
   tag "$pair_id"
+  publishDir "results/fastq/adaptor_removal/", mode: 'copy'
 
   input:
   set pair_id, file(reads) from fastq_files
@@ -51,6 +52,7 @@ Channel
 
 process adaptor_removal {
   tag "$reads.baseName"
+  publishDir "results/fastq/adaptor_removal/", mode: 'copy'
 
   input:
   file reads from fastq_files
@@ -83,6 +85,7 @@ Channel
 
 process trimming {
   tag "$pair_id"
+  publishDir "results/fastq/trimming/", mode: 'copy'
 
   input:
   set pair_id, file(reads) from fastq_files
@@ -113,6 +116,7 @@ Channel
 
 process trimming {
   tag "$reads.baseName"
+  publishDir "results/fastq/trimming/", mode: 'copy'
 
   input:
   file reads from fastq_files
