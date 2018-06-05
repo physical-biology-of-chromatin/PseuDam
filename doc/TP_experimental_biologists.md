@@ -50,7 +50,40 @@ Note that the content of these two folders should never be saved on git.
 
 The [doc](https://gitlab.biologie.ens-lyon.fr/pipelines/nextflow/tree/master/doc) folder contains the documentation of this practical course.
 
-And most interestingly for you, the [src](https://gitlab.biologie.ens-lyon.fr/pipelines/nextflow/tree/master/src) contains code to wrapp tools. This folder contains two subdirectory. A `nf_modules` and a `sge_modules` folder. 
+And most interestingly for you, the [src](https://gitlab.biologie.ens-lyon.fr/pipelines/nextflow/tree/master/src) contains code to wrapp tools. This folder contains two subdirectory. A `docker_modules`, an `nf_modules` and an `sge_modules` folder. 
+
+### `docker_modules`
+
+The `src/docker_modules` contains the code to wrapp tools in [Docker](https://www.docker.com/what-docker). [Docker](https://www.docker.com/what-docker) is a framework that allow you to execute software withing [containers](https://www.docker.com/what-container). The `docker_modules` contains directory corresponding to tools and subdirectories corresponding to their version.
+
+```sh
+ls -l src/docker_modules/
+rwxr-xr-x  3 laurent  _lpoperator   96 May 25 15:42 BEDtools/
+drwxr-xr-x  4 laurent  _lpoperator  128 Jun  5 16:14 Bowtie2/
+drwxr-xr-x  3 laurent  _lpoperator   96 May 25 15:42 FastQC/
+drwxr-xr-x  4 laurent  _lpoperator  128 Jun  5 16:14 HTSeq/
+```
+
+To each `tools/version` corresponds two files:
+
+```sh
+ls -l src/docker_modules/Bowtie2/2.3.4.1/
+-rw-r--r--  1 laurent  _lpoperator  283 Jun  5 15:07 Dockerfile
+-rwxr-xr-x  1 laurent  _lpoperator   79 Jun  5 16:18 docker_init.sh*
+```
+
+The `Dockerfile` is the [Docker](https://www.docker.com/what-docker) recepi to create a [container](https://www.docker.com/what-container) containing `Bowtie2` in it's `2.3.4.1` version. And the `docker_init.sh` file is a small script to create the [container](https://www.docker.com/what-container) from this recipe.
+
+By running this script you will be able to easily install tools in different version on your personnal computer and use it in your pipeline. Some of the advantages are:
+
+- Whatever the computer, the installation and the results will be the same
+- You can keep [container](https://www.docker.com/what-container) for old version of tools and run it on new systems (science = reproducibility)
+- You don't have to bother with detious installation procedure, somebody else already did the job and wrote a `Dockerfile`.
+- You can easly keep [container](https://www.docker.com/what-container) for differents version of the sam tools.
+
+
+
+
  
 
 
