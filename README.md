@@ -31,18 +31,18 @@ src/install_nextflow.sh
 Then to initialise a given tools run the following command:
 
 ```sh
-src/nf_modules/<tool_name>/<tool_version>/docker_init.sh
+src/docker_modules/<tool_name>/<tool_version>/docker_init.sh
 ```
 
 for example to initialise `file_handle` version `0.1.1`, run:
 
 ```sh
-src/nf_modules/file_handle/0.1.1/docker_init.sh
+src/docker_modules/file_handle/0.1.1/docker_init.sh
 ```
 
 To initialise all the tools:
 ```sh
-find src/nf_modules/ -name "docker_init.sh" | awk '{system($0)}'
+find src/docker_modules/ -name "docker_init.sh" | awk '{system($0)}'
 ```
 
 ## Running the tests
