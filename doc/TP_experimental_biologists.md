@@ -72,29 +72,57 @@ ls -l src/docker_modules/Bowtie2/2.3.4.1/
 -rwxr-xr-x  1 laurent  _lpoperator   79 Jun  5 16:18 docker_init.sh*
 ```
 
-The `Dockerfile` is the [Docker](https://www.docker.com/what-docker) recepi to create a [container](https://www.docker.com/what-container) containing `Bowtie2` in it's `2.3.4.1` version. And the `docker_init.sh` file is a small script to create the [container](https://www.docker.com/what-container) from this recipe.
+The `Dockerfile` is the [Docker](https://www.docker.com/what-docker) recipe to create a [container](https://www.docker.com/what-container) containing `Bowtie2` in it's `2.3.4.1` version. And the `docker_init.sh` file is a small script to create the [container](https://www.docker.com/what-container) from this recipe.
 
-By running this script you will be able to easily install tools in different version on your personnal computer and use it in your pipeline. Some of the advantages are:
+By running this script you will be able to easily install tools in different version on your personal computer and use it in your pipeline. Some of the advantages are:
 
 - Whatever the computer, the installation and the results will be the same
 - You can keep [container](https://www.docker.com/what-container) for old version of tools and run it on new systems (science = reproducibility)
-- You don't have to bother with detious installation procedure, somebody else already did the job and wrote a `Dockerfile`.
-- You can easly keep [container](https://www.docker.com/what-container) for differents version of the sam tools.
+- You don't have to bother with tedious installation procedure, somebody else already did the job and wrote a `Dockerfile`.
+- You can easily keep [container](https://www.docker.com/what-container) for different version of the same tools.
 
 ### `sge_modules`
 
-The `src/sge_modules` folder is not realy there. It's a submodule of the project [PSMN/modules](https://gitlab.biologie.ens-lyon.fr/PSMN/modules). To populate it locally you can use the following command:
+The `src/sge_modules` folder is not really there. It's a submodule of the project [PSMN/modules](https://gitlab.biologie.ens-lyon.fr/PSMN/modules). To populate it locally you can use the following command:
 
 ```sh
 git submodule init
 ```
 
-Like for the `src/docker_modules` the [PSMN/modules](https://gitlab.biologie.ens-lyon.fr/PSMN/modules) project describe recepies to install tools and use them. The main difference is that you cannot use [Docker](https://www.docker.com/what-docker) on the PSMN. Instead you have to use another framework [Environement Module](http://www.ens-lyon.fr/PSMN/doku.php?id=documentation:tools:modules) which allows you to load modules for specific tools and version.
+Like for the `src/docker_modules` the [PSMN/modules](https://gitlab.biologie.ens-lyon.fr/PSMN/modules) project describe recipes to install tools and use them. The main difference is that you cannot use [Docker](https://www.docker.com/what-docker) on the PSMN. Instead you have to use another framework [Environment Module](http://www.ens-lyon.fr/PSMN/doku.php?id=documentation:tools:modules) which allows you to load modules for specific tools and version.
 The [README.md](https://gitlab.biologie.ens-lyon.fr/PSMN/modules/blob/master/README.md) file of the [PSMN/modules](https://gitlab.biologie.ens-lyon.fr/PSMN/modules) respository contains all the instruction to be able to load the modules maintained by the LBMC en present in the [PSMN/modules](https://gitlab.biologie.ens-lyon.fr/PSMN/modules) respository.
 
 ### `nf_modules`
 
 The `src/nf_modules` folder contains templates of [nextflow](https://www.nextflow.io/) wrapper for the tools available in [Docker](https://www.docker.com/what-docker) and [SGE](http://www.ens-lyon.fr/PSMN/doku.php?id=documentation:tools:sge). The details of the [nextflow](https://www.nextflow.io/) wrapper will be presented in the next section. Alongside the `.nf` and `.config` there is a `tests` folder that contains a `tests.sh` script to run test on the tool.
+
+# Build your own RNASeq pipeline
+
+In this section you are going to build your own pipeline for RNASeq analysis from the code available in the `src/nf_modules` folder.
+
+## Nextflow pipeline
+
+A pipeline is a succession of **process**. Each process has data input(s) and optional data output(s). Data flow are modeled as **channels**.
+
+
+# Run your pipeline locally
+
+```sh
+git clone -c http.sslVerify=false https://gitlab.biologie.ens-lyon.fr/<usr_name>/nextflow.git
+cd nextflow
+src/install_nextflow.sh
+```
+
+## Create your Docker containers
+
+For this  practical, we are going to need the following tools :
+
+- For Illumina adaptor removal : cutadapt
+- For reads trimming by quality : UrQt
+- For mapping and quantifying reads : Kallisto, RSEM and Bowtie2
+
+To initialize these tools, follow the **Installing** section of the [README.md](https://gitlab.biologie.ens-lyon.fr/pipelines/nextflow/blob/master/README.md) file.
+
 
 
 
