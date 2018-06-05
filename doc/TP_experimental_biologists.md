@@ -96,11 +96,7 @@ The [README.md](https://gitlab.biologie.ens-lyon.fr/PSMN/modules/blob/master/REA
 
 The `src/nf_modules` folder contains templates of [nextflow](https://www.nextflow.io/) wrapper for the tools available in [Docker](https://www.docker.com/what-docker) and [SGE](http://www.ens-lyon.fr/PSMN/doku.php?id=documentation:tools:sge). The details of the [nextflow](https://www.nextflow.io/) wrapper will be presented in the next section. Alongside the `.nf` and `.config` there is a `tests` folder that contains a `tests.sh` script to run test on the tool.
 
-# Build your own RNASeq pipeline
-
-In this section you are going to build your own pipeline for RNASeq analysis from the code available in the `src/nf_modules` folder.
-
-## Nextflow pipeline
+# Nextflow pipeline
 
 A pipeline is a succession of **process**. Each process has data input(s) and optional data output(s). Data flow are modeled as **channels**.
 
@@ -142,6 +138,8 @@ At the end of the script, a file named `sample.fasta` is found in the root the f
 
 Using the WebIDE of Gitlab create a file `src/fasta_sampler.nf` with this process and commit to your repository.
 
+![webide](img/webide.png)
+
 ### Channels
 
 Why bother with channels ? In the above example, the advantages of channels are not really clear. We could have just given the `fasta` file to the process. But what if we have many fasta file to process ? What if we have sub processes to run on each of the sampled fasta files ? Nextflow can easily deal with these problems with the help of channels.
@@ -159,7 +157,11 @@ Here we defined a channel `fasta_file` that is going to send every fasta file fr
 Add the definition of the channel to the `src/fasta_sampler.nf` file and commit to your repository.
 
 
-# Run your pipeline locally
+### Run your pipeline locally
+
+After writing this first pipeline, you may want to test it. To do that first clone your repository. To easily do that set visibility level to *public* in the settings of your project.
+
+You can then run the following commands to download your project on your computer :
 
 ```sh
 git clone -c http.sslVerify=false https://gitlab.biologie.ens-lyon.fr/<usr_name>/nextflow.git
@@ -167,15 +169,83 @@ cd nextflow
 src/install_nextflow.sh
 ```
 
+We also need data to run our pipeline :
+
+```
+cd data
+git clone -c http.sslVerify=false https://gitlab.biologie.ens-lyon.fr/LBMC/tiny_dataset.git
+cd ..
+```
+
+We can run our pipeline with the following command:
+
+```sh
+./nextflow src/fasta_sampler.nf
+```
+
+### Getting our results
+
+Our pipeline seems to work but we don't know where is the `sample.fasta`. To get results out of a process, we need to tell nextflow to write it somewhere (we may don't need to get every intermediate files in our results).
+
+To do that we need to add the following line before the `input:` section:
+
+```Groovy
+  publishDir "results/sampling/", mode: 'copy'
+```
+
+Every file described in the `output:` section will be copied from nextflow to the folder `results/sampling/`.
+
+Add this to you `src/fasta_sampler.nf` file with the WebIDE and commit to your repository.
+Pull your modifications locally with the command:
+
+```sh
+git pull origin master
+```
+
+You can run you pipeline again and check the content of the folder `results/sampling`.
+
+### Fasta everywhere
+
+We ran our pipeline on one fasta file. How nextflow would handle 100 of them ? To test that we need to duplicate the `tiny_v2.fasta` file: 
+
+```sh
+for i in {1..100}
+do
+ cp data/tiny_dataset/fasta/tiny_v2.fasta data/tiny_dataset/fasta/tiny_v2_${i}.fasta
+done
+```
+
+You can run you pipeline again and check the content of the folder `results/sampling`.
+
+Every `fasta_sampler` process write a `sample.fasta` file. We need to make the name of the output file dependent of the name of the input file.
+
+```Groovy
+  output:
+    file "*_sample.fasta" into fasta_sample
+
+  script:
+"""
+head ${fasta} > ${fasta.baseName}_sample.fasta
+"""
+```
+
+Add this to you `src/fasta_sampler.nf` file with the WebIDE and commit to your repository before pulling your modifications locally.
+You can run you pipeline again and check the content of the folder `results/sampling`.
+
+# Build your own RNASeq pipeline
+
+In this section you are going to build your own pipeline for RNASeq analysis from the code available in the `src/nf_modules` folder.
+
 ## Create your Docker containers
 
 For this  practical, we are going to need the following tools :
 
 - For Illumina adaptor removal : cutadapt
 - For reads trimming by quality : UrQt
-- For mapping and quantifying reads : Kallisto, RSEM and Bowtie2
+- For mapping and quantifying reads : Kallisto, Bowtie2
 
 To initialize these tools, follow the **Installing** section of the [README.md](https://gitlab.biologie.ens-lyon.fr/pipelines/nextflow/blob/master/README.md) file.
+
 
 
 
