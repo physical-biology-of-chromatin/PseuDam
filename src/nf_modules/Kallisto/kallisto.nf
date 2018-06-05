@@ -113,7 +113,7 @@ process mapping_fastq {
   script:
 """
 mkdir ${reads.baseName}
-kallisto quant -i ${index[0].baseName} -t ${task.cpus} --single
+kallisto quant -i ${index} -t ${task.cpus} --single
 --bias --bootstrap-samples 100 -o ${reads.baseName} \
 -l ${params.mean} -s ${params.sd} -o ./ \
 ${reads} > ${reads.baseName}_kallisto_report.txt
