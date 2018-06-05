@@ -3,11 +3,13 @@ MAINTAINER Laurent Modolo
 
 ENV RSEM_VERSION=1.3.0
 ENV BOWTIE2_VERSION=2.3.4.1
+ENV SAMTOOLS_VERSION=1.7
 ENV PACKAGES git=1:2.17.0* \
    build-essential=12.4* \
    ca-certificates=20180409 \
    zlib1g-dev=1:1.2.11* \
-   bowtie2=${BOWTIE2_VERSION}*
+   bowtie2=${BOWTIE2_VERSION}* \
+   samtools=${SAMTOOLS_VERSION}*
 
 RUN apt-get update && \
     apt-get install -y --no-install-recommends ${PACKAGES} && \
