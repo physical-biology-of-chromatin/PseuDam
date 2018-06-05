@@ -104,6 +104,60 @@ In this section you are going to build your own pipeline for RNASeq analysis fro
 
 A pipeline is a succession of **process**. Each process has data input(s) and optional data output(s). Data flow are modeled as **channels**.
 
+### Processes
+
+Here are an example of **process**:
+
+```Groovy
+process sample_fasta {
+  input:
+    file fasta from fasta_file
+
+  output:
+    file "sample.fasta" into fasta_sample
+
+  script:
+"""
+head ${fasta} > sample.fasta
+"""
+}
+```
+
+We have the process `sample_fasta` that take as `fasta_file` channel as imput and output a `fasta_sample` channel. The process itself is deffined in the `script:` block and within `"""`.
+
+```Groovy
+  input:
+    file fasta from fasta_file
+```
+
+When we zoom on the `input:` block we see that we define a variable `fasta` of type `file` from the `fasta_file` channel. This mean that groovy is going to write a file named as the content of the variable `fasta` in the root of the folder where `script:` is executed.
+
+
+```Groovy
+  output:
+    file "sample.fasta" into fasta_sample
+```
+
+At the end of the script, a file named `sample.fasta` is found in the root the folder where `script:` is executed and send into the pipeline `fasta_sample`
+
+Using the WebIDE of Gitlab create a file `src/fasta_sampler.nf` with this process and commit to your repository.
+
+### Channels
+
+Why bother with channels ? In the above example, the advantages of channels are not really clear. We could have just given the `fasta` file to the process. But what if we have many fasta file to process ? What if we have sub processes to run on each of the sampled fasta files ? Nextflow can easily deal with these problems with the help of channels.
+
+Channels are streams of items that are emitted by a source and consumed by a process. A process with a channel as input will be run on every items send through the channel.
+
+```Groovy
+Channel
+  .fromPath( "data/tiny_dataset/fasta/*.fasta" )
+  .set { fasta_file }
+```
+
+Here we defined a channel `fasta_file` that is going to send every fasta file from the folder `data/fasta/` into the process that take it as input.
+
+Add the definition of the channel to the `src/fasta_sampler.nf` file and commit to your repository.
+
 
 # Run your pipeline locally
 
