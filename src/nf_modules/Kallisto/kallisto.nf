@@ -12,7 +12,7 @@ log.info "fasta files : ${params.fasta}"
 
 Channel
   .fromPath( params.fasta )
-  .ifEmpty { error "Cannot find any bam files matching: ${params.fasta}" }
+  .ifEmpty { error "Cannot find any fasta files matching: ${params.fasta}" }
   .set { fasta_file }
 
 process index_fasta {
@@ -60,7 +60,7 @@ process mapping_fastq {
 
   input:
   set pair_id, file(reads) from fastq_files
-  file index from index_files.collect()
+  file index from index_files.toList()
 
   output:
   file "*" into counts_files
@@ -105,7 +105,7 @@ process mapping_fastq {
 
   input:
   file reads from fastq_files
-  file index from index_files.collect()
+  file index from index_files.toList()
 
   output:
   file "*" into count_files

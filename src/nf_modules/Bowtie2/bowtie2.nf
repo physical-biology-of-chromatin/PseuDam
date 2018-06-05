@@ -63,7 +63,7 @@ process mapping_fastq {
 
   input:
   set pair_id, file(reads) from fastq_files
-  file index from index_files.collect()
+  file index from index_files.toList()
 
   output:
   file "*.bam" into bam_files
@@ -106,7 +106,7 @@ process mapping_fastq {
 
   input:
   file reads from fastq_files
-  file index from index_files.collect()
+  file index from index_files.toList()
 
   output:
   file "*.bam" into bam_files

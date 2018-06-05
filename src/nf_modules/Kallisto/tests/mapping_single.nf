@@ -24,7 +24,7 @@ process mapping_fastq {
 
   input:
   file reads from fastq_files
-  file index from index_files.collect()
+  file index from index_files.toList()
 
   output:
   file "*" into count_files

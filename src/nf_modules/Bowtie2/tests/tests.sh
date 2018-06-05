@@ -7,11 +7,11 @@ nextflow src/nf_modules/Bowtie2/tests/mapping_single.nf \
   -c src/nf_modules/Bowtie2/bowtie2.config \
   -profile docker \
   --index "data/tiny_dataset/fasta/*.bt2" \
-  --fastq "data/tiny_dataset/fastq/tiny_S.fastq"
+  --fastq "data/tiny_dataset/fastq/tiny*_S.fastq"
 
 nextflow src/nf_modules/Bowtie2/tests/mapping_paired.nf \
   -c src/nf_modules/Bowtie2/bowtie2.config \
   -profile docker \
   --index "data/tiny_dataset/fasta/*.bt2" \
-  --fastq "data/tiny_dataset/fastq/tiny_R{1,2}.fastq"
+  --fastq "data/tiny_dataset/fastq/tiny*_R{1,2}.fastq"
 

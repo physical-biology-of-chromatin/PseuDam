@@ -42,6 +42,15 @@ src/nf_modules/file_handle/0.1.1/docker_init.sh
 
 ## Running the tests
 
+```sh
+cd data
+git clone -c http.sslVerify=false https://gitlab.biologie.ens-lyon.fr/LBMC/tiny_dataset.git
+cp data/tiny_dataset/fastq/tiny_R1.fastq data/tiny_dataset/fastq/tiny2_R1.fastq
+cp data/tiny_dataset/fastq/tiny_R2.fastq data/tiny_dataset/fastq/tiny2_R2.fastq
+cp data/tiny_dataset/fastq/tiny_S.fastq data/tiny_dataset/fastq/tiny2_S.fastq
+nextflow src/nf_test.nf -c src/nf_test.config --fastq "data/tiny_dataset/fastq/tiny_R{1,2}.fastq"
+```
+
 Explain how to run the automated tests for this system
 
 ### Break down into end to end tests

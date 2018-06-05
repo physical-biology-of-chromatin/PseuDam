@@ -20,7 +20,7 @@ process mapping_fastq {
 
   input:
   set pair_id, file(reads) from fastq_files
-  file index from index_files.collect()
+  file index from index_files.toList()
 
   output:
   file "*" into counts_files
