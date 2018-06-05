@@ -40,33 +40,33 @@ for example to initialise `file_handle` version `0.1.1`, run:
 src/nf_modules/file_handle/0.1.1/docker_init.sh
 ```
 
+To initialise all the tools:
+```sh
+find src/nf_modules/ -name "docker_init.sh" | awk '{system($0)}'
+```
+
 ## Running the tests
 
+To run tests we first need to get a trainning set
 ```sh
 cd data
 git clone -c http.sslVerify=false https://gitlab.biologie.ens-lyon.fr/LBMC/tiny_dataset.git
-cp data/tiny_dataset/fastq/tiny_R1.fastq data/tiny_dataset/fastq/tiny2_R1.fastq
-cp data/tiny_dataset/fastq/tiny_R2.fastq data/tiny_dataset/fastq/tiny2_R2.fastq
-cp data/tiny_dataset/fastq/tiny_S.fastq data/tiny_dataset/fastq/tiny2_S.fastq
-nextflow src/nf_test.nf -c src/nf_test.config --fastq "data/tiny_dataset/fastq/tiny_R{1,2}.fastq"
+cp tiny_dataset/fastq/tiny_R1.fastq tiny_dataset/fastq/tiny2_R1.fastq
+cp tiny_dataset/fastq/tiny_R2.fastq tiny_dataset/fastq/tiny2_R2.fastq
+cp tiny_dataset/fastq/tiny_S.fastq tiny_dataset/fastq/tiny2_S.fastq
+cd ..
 ```
 
-Explain how to run the automated tests for this system
+Then to run the tests for a given tools run the following command:
 
-### Break down into end to end tests
-
-Explain what these tests test and why
-
-```
-Give an example
+```sh
+src/nf_modules/<tool_name>/<tool_version>/tests/tests.sh
 ```
 
-### And coding style tests
+for example to run the tests on `Bowtie2` run:
 
-Explain what these tests test and why
-
-```
-Give an example
+```sh
+src/nf_modules/Bowtie2/tests/tests.sh
 ```
 
 ## Contributing
