@@ -81,6 +81,19 @@ By running this script you will be able to easily install tools in different ver
 - You don't have to bother with detious installation procedure, somebody else already did the job and wrote a `Dockerfile`.
 - You can easly keep [container](https://www.docker.com/what-container) for differents version of the sam tools.
 
+### `sge_modules`
+
+The `src/sge_modules` folder is not realy there. It's a submodule of the project [PSMN/modules](https://gitlab.biologie.ens-lyon.fr/PSMN/modules). To populate it locally you can use the following command:
+
+```sh
+git submodule init
+```
+
+Like for the `src/docker_modules` the [PSMN/modules](https://gitlab.biologie.ens-lyon.fr/PSMN/modules) project describe recepies to install tools and use them. The main difference is that you cannot use [Docker](https://www.docker.com/what-docker) on the PSMN. Instead you have to use another framework [Environement Module](http://www.ens-lyon.fr/PSMN/doku.php?id=documentation:tools:modules) which allows you to load modules for specific tools and version.
+The [README.md](https://gitlab.biologie.ens-lyon.fr/PSMN/modules/blob/master/README.md) file of the [PSMN/modules](https://gitlab.biologie.ens-lyon.fr/PSMN/modules) respository contains all the instruction to be able to load the modules maintained by the LBMC en present in the [PSMN/modules](https://gitlab.biologie.ens-lyon.fr/PSMN/modules) respository.
+
+
+
 
 
 
