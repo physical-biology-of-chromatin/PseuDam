@@ -76,3 +76,60 @@ bedtools getfasta -name \
 """
 }
 
+params.fasta = "$baseDir/data/bam/*.fasta"
+
+log.info "fasta files : ${params.fasta}"
+
+Channel
+  .fromPath( params.fasta )
+  .ifEmpty { error "Cannot find any fasta files matching: ${params.fasta}" }
+  .set { fasta_file }
+
+process index_fasta {
+  tag "$fasta.baseName"
+  publishDir "results/mapping/index/", mode: 'copy'
+
+  input:
+    file fasta from fasta_file
+
+  output:
+    file "*.index*" into index_files
+
+  script:
+"""
+kallisto index -k 31 --make-unique -i ${fasta.baseName}.index ${fasta} \
+> ${fasta.baseName}_kallisto_report.txt
+"""
+}
+
+params.index = "$baseDir/data/index/*.index.*"
+
+log.info "index files : ${params.index}"
+
+Channel
+  .fromPath( params.index )
+  .ifEmpty { error "Cannot find any index files matching: ${params.index}" }
+  .set { index_files }
+
+process mapping_fastq {
+  tag "$reads"
+  cpus 4
+  publishDir "results/mapping/quantification/", mode: 'copy'
+
+  input:
+  file reads from fastq_files
+  file index from index_files.toList()
+
+  output:
+  file "*" into counts_files
+
+  script:
+"""
+mkdir ${reads[0].baseName}
+kallisto quant -i ${index} -t ${task.cpus} \
+--bias --bootstrap-samples 100 -o ${reads[0].baseName} \
+${reads[0]} ${reads[1]} &> ${reads[0].baseName}_kallisto_report.txt
+"""
+}
+
+
