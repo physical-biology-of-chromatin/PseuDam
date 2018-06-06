@@ -1,10 +1,3 @@
-/*
-* bedtools :
-* Imputs : fastq files
-* Output : fastq files
-*/
-/*                      fasta extraction                                     */
-
 params.fastq = "$baseDir/data/fasta/*.fasta"
 params.bed = "$baseDir/data/annot/*.bed"
 
