@@ -31,7 +31,7 @@ process trimming {
   publishDir "results/fastq/trimming/", mode: 'copy'
 
   input:
-  set pair_id, file(reads) from fastq_files_cut
+  file reads from fastq_files_cut
 
   output:
   file "*_trim_R{1,2}.fastq.gz" into fastq_files_trim
