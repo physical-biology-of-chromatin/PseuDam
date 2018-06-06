@@ -81,7 +81,7 @@ process index_fasta {
   publishDir "results/mapping/index/", mode: 'copy'
 
   input:
-    file fasta from fasta_file
+    file fasta from fasta_files_extracted
 
   output:
     file "*.index*" into index_files
