@@ -93,22 +93,13 @@ kallisto index -k 31 --make-unique -i ${fasta.baseName}.index ${fasta} \
 """
 }
 
-params.index = "$baseDir/data/index/*.index.*"
-
-log.info "index files : ${params.index}"
-
-Channel
-  .fromPath( params.index )
-  .ifEmpty { error "Cannot find any index files matching: ${params.index}" }
-  .set { index_files }
-
 process mapping_fastq {
   tag "$reads"
   cpus 4
   publishDir "results/mapping/quantification/", mode: 'copy'
 
   input:
-  file reads from fastq_files
+  file reads from fastq_files_trim
   file index from index_files.toList()
 
   output:
