@@ -1,11 +1,23 @@
 params.fastq = "$baseDir/data/fastq/*_{1,2}.fastq" /* we can use now a param -fastq to specify where are fastq files. this path is the default path */
+params.fasta = "$baseDir/data/fasta/*.fasta"
+params.bed = "$baseDir/data/annot/*.bed"
 
 log.info "fastq files : ${params.fastq}"
+log.info "fasta file : ${params.fasta}"
+log.info "bed file : ${params.bed}"
 
 Channel
   .fromFilePairs( params.fastq )
   .ifEmpty { error "Cannot find any fastq files matching: ${params.fastq}" }
   .set { fastq_files }
+Channel
+  .fromPath( params.fasta )
+  .ifEmpty { error "Cannot find any fasta files matching: ${params.fasta}" }
+  .set { fasta_files }
+Channel
+  .fromPath( params.bed )
+  .ifEmpty { error "Cannot find any bed files matching: ${params.bed}" }
+  .set { bed_files }
 
 process adaptor_removal {
   tag "$pair_id"
@@ -45,4 +57,22 @@ UrQt --t 20 --m ${task.cpus} --gz \
 """
 }
 
+process fasta_from_bed {
+  tag "${bed.baseName}"
+  cpus 4
+  publishDir "results/fasta/", mode: 'copy'
+
+  input:
+  file fasta from fasta_files
+  file bed from bed_files
+
+  output:
+  file "*_extracted.fasta" into fasta_files_extracted
+
+  script:
+"""
+bedtools getfasta -name \
+-fi ${fasta} -bed ${bed} -fo ${bed.baseName}_extracted.fasta
+"""
+}
 
