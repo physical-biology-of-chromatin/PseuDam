@@ -17,7 +17,7 @@ For this we are going to build a small RNASeq analysis pipeline that should run 
 - remove Illumina adaptors
 - trim reads by quality
 - build the index of a reference genome
-- estimate the amount of RNA fragments mapping to the transcript of this genome
+- estimate the amount of RNA fragments mapping to the transcripts of this genome
 
 # Initialize your own project
 
@@ -79,7 +79,7 @@ By running this script you will be able to easily install tools in different ver
 - Whatever the computer, the installation and the results will be the same
 - You can keep [container](https://www.docker.com/what-container) for old version of tools and run it on new systems (science = reproducibility)
 - You don’t have to bother with tedious installation procedures, somebody else already did the job and wrote a `Dockerfile`.
-- You can easily keep [container](https://www.docker.com/what-container) for different version of the same tools.
+- You can easily keep [containers](https://www.docker.com/what-container) for different version of the same tools.
 
 ### `sge_modules`
 
@@ -90,11 +90,11 @@ git submodule init
 ```
 
 Like the `src/docker_modules` the [PSMN/modules](https://gitlab.biologie.ens-lyon.fr/PSMN/modules) project describe recipes to install tools and use them. The main difference is that you cannot use [Docker](https://www.docker.com/what-docker) on the PSMN. Instead you have to use another framework [Environment Module](http://www.ens-lyon.fr/PSMN/doku.php?id=documentation:tools:modules) which allows you to load modules for specific tools and version.
-The [README.md](https://gitlab.biologie.ens-lyon.fr/PSMN/modules/blob/master/README.md) file of the [PSMN/modules](https://gitlab.biologie.ens-lyon.fr/PSMN/modules) repository contains all the instruction to be able to load the modules maintained by the LBMC en present in the [PSMN/modules](https://gitlab.biologie.ens-lyon.fr/PSMN/modules) repository.
+The [README.md](https://gitlab.biologie.ens-lyon.fr/PSMN/modules/blob/master/README.md) file of the [PSMN/modules](https://gitlab.biologie.ens-lyon.fr/PSMN/modules) repository contains all the instruction to be able to load the modules maintained by the LBMC and present in the [PSMN/modules](https://gitlab.biologie.ens-lyon.fr/PSMN/modules) repository.
 
 ### `nf_modules`
 
-The `src/nf_modules` folder contains templates of [nextflow](https://www.nextflow.io/) wrapper for the tools available in [Docker](https://www.docker.com/what-docker) and [SGE](http://www.ens-lyon.fr/PSMN/doku.php?id=documentation:tools:sge). The details of the [nextflow](https://www.nextflow.io/) wrapper will be presented in the next section. Alongside the `.nf` and `.config` there is a `tests` folder that contains a `tests.sh` script to run test on the tool.
+The `src/nf_modules` folder contains templates of [nextflow](https://www.nextflow.io/) wrappers for the tools available in [Docker](https://www.docker.com/what-docker) and [SGE](http://www.ens-lyon.fr/PSMN/doku.php?id=documentation:tools:sge). The details of the [nextflow](https://www.nextflow.io/) wrapper will be presented in the next section. Alongside the `.nf` and `.config` there is a `tests` folder that contains a `tests.sh` script to run test on the tool.
 
 # Nextflow pipeline
 
@@ -136,7 +136,7 @@ file "sample.fasta" into fasta_sample
 
 At the end of the script, a file named `sample.fasta` is found in the root the folder where `script:` is executed and send into the pipeline `fasta_sample`
 
-Using the WebIDE of Gitlab create a file `src/fasta_sampler.nf` with this process and commit to your repository.
+Using the WebIDE of Gitlab, create a file `src/fasta_sampler.nf` with this process and commit to your repository.
 
 ![webide](img/webide.png)
 
@@ -159,7 +159,7 @@ Add the definition of the channel to the `src/fasta_sampler.nf` file and commit 
 
 ## Run your pipeline locally
 
-After writing this first pipeline, you may want to test it. To do that first clone your repository. To easily do that set visibility level to *public* in the settings/General/Permissions page of your project.
+After writing this first pipeline, you may want to test it. To do that, first clone your repository. To easily do that set the visibility level to *public* in the settings/General/Permissions page of your project.
 
 You can then run the following commands to download your project on your computer:
 
@@ -257,7 +257,7 @@ docker rmi $(docker images -qf "dangling=true")
 
 The first step of the pipeline is to remove any Illumina adaptor left in your read files.
 
-Open the WebIDE and create a `src/RNASeq.nf` file. Browse for [src/nf_modules/cutadapt/cutadapt.nf](https://gitlab.biologie.ens-lyon.fr/pipelines/nextflow/blob/master/src/nf_modules/cutadapt/cutadapt.nf), this file contains examples for cutadapt. We are interested in the *Illumina adaptor removal*,*for paired-end data* section of the code. Copy this code in your pipeline and commit.
+Open the WebIDE and create a `src/RNASeq.nf` file. Browse for [src/nf_modules/cutadapt/cutadapt.nf](https://gitlab.biologie.ens-lyon.fr/pipelines/nextflow/blob/master/src/nf_modules/cutadapt/cutadapt.nf), this file contains examples for cutadapt. We are interested in the *Illumina adaptor removal*, *for paired-end data* section of the code. Copy this code in your pipeline and commit.
 
 Compared to before, we have few new lines:
 
@@ -332,7 +332,7 @@ You can test your pipeline.
 
 ## BEDtools
 
-Kallisto need the sequences of the transcript that need to be quantified. We are going to extract these sequences from the reference `data/tiny_dataset/fasta/tiny_v2.fasta` with the `bed` annotation `data/tiny_dataset/annot/tiny.bed`.
+Kallisto need the sequences of the transcripts that need to be quantified. We are going to extract these sequences from the reference `data/tiny_dataset/fasta/tiny_v2.fasta` with the `bed` annotation `data/tiny_dataset/annot/tiny.bed`.
 
 You can copy to your `src/RNASeq.nf` file the content of [src/nf_modules/BEDtools/bedtools.nf](https://gitlab.biologie.ens-lyon.fr/pipelines/nextflow/blob/master/src/nf_modules/BEDtools/bedtools.nf) and to your `src/RNASeq.config` file the content of [src/nf_modules/BEDtools/bedtools.config](https://gitlab.biologie.ens-lyon.fr/pipelines/nextflow/blob/master/src/nf_modules/BEDtools/bedtools.config).
 
@@ -353,12 +353,25 @@ We are going to work with paired-end so only copy the relevant processes. The `i
 Commit your work and test your pipeline.
 You now have a RNASeq analysis pipeline that can run locally with Docker!
 
+
+## Additional nextflow option
+
+With nextflow you can restart the computation of a pipeline and get a trace of the process with the following options:
+
+```sh
+ -resume -with-dag results/RNASeq_dag.pdf -with-timeline results/RNASeq_timeline
+```
+
 # Run your RNASeq pipeline on the PSMN
 
 First you need to connect to the PSMN:
 
 ```sh
 login@allo-psmn
+```
+Then once connected to `allo-psmn`, you can connect to `e5-2667v4comp1`:
+
+```sh
 login@e5-2667v4comp1
 ```
 
@@ -388,6 +401,12 @@ As we don’t want nextflow to be killed in case of disconnection, we start by l
 tmux
 module load nextflow/0.28.2
 nextflow src/RNASeq.nf -c src/RNASeq.config -profile sge --fastq "data/tiny_dataset/fastq/*_R{1,2}.fastq" --fasta "data/tiny_dataset/fasta/tiny_v2.fasta" --bed "data/tiny_dataset/annot/tiny.bed"
+```
+
+To use the scratch for nextflow computations add the option :
+
+```sh
+-w /scratch/login
 ```
 
 You just ran your pipeline on the PSMN!
