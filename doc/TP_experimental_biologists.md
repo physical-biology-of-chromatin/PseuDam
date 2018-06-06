@@ -344,7 +344,13 @@ Commit your work and test your pipeline with the following command :
 
 ## Kallisto
 
+Kallisto run in two step: the indexation of the reference and the quantification on this index.
 
+You can copy to your `src/RNASeq.nf` file the relevant content of [src/nf_modules/Kallisto/kallisto.nf](https://gitlab.biologie.ens-lyon.fr/pipelines/nextflow/blob/master/src/nf_modules/Kallisto/kallisto.nf) and to your `src/RNASeq.config` file the content of [src/nf_modules/Kallisto/kallisto.config](https://gitlab.biologie.ens-lyon.fr/pipelines/nextflow/blob/master/src/nf_modules/Kallisto/kallisto.config).
+
+We are going to work with paired-end so only copy the relevant processes. The `index_fasta` process need to take as input the output of your `fasta_from_bed` process. The `fastq` input of your `mapping_fastq` process need to take as input the output of your `index_fasta` process and the `trimming` process.
+
+Commit your work and test your pipeline.
 
 
 
