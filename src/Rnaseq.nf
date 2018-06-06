@@ -78,5 +78,45 @@ bedtools getfasta -name \
 """
 }
 
+process index_fasta {
+  tag "$fasta.baseName"
+  publishDir "results/mapping/index/", mode: 'copy'
+
+  input:
+    file fasta from fasta_files_extracted
+
+  output:
+    file "*.index*" into index_files
+
+  script:
+"""
+kallisto index -k 31 --make-unique -i ${fasta.baseName}.index ${fasta} \
+> ${fasta.baseName}_kallisto_report.txt
+"""
+}
+
+
+process mapping_fastq {
+  tag "$reads"
+  cpus 4
+  publishDir "results/mapping/quantification/", mode: 'copy'
+
+  input:
+  file reads from fastq_files_trim
+  file index from index_files
+
+  output:
+  file "*" into counts_files
+
+  script:
+"""
+mkdir ${reads[0].baseName}
+kallisto quant -i ${index} -t ${task.cpus} \
+--bias --bootstrap-samples 100 -o ${reads[0].baseName} \
+${reads[0]} ${reads[1]} &> ${reads[0].baseName}_kallisto_report.txt
+"""
+}
+
+
 
 
