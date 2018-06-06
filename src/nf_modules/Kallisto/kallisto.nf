@@ -54,12 +54,12 @@ Channel
   .set { index_files }
 
 process mapping_fastq {
-  tag "$pair_id"
+  tag "$reads"
   cpus 4
   publishDir "results/mapping/quantification/", mode: 'copy'
 
   input:
-  set pair_id, file(reads) from fastq_files
+  file reads from fastq_files
   file index from index_files.toList()
 
   output:
@@ -67,9 +67,9 @@ process mapping_fastq {
 
   script:
 """
-mkdir ${pair_id}
+mkdir ${reads[0].baseName}
 kallisto quant -i ${index} -t ${task.cpus} \
---bias --bootstrap-samples 100 -o ${pair_id} \
+--bias --bootstrap-samples 100 -o ${reads[0].baseName} \
 ${reads[0]} ${reads[1]} &> ${pair_id}_kallisto_report.txt
 """
 }
