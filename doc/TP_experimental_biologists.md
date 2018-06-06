@@ -242,7 +242,7 @@ For this  practical, we are going to need the following tools :
 
 - For Illumina adaptor removal : cutadapt
 - For reads trimming by quality : UrQt
-- For mapping and quantifying reads : Kallisto, Bowtie2
+- For mapping and quantifying reads : BEDtools and Kallisto
 
 To initialize these tools, follow the **Installing** section of the [README.md](https://gitlab.biologie.ens-lyon.fr/pipelines/nextflow/blob/master/README.md) file.
 
@@ -293,11 +293,16 @@ For the `fastq_sampler.nf` pipeline we used the command `head` present in most b
 - launch the process in a Docker container that have cutadapt installed
 - launch the process with SGE while loading the correct module to have cutadapt available
 
-We are not going to use the first option which requiere no configuration for nextflow but tedious tools installation. Instead, we are going to use existing *wrappers* and tell nextflow about it. This is what the `src/cutadapt/cutadapt.config` is used for.
+We are not going to use the first option which requiere no configuration for nextflow but tedious tools installation. Instead, we are going to use existing *wrappers* and tell nextflow about it. This is what the [src/nf_modules/cutadapt/cutadapt.config](https://gitlab.biologie.ens-lyon.fr/pipelines/nextflow/blob/master/src/nf_modules/cutadapt/cutadapt.config) is used for.
 
 Copy the content of this config file to an `src/RNASeq.config` file. This file is structured in process blocks. Here we are only interested in configuring `adaptor_removal` process not `trimming` process. So you can remove the `trimming` block and commit.
 
-You can test your pipeline.
+You can test your pipeline with the following command:
+
+```sh
+./nextflow src/RNASeq.nf -c src/RNASeq.config -profile docker --fastq "data/tiny_dataset/fastq/*_R{1,2}.fastq"
+```
+
 
 ## UrQt
 
@@ -313,21 +318,31 @@ Therefore, you need to change the line :
   set pair_id, file(reads) from fastq_files
 ```
 
-In the the `trimming` process to:
+In the `trimming` process to:
 
 ```Groovy
   set pair_id, file(reads) from fastq_files_cut
 ```
 
 The two processes are now connected by the channel `fastq_files_cut`.
+
+Add the content of the [src/nf_modules/UrQt/urqt.config](https://gitlab.biologie.ens-lyon.fr/pipelines/nextflow/blob/master/src/nf_modules/UrQt/urqt.config) file to your `src/RNASeq.config` file and commit.
+
 You can test your pipeline.
 
+## BEDtools
+
+Kallisto need the sequences of the transcript that need to be quantified. We are going to extract these sequences from the reference `data/tiny_dataset/fasta/tiny_v2.fasta` with the `bed` annotation `data/tiny_dataset/annot/tiny.bed`.
+
+You can copy to your `src/RNASeq.nf` file the content of [src/nf_modules/BEDtools/bedtools.nf](https://gitlab.biologie.ens-lyon.fr/pipelines/nextflow/blob/master/src/nf_modules/BEDtools/bedtools.nf) and to your `src/RNASeq.config` file the content of [src/nf_modules/BEDtools/bedtools.config](https://gitlab.biologie.ens-lyon.fr/pipelines/nextflow/blob/master/src/nf_modules/BEDtools/bedtools.config).
+
+Commit your work and test your pipeline with the following command :
+
+```sh
+./nextflow src/RNASeq.nf -c src/RNASeq.config -profile docker --fastq "data/tiny_dataset/fastq/*_R{1,2}.fastq" --fasta "data/tiny_dataset/fasta/tiny_v2.fasta" --bed "data/tiny_dataset/annot/tiny.bed"
+```
+
 ## Kallisto
-
-
-
- 
-
 
 
 
