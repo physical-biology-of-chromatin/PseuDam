@@ -159,7 +159,7 @@ Add the definition of the channel to the `src/fasta_sampler.nf` file and commit 
 
 ## Run your pipeline locally
 
-After writing this first pipeline, you may want to test it. To do that first clone your repository. To easily do that set visibility level to *public* in the settings of your project.
+After writing this first pipeline, you may want to test it. To do that first clone your repository. To easily do that set visibility level to *public* in the settings/General/Permissions page of your project.
 
 You can then run the following commands to download your project on your computer :
 
