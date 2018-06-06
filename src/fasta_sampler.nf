@@ -9,10 +9,10 @@ process sample_fasta {
 file fasta from fasta_file
 
   output:
-file "sample.fasta" into fasta_sample
+file "*_sample.fasta" into fasta_sample
 
   script:
 """
-head ${fasta} > sample.fasta
+head ${fasta} > ${fasta.baseName}_sample.fasta
 """
 }
