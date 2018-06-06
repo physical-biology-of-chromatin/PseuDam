@@ -27,7 +27,7 @@ process trimming {
   set pair_id, file(reads) from fastq_files
 
   output:
-  file "*_trim_R{1,2}.fastq.gz" into fastq_files_cut
+  file "*_trim_R{1,2}.fastq.gz" into fastq_files_trim
 
   script:
 """
