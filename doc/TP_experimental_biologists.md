@@ -351,6 +351,43 @@ You can copy to your `src/RNASeq.nf` file the relevant content of [src/nf_module
 We are going to work with paired-end so only copy the relevant processes. The `index_fasta` process need to take as input the output of your `fasta_from_bed` process. The `fastq` input of your `mapping_fastq` process need to take as input the output of your `index_fasta` process and the `trimming` process.
 
 Commit your work and test your pipeline.
+You now have a RNASeq analysis pipeline that can run locally with Docker !
 
+# Run your RNASeq pipeline on the PSMN
 
+First you need to connect to the PSMN:
 
+```sh
+login@allo-psmn
+login@e5-2667v4comp1
+```
+
+## Set your environement
+
+Make the LBMC modules available to you:
+
+```sh
+ln -s /Xnfs/lbmcdb/common/modules/modulefiles ~/privatemodules
+echo "module use ~/privatemodules" >> .bashrc
+```
+
+Then you need to clone your pipeline and get the data :
+
+```sh
+git clone -c http.sslVerify=false https://gitlab.biologie.ens-lyon.fr/lmodolo/nextflow.git
+cd nextflow/data
+git clone -c http.sslVerify=false https://gitlab.biologie.ens-lyon.fr/LBMC/tiny_dataset.git
+cd ..
+```
+
+## Run nextflow
+
+As we don't want nextflow to be killed in case of deconnection we start by launching `tmux`. In case of deconnection, you can restore your session with the command `tmux a`.
+
+```sh
+tmux
+module load nextflow/0.28.2
+nextflow src/RNASeq.nf -c src/RNASeq.config -profile sge --fastq "data/tiny_dataset/fastq/*_R{1,2}.fastq" --fasta "data/tiny_dataset/fasta/tiny_v2.fasta" --bed "data/tiny_dataset/annot/tiny.bed"
+```
+
+You just ran your pipeline on the PSMN !
