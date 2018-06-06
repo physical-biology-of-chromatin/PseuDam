@@ -246,6 +246,13 @@ For this  practical, we are going to need the following tools :
 
 To initialize these tools, follow the **Installing** section of the [README.md](https://gitlab.biologie.ens-lyon.fr/pipelines/nextflow/blob/master/README.md) file.
 
+If you are using a CBP computer don't forget to cleanup your docker containers at the end of the practical with the following command:
+
+```sh
+docker rm $(docker stop $(docker ps -aq))
+docker rmi $(docker images -qf "dangling=true")
+```
+
 ## Cutadapt
 
 The first step of the pipeline is to remove any Illumina adaptor left in your reads files.
@@ -276,6 +283,19 @@ Channel
 ```
 
 As we are working with paired-end RNASeq data we tell nextflow to send pairs of fastq in the `fastq_file` channel.
+
+
+### cutadapt.config
+
+For the `fastq_sampler.nf` pipeline we used the command `head` present in most base UNIX systems. Here we want to use `cutadapt` which is not. Therefore, we have three main options:
+
+- install cutadapt locally so nextflow can use it
+- launch the process in a Docker container that have cutadapt installed
+- launch the process with SGE while loading the correct module to have cutadapt available
+
+We are not going to use the first option which requiere no configuration for nextflow but tedious tools installation. Instead, we are going to use existing *wrappers* and tell nextflow about it. This is what the `src/cutadapt/cutadapt.config` is used for.
+
+Copy the content of this config file to an `src/RNASeq.config` file. This file is structured in process blocks. Here we are only interested in configuring `adaptor_removal` process not `trimming` process. So you can remove the `trimming` block and commit.
 
 You can test your pipeline.
 
