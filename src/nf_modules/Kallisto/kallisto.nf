@@ -70,7 +70,7 @@ process mapping_fastq {
 mkdir ${reads[0].baseName}
 kallisto quant -i ${index} -t ${task.cpus} \
 --bias --bootstrap-samples 100 -o ${reads[0].baseName} \
-${reads[0]} ${reads[1]} &> ${pair_id}_kallisto_report.txt
+${reads[0]} ${reads[1]} &> ${reads[0].baseName}_kallisto_report.txt
 """
 }
 
