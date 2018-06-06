@@ -76,15 +76,6 @@ bedtools getfasta -name \
 """
 }
 
-params.fasta = "$baseDir/data/bam/*.fasta"
-
-log.info "fasta files : ${params.fasta}"
-
-Channel
-  .fromPath( params.fasta )
-  .ifEmpty { error "Cannot find any fasta files matching: ${params.fasta}" }
-  .set { fasta_file }
-
 process index_fasta {
   tag "$fasta.baseName"
   publishDir "results/mapping/index/", mode: 'copy'
