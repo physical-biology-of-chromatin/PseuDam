@@ -14,7 +14,7 @@ Channel
   .set { index_files }
 
 process mapping_fastq {
-  tag "$pair_id"
+  tag "$reads"
   cpus 4
   publishDir "results/mapping/quantification/", mode: 'copy'
 
@@ -27,7 +27,7 @@ process mapping_fastq {
 
   script:
 """
-mkdir ${pair_id}
+mkdir ${reads[0].baseName}
 kallisto quant -i ${index} -t ${task.cpus} \
 --bias --bootstrap-samples 100 -o ${pair_id} \
 ${reads[0]} ${reads[1]} &> ${pair_id}_kallisto_report.txt

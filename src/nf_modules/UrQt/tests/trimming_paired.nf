@@ -6,14 +6,15 @@ Channel
   .set { fastq_files }
 
 process trimming {
-  tag "$pair_id"
+  tag "${reads}"
   cpus 4
+  publishDir "results/fastq/trimming/", mode: 'copy'
 
   input:
   set pair_id, file(reads) from fastq_files
 
   output:
-  file "*_trim_R{1,2}.fastq.gz" into fastq_files_cut
+  set pair_id, "*_trim_R{1,2}.fastq.gz" into fastq_files_trim
 
   script:
 """
@@ -23,3 +24,4 @@ UrQt --t 20 --m ${task.cpus} --gz \
 > ${pair_id}_trimming_report.txt
 """
 }
+

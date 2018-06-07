@@ -58,7 +58,7 @@ process mapping_fastq {
   publishDir "results/mapping/quantification/", mode: 'copy'
 
   input:
-  file reads from fastq_files
+  set pair_id, file(reads) from fastq_files
   file index from index_files.toList()
 
   output:
@@ -68,8 +68,8 @@ process mapping_fastq {
 """
 mkdir ${reads[0].baseName}
 kallisto quant -i ${index} -t ${task.cpus} \
---bias --bootstrap-samples 100 -o ${reads[0].baseName} \
-${reads[0]} ${reads[1]} &> ${reads[0].baseName}_kallisto_report.txt
+--bias --bootstrap-samples 100 -o ${pair_id} \
+${reads[0]} ${reads[1]} &> ${pair_id}_kallisto_report.txt
 """
 }
 

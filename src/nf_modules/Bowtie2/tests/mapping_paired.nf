@@ -23,7 +23,7 @@ process mapping_fastq {
   file index from index_files.toList()
 
   output:
-  file "*.bam" into bam_files
+  set pair_id, "*.bam" into bam_files
 
   script:
 """
@@ -37,3 +37,4 @@ if grep -q "Error" ${pair_id}_bowtie2_report.txt; then
 fi
 """
 }
+

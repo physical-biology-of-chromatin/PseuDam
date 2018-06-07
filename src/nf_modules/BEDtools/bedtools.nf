@@ -1,7 +1,8 @@
 /*
 * bedtools :
-* Imputs : fastq files
-* Output : fastq files
+* Imputs : fasta files
+* Imputs : bed files
+* Output : fasta files
 */
 /*                      fasta extraction                                     */
 

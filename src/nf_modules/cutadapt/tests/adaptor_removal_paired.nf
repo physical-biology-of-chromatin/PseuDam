@@ -7,12 +7,13 @@ Channel
 
 process adaptor_removal {
   tag "$pair_id"
+  publishDir "results/fastq/adaptor_removal/", mode: 'copy'
 
   input:
   set pair_id, file(reads) from fastq_files
 
   output:
-  file "*_cut_R{1,2}.fastq.gz" into fastq_files_cut
+  set pair_id, "*_cut_R{1,2}.fastq.gz" into fastq_files_cut
 
   script:
   """
@@ -21,4 +22,3 @@ process adaptor_removal {
   ${reads[0]} ${reads[1]} > ${pair_id}_report.txt
   """
 }
-
