@@ -174,4 +174,12 @@ The [`kallisto.nf`](./src/nf_modules/Kallisto/kallisto.nf) file contains example
 - Input and output must be clearly defined.
 - Your process usable as a starting process or a process retrieving the output of another process.
 
+For more informations on processes and channels you can check the [nextflow documentation](https://www.nextflow.io/docs/latest/index.html).
+
+## Making your wrapper available to the LBMC
+
+To make your module available to the LBMC you must have a `tests.sh` script  and one or many `docker_init.sh` scripts working without errors .
+
+Then after pushing your modification on your forked repository, you can make a Merge Request to the [PSMN/modules](https://gitlab.biologie.ens-lyon.fr/pipelines/nextflow) **dev** branch. Where it will be tested and 
+integrated to the **master** branch.
 
