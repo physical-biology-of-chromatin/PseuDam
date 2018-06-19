@@ -21,7 +21,7 @@ For the practical you can either work with the WebIDE of Gitlab, or locally as d
 
 To run a tools within a [Docker container](https://www.docker.com/what-container) you need to write a `Dockerfile`.
 
-`Dockerfile` are found in the [pipelines/nextflow](https://gitlab.biologie.ens-lyon.fr/pipelines/nextflow) project under `src/docker_modules/`. Each `Dockerfile` are paired with a `docker_init.sh` file like following example for `Kallisto` version `0.43.1`:
+[`Dockerfile`](./src/docker_modules/Kallisto/0.44.0/Dockerfile) are found in the [pipelines/nextflow](https://gitlab.biologie.ens-lyon.fr/pipelines/nextflow) project under `src/docker_modules/`. Each [`Dockerfile`](./src/docker_modules/Kallisto/0.44.0/Dockerfile) are paired with a [`docker_init.sh`](./src/docker_modules/Kallisto/0.44.0/docker_init.sh) file like following example for `Kallisto` version `0.43.1`:
 
 ```sh
 $ ls -l src/docker_modules/Kallisto/0.43.1/
@@ -32,12 +32,12 @@ drwxr-xr-x 3 laurent users 4.0K Jun  6 09:49 ../
 -rwxr-xr-x 1 laurent users   79 Jun  5 19:06 docker_init.sh*                     
 ```
 
-## `docker_init.sh`
-The `docker_init.sh` is a simple sh script with the executable right (`chmod +x`).By executing this script, the user creates the [Docker container](https://www.docker.com/what-container) for the tools in a specific version. You can check the `docker_init.sh` file of any implemented tools as a template. Remember that the name of the [container](https://www.docker.com/what-container) must be in lower case.
+## [`docker_init.sh`](./src/docker_modules/Kallisto/0.44.0/docker_init.sh)
+The [`docker_init.sh`](./src/docker_modules/Kallisto/0.44.0/docker_init.sh) is a simple sh script with the executable right (`chmod +x`).By executing this script, the user creates the [Docker container](https://www.docker.com/what-container) for the tools in a specific version. You can check the [`docker_init.sh`](./src/docker_modules/Kallisto/0.44.0/docker_init.sh) file of any implemented tools as a template. Remember that the name of the [container](https://www.docker.com/what-container) must be in lower case.
 
-## `Dockerfile`
+## [`Dockerfile`](./src/docker_modules/Kallisto/0.44.0/Dockerfile)
 
-The recipe to wrap your tool in a [Docker container](https://www.docker.com/what-container) is written in a `Dockerfile` file.
+The recipe to wrap your tool in a [Docker container](https://www.docker.com/what-container) is written in a [`Dockerfile`](./src/docker_modules/Kallisto/0.44.0/Dockerfile) file.
 
 For `Kallisto` version `0.44.0` the header of the `Dockerfile` is :
 
@@ -54,8 +54,8 @@ Then we declare the *maintainer* of the container. Before declaring a environmen
 
 You should always declare a variable `TOOLSNAME_VERSION` that contains the version number of commit number of the tools you wrap. Therefore in simple case you just have to modify this line to create a new `Dockerfile` for another version of the tool.
 
-The following of the `Dockerfile` is a succession of `bash` commands executed as the **root** user within the container.
-When you build your `Dockerfile`, instead of launching many time the `docker_init.sh` script you can connect to a base container in interactive mode to launch tests your commands.
+The following of the [`Dockerfile`](./src/docker_modules/Kallisto/0.44.0/Dockerfile) is a succession of `bash` commands executed as the **root** user within the container.
+When you build your [`Dockerfile`](./src/docker_modules/Kallisto/0.44.0/Dockerfile), instead of launching many time the [`docker_init.sh`](./src/docker_modules/Kallisto/0.44.0/docker_init.sh) script you can connect to a base container in interactive mode to launch tests your commands.
 
 ```sh
 docker run -it ubuntu:18.04 bash
@@ -92,8 +92,8 @@ total 16
 -rwxr-xr-x 1 laurent users  627 Jun 18 17:14 tests.sh*
 ```
 
-The `Kallisto.config` file contains intruction for two profiles : `sge` and `docker`.
-The `Kallisto.nf` file contains nextflow processes to use `Kallisto`.
+The [`kallisto.config`](./src/nf_modules/Kallisto/kallisto.config) file contains intruction for two profiles : `sge` and `docker`.
+The [`kallisto.nf`](./src/nf_modules/Kallisto/kallisto.nf) file contains nextflow processes to use `Kallisto`.
 
-The `tests/tests.sh` script, contains a serie of calls nextflow on the other `.nf` files of the `tests/` folder. Those tests correspond to execution of the processes present in the `Kallisto.nf` file on the [LBMC/tiny_dataset](https://gitlab.biologie.ens-lyon.fr/LBMC/tiny_dataset) dataset. You can read the *Running the tests* section of the [README.md](https://gitlab.biologie.ens-lyon.fr/pipelines/nextflow/blob/master/README.md).
+The [`tests/tests.sh`](./src/nf_modules/Kallisto/tests/tests.sh) script, contains a serie of nextflow calls on the other `.nf` files of the [`tests/`](./src/nf_modules/kallisto/tests/) folder. Those tests correspond to execution of the processes present in the [`kallisto.nf`](./src/nf_modules/Kallisto/kallisto.nf) file on the [LBMC/tiny_dataset](https://gitlab.biologie.ens-lyon.fr/LBMC/tiny_dataset) dataset. You can read the *Running the tests* section of the [README.md](https://gitlab.biologie.ens-lyon.fr/pipelines/nextflow/blob/master/README.md).
 
