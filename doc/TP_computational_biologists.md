@@ -13,23 +13,23 @@ highlight: tango
 
 The goal of this practical is to learn how to *wrap* tools in [Docker](https://www.docker.com/what-docker) or [Environment Module](http://www.ens-lyon.fr/PSMN/doku.php?id=documentation:tools:modules) to make them available to nextflow on a personal computer or at the [PSMN](http://www.ens-lyon.fr/PSMN/doku.php).
 
-Here we assume that you followed the [TP for experimental biologists](./TP_experimental_biologists.md), and that you know the basics on [Docker containers](https://www.docker.com/what-container) and [Environment Module](http://www.ens-lyon.fr/PSMN/doku.php?id=documentation:tools:modules) usage. We also are going to assume that you know how to build and use a nextflow pipeline from the template [pipelines/nextflow](https://gitlab.biologie.ens-lyon.fr/pipelines/nextflow).
+Here we assume that you followed the [TP for experimental biologists](./TP_experimental_biologists.md), and that you know the basics on [Docker containers](https://www.docker.com/what-container) and [Environment Module](http://www.ens-lyon.fr/PSMN/doku.php?id=documentation:tools:modules) usage. We are also going to assume that you know how to build and use a nextflow pipeline from the template [pipelines/nextflow](https://gitlab.biologie.ens-lyon.fr/pipelines/nextflow).
 
 For the practical you can either work with the WebIDE of Gitlab, or locally as described in [git : the basis formation](https://gitlab.biologie.ens-lyon.fr/formations/git_basis).
 
 # Docker
 
-To run a tools within a [Docker container](https://www.docker.com/what-container) you need to write a `Dockerfile`.
+To run a tool within a [Docker container](https://www.docker.com/what-container) you need to write a `Dockerfile`.
 
-[`Dockerfile`](./src/docker_modules/Kallisto/0.44.0/Dockerfile) are found in the [pipelines/nextflow](https://gitlab.biologie.ens-lyon.fr/pipelines/nextflow) project under `src/docker_modules/`. Each [`Dockerfile`](./src/docker_modules/Kallisto/0.44.0/Dockerfile) are paired with a [`docker_init.sh`](./src/docker_modules/Kallisto/0.44.0/docker_init.sh) file like following example for `Kallisto` version `0.43.1`:
+[`Dockerfile`](./src/docker_modules/Kallisto/0.44.0/Dockerfile) are found in the [pipelines/nextflow](https://gitlab.biologie.ens-lyon.fr/pipelines/nextflow) project under `src/docker_modules/`. Each [`Dockerfile`](./src/docker_modules/Kallisto/0.44.0/Dockerfile) are paired with a [`docker_init.sh`](./src/docker_modules/Kallisto/0.44.0/docker_init.sh) file like following the example for `Kallisto` version `0.43.1`:
 
 ```sh
 $ ls -l src/docker_modules/Kallisto/0.43.1/
 total 16K                                                                        
-drwxr-xr-x 2 laurent users 4.0K Jun  5 19:06 ./                                  
-drwxr-xr-x 3 laurent users 4.0K Jun  6 09:49 ../                                 
+drwxr-xr-x 2 laurent users 4.0K Jun 5 19:06 ./                                  
+drwxr-xr-x 3 laurent users 4.0K Jun 6 09:49 ../                                 
 -rw-r--r-- 1 laurent users  587 Jun  5 19:06 Dockerfile                          
--rwxr-xr-x 1 laurent users   79 Jun  5 19:06 docker_init.sh*                     
+-rwxr-xr-x 1 laurent users 79 Jun 5 19:06 docker_init.sh*                     
 ```
 
 ## [`docker_init.sh`](./src/docker_modules/Kallisto/0.44.0/docker_init.sh)
@@ -48,14 +48,14 @@ MAINTAINER Laurent Modolo
 ENV KALLISTO_VERSION=0.44.0
 ```
 
-This means that we initialize the [container](https://www.docker.com/what-container) from a bare installation of Ubuntu 18.04. You can check the ubuntu  available versions [here](https://hub.docker.com/_/ubuntu/) or others operating systems like [debian](https://hub.docker.com/_/debian/) or [worst](https://hub.docker.com/r/microsoft/windowsservercore/).
+This means that we initialize the [container](https://www.docker.com/what-container) from a bare installation of Ubuntu 18.04. You can check the ubuntu available versions [here](https://hub.docker.com/_/ubuntu/) or others operating systems like [debian](https://hub.docker.com/_/debian/) or [worst](https://hub.docker.com/r/microsoft/windowsservercore/).
 
 Then we declare the *maintainer* of the container. Before declaring a environment variable for the container named `KALLISTO_VERSION` which contains the version of the tools wrapped. This means that this bash variable will be declared within the [container](https://www.docker.com/what-container).
 
 You should always declare a variable `TOOLSNAME_VERSION` that contains the version number of commit number of the tools you wrap. Therefore in simple case you just have to modify this line to create a new `Dockerfile` for another version of the tool.
 
 The following of the [`Dockerfile`](./src/docker_modules/Kallisto/0.44.0/Dockerfile) is a succession of `bash` commands executed as the **root** user within the container.
-When you build your [`Dockerfile`](./src/docker_modules/Kallisto/0.44.0/Dockerfile), instead of launching many time the [`docker_init.sh`](./src/docker_modules/Kallisto/0.44.0/docker_init.sh) script you can connect to a base container in interactive mode to launch tests your commands.
+When you build your [`Dockerfile`](./src/docker_modules/Kallisto/0.44.0/Dockerfile), instead of launching many times the [`docker_init.sh`](./src/docker_modules/Kallisto/0.44.0/docker_init.sh) script you can connect to a base container in interactive mode to launch tests your commands.
 
 ```sh
 docker run -it ubuntu:18.04 bash
@@ -80,16 +80,16 @@ The last step to wrap your tool, is to make it available in nextflow. For this y
 ls -lR src/nf_modules/Kallisto
 src/nf_modules/Kallisto/:
 total 12
--rw-r--r-- 1 laurent users  866 Jun 18 17:13 kallisto.config
--rw-r--r-- 1 laurent users 2711 Jun 18 17:13 kallisto.nf
-drwxr-xr-x 2 laurent users 4096 Jun 18 17:14 tests/
+-rw-r--r-- 1 laurent users 866 Jun 18 17:13 kallisto.config
+-rw-r--r-- 1 laurent users 2711 Jun 18 17:13 kallisto.nf
+drwxr-xr-x 2 laurent users 4096 Jun 18 17:14 tests/
 
 src/nf_modules/Kallisto/tests:
 total 16
--rw-r--r-- 1 laurent users  551 Jun 18 17:14 index.nf
--rw-r--r-- 1 laurent users  901 Jun 18 17:14 mapping_paired.nf
--rw-r--r-- 1 laurent users 1037 Jun 18 17:14 mapping_single.nf
--rwxr-xr-x 1 laurent users  627 Jun 18 17:14 tests.sh*
+-rw-r--r-- 1 laurent users 551 Jun 18 17:14 index.nf
+-rw-r--r-- 1 laurent users 901 Jun 18 17:14 mapping_paired.nf
+-rw-r--r-- 1 laurent users 1037 Jun 18 17:14 mapping_single.nf
+-rwxr-xr-x 1 laurent users 627 Jun 18 17:14 tests.sh*
 ```
 
 The [`kallisto.config`](./src/nf_modules/Kallisto/kallisto.config) file contains intruction for two profiles : `sge` and `docker`.
