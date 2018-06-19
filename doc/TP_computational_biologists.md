@@ -74,7 +74,7 @@ You can read the Contributing guide of the [PMSN/modules](https://gitlab.biologi
 
 # Nextflow
 
-The last step to wrap your tool, is to make it available in nextflow. For this you need to create at least 4 files, like the following for Kallisto version `0.44.0`:
+The last step to wrap your tool is to make it available in nextflow. For this you need to create at least 4 files, like the following for Kallisto version `0.44.0`:
 
 ```sh
 ls -lR src/nf_modules/Kallisto
@@ -92,8 +92,86 @@ total 16
 -rwxr-xr-x 1 laurent users 627 Jun 18 17:14 tests.sh*
 ```
 
-The [`kallisto.config`](./src/nf_modules/Kallisto/kallisto.config) file contains intruction for two profiles : `sge` and `docker`.
+The [`kallisto.config`](./src/nf_modules/Kallisto/kallisto.config) file contains instructions for two profiles : `sge` and `docker`.
 The [`kallisto.nf`](./src/nf_modules/Kallisto/kallisto.nf) file contains nextflow processes to use `Kallisto`.
 
-The [`tests/tests.sh`](./src/nf_modules/Kallisto/tests/tests.sh) script, contains a serie of nextflow calls on the other `.nf` files of the [`tests/`](./src/nf_modules/kallisto/tests/) folder. Those tests correspond to execution of the processes present in the [`kallisto.nf`](./src/nf_modules/Kallisto/kallisto.nf) file on the [LBMC/tiny_dataset](https://gitlab.biologie.ens-lyon.fr/LBMC/tiny_dataset) dataset. You can read the *Running the tests* section of the [README.md](https://gitlab.biologie.ens-lyon.fr/pipelines/nextflow/blob/master/README.md).
+The [`tests/tests.sh`](./src/nf_modules/Kallisto/tests/tests.sh) script, contains a series of nextflow calls on the other `.nf` files of the [`tests/`](./src/nf_modules/kallisto/tests/) folder. Those tests correspond to execution of the processes present in the [`kallisto.nf`](./src/nf_modules/Kallisto/kallisto.nf) file on the [LBMC/tiny_dataset](https://gitlab.biologie.ens-lyon.fr/LBMC/tiny_dataset) dataset with the `docker` profile. You can read the *Running the tests* section of the [README.md](https://gitlab.biologie.ens-lyon.fr/pipelines/nextflow/blob/master/README.md).
+
+## [`kallisto.config`](./src/nf_modules/Kallisto/kallisto.config)
+
+The `.config` file defines the configuration to apply to your process conditionally to the value of the `-profile` option. You must define configuration for at least the `sge` and `docker` profile.
+
+```Groovy
+profiles {
+  docker {
+    docker.temp = 'auto'
+    docker.enabled = true
+    process {
+    }
+  }
+  sge {
+    process{
+    }
+  }
+```
+
+### `docker` profile
+
+The `docker` profile start by enabling docker for the whole pipeline. After that you only have to define the container name of each process:
+For example, for `Kallisto`, we have:
+
+```Groovy
+process {
+  $index_fasta {
+    container = "kallisto:0.44.0"
+  }
+  $mapping_fastq {
+    container = "kallisto:0.44.0"
+  }
+}
+```
+
+### `sge` profile
+
+The `sge` profile define for each process all the information necessary to launch your process on a give queue at the PSMN.
+For example, for `Kallisto`, we have:
+
+```Groovy
+process{
+  $index_fasta {
+    beforeScript = "module purge; module load Kallisto/0.44.0"
+    executor = "sge"
+    cpus = 1
+    memory = "5GB"
+    time = "6h"
+    queueSize = 1000
+    pollInterval = '60sec'
+    queue = 'h6-E5-2667v4deb128'
+    penv = 'openmp8'
+  }
+  $mapping_fastq {
+    beforeScript = "module purge; module load Kallisto/0.44.0"
+    executor = "sge"
+    cpus = 4
+    memory = "5GB"
+    time = "6h"
+    queueSize = 1000
+    pollInterval = '60sec'
+    queue = 'h6-E5-2667v4deb128'
+    penv = 'openmp8'
+  }
+}
+```
+
+The `beforeScript` variable is executed before the main script of the corresponding process.
+
+## [`kallisto.nf`](./src/nf_modules/Kallisto/kallisto.nf)
+
+The [`kallisto.nf`](./src/nf_modules/Kallisto/kallisto.nf) file contains examples of nextflow process that execute Kallisto.
+
+- Each example must be usable as is to be incorporated in a nextflow pipeline.
+- You need to define, default value for the parameters passed to the process. 
+- Input and output must be clearly defined.
+- Your process usable as a starting process or a process retrieving the output of another process.
+
 
