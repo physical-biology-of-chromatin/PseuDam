@@ -1,6 +1,13 @@
 # nextflow pipeline
 
 This repository is a template and a library repository to help you build nextflow pipeline.
+You can fork this repository to build your own pipeline.
+To get the last commits from this repository into your fork use the following commands:
+
+```sh
+git remote add upstream https://gitlab.biologie.ens-lyon.fr/pipelines/nextflow.git
+git pull upstream master
+```
 
 ## Getting Started
 
@@ -47,7 +54,7 @@ find src/docker_modules/ -name "docker_init.sh" | awk '{system($0)}'
 
 ## Running the tests
 
-To run tests we first need to get a trainning set
+To run tests we first need to get a training set
 ```sh
 cd data
 git clone -c http.sslVerify=false https://gitlab.biologie.ens-lyon.fr/LBMC/tiny_dataset.git

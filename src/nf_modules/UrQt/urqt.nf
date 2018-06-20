@@ -24,17 +24,17 @@ process trimming {
   publishDir "results/fastq/trimming/", mode: 'copy'
 
   input:
-  file reads from fastq_files
+  set pair_id, file(reads) from fastq_files
 
   output:
-  file "*_trim_R{1,2}.fastq.gz" into fastq_files_trim
+  set pair_id, "*_trim_R{1,2}.fastq.gz" into fastq_files_trim
 
   script:
 """
 UrQt --t 20 --m ${task.cpus} --gz \
 --in ${reads[0]} --inpair ${reads[1]} \
---out ${reads[0].baseName}_trim_R1.fastq.gz --outpair ${reads[1].baseName}_trim_R2.fastq.gz \
-> ${reads[0].baseName}_trimming_report.txt
+--out ${pair_id}_trim_R1.fastq.gz --outpair ${pair_id}_trim_R2.fastq.gz \
+> ${pair_id}_trimming_report.txt
 """
 }
 
