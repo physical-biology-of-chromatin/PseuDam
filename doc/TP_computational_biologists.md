@@ -186,3 +186,5 @@ All the processes in your `.nf` must be covered by the tests.
 
 After pushing your modifications on your forked repository, you can make a Merge Request to the [PSMN/modules](https://gitlab.biologie.ens-lyon.fr/pipelines/nextflow) **dev** branch. Where it will be tested and integrated to the **master** branch.
 
+You can read more on this process [here](https://guides.github.com/introduction/flow/)
+
