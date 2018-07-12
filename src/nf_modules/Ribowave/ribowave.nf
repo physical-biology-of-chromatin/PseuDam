@@ -108,8 +108,8 @@ Channel
   .ifEmpty { error "Cannot find any index files matching: ${params.p_site}" }
   .set { p_site_file }
 
-process determination_P_site {
-  publishDir "results/ribowave/track_P_site", mode: 'copy'
+process track_P_site {
+  publishDir "results/ribowave", mode: 'copy'
 
   input:
   file bam from bam_files
@@ -118,7 +118,7 @@ process determination_P_site {
   file p_site from p_site_file
 
   output:
-  file "*" into det_p_site_channel
+  file "*" into track_p_site_channel
 
   script:
 """
@@ -127,47 +127,41 @@ process determination_P_site {
 }
 
 /*
-* for single-end data
+* ribowave Identifying translated ORF
 */
 
-params.fastq = "$baseDir/data/fastq/*.fastq"
-params.index = "$baseDir/data/index/*.index*"
-params.mean = 200
-params.sd = 100
+params.psite = ""
+params.finalORF = ""
+params.outputdir = ""
+params.jobname = ""
 
-log.info "fastq files : ${params.fastq}"
-log.info "index files : ${params.index}"
-log.info "mean read size: ${params.mean}"
-log.info "sd read size: ${params.sd}"
+log.info "psite file : ${params.psite}"
+log.info "finalORF file : ${params.finalORF}"
+log.info "job name : ${params.jobname}"
+log.info "output dir : ${params.outputdir}"
 
 Channel
-  .fromPath( params.fastq )
-  .ifEmpty { error "Cannot find any fastq files matching: ${params.fastq}" }
-  .set { fastq_files }
+  .fromPath( params.psite )
+  .ifEmpty { error "Cannot find any fastq files matching: ${params.psite}" }
+  .set { psite_file }
 Channel
-  .fromPath( params.index )
-  .ifEmpty { error "Cannot find any index files matching: ${params.index}" }
-  .set { index_files }
+  .fromPath( params.finalORF )
+  .ifEmpty { error "Cannot find any index files matching: ${params.finalORF}" }
+  .set { finalORF_file }
 
-process mapping_fastq {
-  tag "$reads.baseName"
-  cpus 4
-  publishDir "results/mapping/quantification/", mode: 'copy'
+process ribowave_transORF {
+  publishDir "results/ribowave", mode: 'copy'
 
   input:
-  file reads from fastq_files
-  file index from index_files.toList()
+  file psite from psite_file
+  file finalORF from finalORF_file
 
   output:
-  file "*" into count_files
+  file "*" into ribowave_channel
 
   script:
 """
-mkdir ${reads.baseName}
-kallisto quant -i ${index} -t ${task.cpus} --single
---bias --bootstrap-samples 100 -o ${reads.baseName} \
--l ${params.mean} -s ${params.sd} -o ./ \
-${reads} > ${reads.baseName}_kallisto_report.txt
+/Ribowave/scripts/Ribowave -PD -a ${psite} -b ${finalORF} -o ${params.outputdir} -n ${params.jobname} -s /Ribowave/scripts -p 8
 """
 }
 
