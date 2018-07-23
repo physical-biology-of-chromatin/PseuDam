@@ -76,6 +76,33 @@ for example to run the tests on `Bowtie2` run:
 src/nf_modules/Bowtie2/tests/tests.sh
 ```
 
+## Available tools
+
+| tool | nf module | docker module | sge module |
+|------|:---------:|:-------------:|:----------:|
+BEDtools | ok | ok | ok
+Bowtie2 | ok | ok | ok
+FastQC | **no** | ok | ok
+HISAT2 | **no** | ok | ok
+HTSeq | ok | ok | ok
+Kallisto | ok | ok | ok
+MultiQC | **no** | ok | ok
+RSEM | ok | ok | ok
+SAMtools | ok | ok | ok
+SRAtoolkit | **no** | ok | ok
+Salmon | **no** | ok | ok
+TopHat | **no** | ok | ok
+Trimmomatic | **no** | ok | ok
+UrQt | ok | ok | ok
+canu | ok | ok | ok
+cutadapt | ok | ok | ok
+deepTools | **no** | ok | ok
+file_handle | **no** | ok | ok
+pigz | **no** | ok | ok
+sra-tools | ok | **no** | **no**
+
+
+
 ## Contributing
 
 Please read [CONTRIBUTING.md](CONTRIBUTING.md) for details on our code of conduct, and the process for submitting pull requests to us.
