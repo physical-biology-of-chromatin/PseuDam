@@ -16,7 +16,7 @@ Channel
 
 process fastqc {
   tag "$fastq.baseName"
-  publishDir "results/fasqc/${fastq.baseName}/", mode: 'copy'
+  publishDir "results/fastqc/", mode: 'copy'
 
   input:
     file fastq from fastq_files
