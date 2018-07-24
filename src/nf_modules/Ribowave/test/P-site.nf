@@ -1,10 +1,8 @@
 params.bam = ""
 params.start = ""
-params.jobname = ""
 
 log.info "bam file(s) : ${params.bam}"
 log.info "start_codon file : ${params.start}"
-log.info "job name : ${params.jobname}"
 
 Channel
   .fromPath( params.bam )
@@ -15,8 +13,9 @@ Channel
   .ifEmpty { error "Cannot find any index files matching: ${params.start}" }
   .set { start_file }
 
-process p_site {
-  publishDir "results/ribowave/P-site", mode: 'copy'
+process determination_P_site {
+  tag "$bam.baseName"
+  publishDir "results/ribowave", mode: 'copy'
 
   input:
   file bam from bam_files
@@ -24,9 +23,10 @@ process p_site {
 
   output:
   file "*" into p_site_channel
+  file "*psite1nt.txt" into psite1nt_channel
 
   script:
 """
-/Ribowave/scripts/P-site_determination.sh -i ${bam} -S ${start} -o ./ -n ${params.jobname} -s /Ribowave/scripts
+/Ribowave/scripts/P-site_determination.sh -i ${bam} -S ${start} -o ./ -n ${bam.baseName} -s /Ribowave/scripts
 """
 }
