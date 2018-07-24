@@ -22,7 +22,7 @@ process fastqc {
     file fastq from fastq_files
 
   output:
-    file "*" into fastqc_repport
+    file "*.htlm" into fastqc_repport
 
   script:
 """
