@@ -20,24 +20,24 @@ Channel
 
 //run is the column name containing SRR ids
 
-  process fastqdump {
+process fastq_dump {
   tag {"${x.run}"}
   publishDir "results/download/fastq/${x.run}/", mode: 'copy'
+
   input:
-  val x  from SRR
+    val x  from SRR
+
   output:
-  file("*") into fastq
+    file("*") into fastq
 
   script:
-
-  """
- #for test only 10000  reads are downloading with the option -N 10000 -X 20000
-  fastq-dump --split-files --defline-seq '@\$ac_\$si/\$ri' --defline-qual "+" -N 10000 -X 20000 ${x.run}
-  if [ -f ${x.run}_1.fastq ]
-  then
-    true
-  else
-    touch ${x.run}.fastq
-  fi
 """
-  }
+fastq-dump --split-files --defline-seq '@\$ac_\$si/\$ri' --defline-qual "+"  ${x.run}
+if [ -f ${x.run}_1.fastq ]
+then
+  true
+else
+  touch ${x.run}.fastq
+fi
+"""
+}

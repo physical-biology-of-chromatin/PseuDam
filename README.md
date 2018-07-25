@@ -89,7 +89,7 @@ Kallisto | ok | ok | ok
 MultiQC | ok | ok | ok
 RSEM | ok | ok | ok
 SAMtools | ok | ok | ok
-SRAtoolkit | **no** | ok | ok
+SRAtoolkit | ok | ok | ok
 Salmon | **no** | ok | ok
 TopHat | **no** | ok | ok
 Trimmomatic | **no** | ok | ok
@@ -99,8 +99,6 @@ cutadapt | ok | ok | ok
 deepTools | **no** | ok | ok
 file_handle | **no** | ok | ok
 pigz | **no** | ok | ok
-sra-tools | ok | **no** | **no**
-
 
 
 ## Contributing
