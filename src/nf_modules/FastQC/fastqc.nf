@@ -21,19 +21,19 @@ Channel
   .set { fastq_files }
 
 process fastqc_fastq {
-  tag "$fastq.baseName"
+  tag "$reads.baseName"
   publishDir "results/fastq/fastqc/", mode: 'copy'
   cpus = 1
 
   input:
-    file fastq from fastq_files
+    file reads from fastq_files
 
   output:
     file "*.{zip,html}" into fastqc_repport
 
   script:
 """
-fastqc --quiet --threads ${task.cpus} --outdir -f fastq ./ ${fastq}
+fastqc --quiet --threads ${task.cpus} --format fastq --outdir ./ ${reads}
 """
 }
 
@@ -63,8 +63,8 @@ process fastqc_fastq {
 
   script:
 """
-fastqc --quiet --threads ${task.cpus} --outdir -f fastq ./ \
-${fastq[0]} ${fastq[1]}
+fastqc --quiet --threads ${task.cpus} --format fastq --outdir ./ \
+${reads[0]} ${reads[1]}
 """
 }
 
