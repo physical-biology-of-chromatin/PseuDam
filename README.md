@@ -82,11 +82,11 @@ src/nf_modules/Bowtie2/tests/tests.sh
 |------|:---------:|:-------------:|:----------:|
 BEDtools | ok | ok | ok
 Bowtie2 | ok | ok | ok
-FastQC | **no** | ok | ok
+FastQC | ok | ok | ok
 HISAT2 | **no** | ok | ok
 HTSeq | ok | ok | ok
 Kallisto | ok | ok | ok
-MultiQC | **no** | ok | ok
+MultiQC | ok | ok | ok
 RSEM | ok | ok | ok
 SAMtools | ok | ok | ok
 SRAtoolkit | **no** | ok | ok
