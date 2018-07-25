@@ -1,6 +1,13 @@
 # nextflow pipeline
 
 This repository is a template and a library repository to help you build nextflow pipeline.
+You can fork this repository to build your own pipeline.
+To get the last commits from this repository into your fork use the following commands:
+
+```sh
+git remote add upstream https://gitlab.biologie.ens-lyon.fr/pipelines/nextflow.git
+git pull upstream master
+```
 
 ## Getting Started
 
@@ -47,7 +54,7 @@ find src/docker_modules/ -name "docker_init.sh" | awk '{system($0)}'
 
 ## Running the tests
 
-To run tests we first need to get a trainning set
+To run tests we first need to get a training set
 ```sh
 cd data
 git clone -c http.sslVerify=false https://gitlab.biologie.ens-lyon.fr/LBMC/tiny_dataset.git
@@ -68,6 +75,33 @@ for example to run the tests on `Bowtie2` run:
 ```sh
 src/nf_modules/Bowtie2/tests/tests.sh
 ```
+
+## Available tools
+
+| tool | nf module | docker module | sge module |
+|------|:---------:|:-------------:|:----------:|
+BEDtools | ok | ok | ok
+Bowtie2 | ok | ok | ok
+FastQC | **no** | ok | ok
+HISAT2 | **no** | ok | ok
+HTSeq | ok | ok | ok
+Kallisto | ok | ok | ok
+MultiQC | **no** | ok | ok
+RSEM | ok | ok | ok
+SAMtools | ok | ok | ok
+SRAtoolkit | **no** | ok | ok
+Salmon | **no** | ok | ok
+TopHat | **no** | ok | ok
+Trimmomatic | **no** | ok | ok
+UrQt | ok | ok | ok
+canu | ok | ok | ok
+cutadapt | ok | ok | ok
+deepTools | **no** | ok | ok
+file_handle | **no** | ok | ok
+pigz | **no** | ok | ok
+sra-tools | ok | **no** | **no**
+
+
 
 ## Contributing
 

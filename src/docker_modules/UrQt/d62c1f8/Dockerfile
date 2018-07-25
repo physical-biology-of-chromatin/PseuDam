@@ -1,7 +1,7 @@
 FROM ubuntu:18.04
 MAINTAINER Laurent Modolo
 
-ENV PACKAGES git=1:2.17.0* \
+ENV PACKAGES git=1:2.17* \
    build-essential=12.4* \
    ca-certificates=20180409 \
    zlib1g-dev=1:1.2.11*

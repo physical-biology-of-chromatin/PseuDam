@@ -27,7 +27,7 @@ process adaptor_removal {
   set pair_id, file(reads) from fastq_files
 
   output:
-  file "*_cut_R{1,2}.fastq.gz" into fastq_files_cut
+  set pair_id, "*_cut_R{1,2}.fastq.gz" into fastq_files_cut
 
   script:
   """
@@ -91,7 +91,7 @@ process trimming {
   set pair_id, file(reads) from fastq_files
 
   output:
-  file "*_trim_R{1,2}.fastq.gz" into fastq_files_trim
+  set pair_id, "*_trim_R{1,2}.fastq.gz" into fastq_files_trim
 
   script:
   """

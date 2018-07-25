@@ -1,11 +1,12 @@
 /*
 * bedtools :
-* Imputs : fastq files
-* Output : fastq files
+* Imputs : fasta files
+* Imputs : bed files
+* Output : fasta files
 */
 /*                      fasta extraction                                     */
 
-params.fastq = "$baseDir/data/fasta/*.fasta"
+params.fasta = "$baseDir/data/fasta/*.fasta"
 params.bed = "$baseDir/data/annot/*.bed"
 
 log.info "fasta file : ${params.fasta}"
