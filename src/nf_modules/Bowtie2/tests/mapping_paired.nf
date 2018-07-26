@@ -24,6 +24,7 @@ process mapping_fastq {
 
   output:
   set pair_id, "*.bam" into bam_files
+  file "*_report.txt" into mapping_report
 
   script:
   index_id = index[0]

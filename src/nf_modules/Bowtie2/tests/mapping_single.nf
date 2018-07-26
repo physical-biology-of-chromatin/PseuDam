@@ -23,6 +23,7 @@ process mapping_fastq {
 
   output:
   file "*.bam" into bam_files
+  file "*_report.txt" into mapping_report
 
   script:
   index_id = index[0]
