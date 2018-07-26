@@ -92,7 +92,7 @@ HISAT2 | **no** | ok | **no**
 HTSeq | ok | ok | ok
 Kallisto | ok | ok | ok
 MultiQC | ok | ok | ok
-MUSIC | **no** | **no** | ok
+MUSIC | **no** | ok | ok
 pigz | **no** | ok | ok
 RSEM | ok | ok | ok
 SAMtools | ok | ok | ok
