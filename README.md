@@ -83,11 +83,17 @@ src/nf_modules/Bowtie2/tests/tests.sh
 BEDtools | ok | ok | ok
 Bowtie | ok | ok | **no**
 Bowtie2 | ok | ok | ok
+canu | ok | ok | ok
+cutadapt | ok | ok | ok
+deepTools | **no** | ok | ok
 FastQC | ok | ok | ok
+file_handle | **no** | ok | ok
 HISAT2 | **no** | ok | **no**
 HTSeq | ok | ok | ok
 Kallisto | ok | ok | ok
 MultiQC | ok | ok | ok
+MUSIC | **no** | **no** | ok
+pigz | **no** | ok | ok
 RSEM | ok | ok | ok
 SAMtools | ok | ok | ok
 SRAtoolkit | ok | ok | ok
@@ -95,11 +101,6 @@ Salmon | **no** | ok | ok
 TopHat | **no** | ok | ok
 Trimmomatic | **no** | ok | ok
 UrQt | ok | ok | ok
-canu | ok | ok | ok
-cutadapt | ok | ok | ok
-deepTools | **no** | ok | ok
-file_handle | **no** | ok | ok
-pigz | **no** | ok | ok
 
 
 ## Contributing
