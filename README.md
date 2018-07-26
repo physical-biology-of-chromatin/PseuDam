@@ -81,6 +81,7 @@ src/nf_modules/Bowtie2/tests/tests.sh
 | tool | nf module | docker module | sge module |
 |------|:---------:|:-------------:|:----------:|
 BEDtools | ok | ok | ok
+Bowtie | ok | ok | **no**
 Bowtie2 | ok | ok | ok
 FastQC | ok | ok | ok
 HISAT2 | **no** | ok | **no**
