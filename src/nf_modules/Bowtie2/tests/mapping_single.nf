@@ -25,8 +25,14 @@ process mapping_fastq {
   file "*.bam" into bam_files
 
   script:
+  index_id = index[0]
+  for (index_file in index) {
+    if (index_file =~ /.*\.1\.bt2/) {
+        index_id = ( index_file =~ /(.*)\.1\.bt2/)[0][1]
+    }
+  }
 """
-bowtie2 --very_sensitive -p ${task.cpus} -x ${index[0].baseName} \
+bowtie2 --very_sensitive -p ${task.cpus} -x ${index_id} \
 -U ${reads} 2> \
 ${reads.baseName}_bowtie2_report.txt | \
 samtools view -Sb - > ${reads.baseName}.bam

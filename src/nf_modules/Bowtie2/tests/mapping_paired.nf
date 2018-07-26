@@ -26,11 +26,17 @@ process mapping_fastq {
   set pair_id, "*.bam" into bam_files
 
   script:
+  index_id = index[0]
+  for (index_file in index) {
+    if (index_file =~ /.*\.1\.bt2/) {
+        index_id = ( index_file =~ /(.*)\.1\.bt2/)[0][1]
+    }
+  }
 """
- bowtie2 --very-sensitive -p ${task.cpus} -x ${index[0].baseName} \
- -1 ${reads[0]} -2 ${reads[1]} 2> \
- ${pair_id}_bowtie2_report.txt | \
- samtools view -Sb - > ${pair_id}.bam
+bowtie2 --very-sensitive -p ${task.cpus} -x ${index_id} \
+-1 ${reads[0]} -2 ${reads[1]} 2> \
+${pair_id}_bowtie2_report.txt | \
+samtools view -Sb - > ${pair_id}.bam
 
 if grep -q "Error" ${pair_id}_bowtie2_report.txt; then
   exit 1
