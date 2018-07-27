@@ -94,6 +94,7 @@ Kallisto | ok | ok | ok
 MACS2 | **no** | ok | ok
 MultiQC | ok | ok | ok
 MUSIC | **no** | ok | ok
+picard | **no** | ok | **no**
 pigz | **no** | ok | ok
 RSEM | ok | ok | ok
 SAMtools | ok | ok | ok
