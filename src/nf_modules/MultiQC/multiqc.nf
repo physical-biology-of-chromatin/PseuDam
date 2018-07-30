@@ -7,12 +7,12 @@
 /*                      MultiQC                                     */
 
 process multiqc {
-  tag "$repport.baseName"
+  tag "$report.baseName"
   publishDir "results/fastq/multiqc/", mode: 'copy'
   cpus = 1
 
   input:
-    file repport from fastqc_repport.collect()
+    file report from fastqc_report.collect()
 
   output:
     file "*multiqc_*" into multiqc_report

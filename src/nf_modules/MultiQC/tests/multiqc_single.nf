@@ -16,7 +16,7 @@ process fastqc_fastq {
     file reads from fastq_files
 
   output:
-    file "*.{zip,html}" into fastqc_repport
+    file "*.{zip,html}" into fastqc_report
 
   script:
 """
@@ -25,12 +25,12 @@ fastqc --quiet --threads ${task.cpus} --format fastq --outdir ./ ${reads}
 }
 
 process multiqc {
-  tag "$repport[0].baseName"
+  tag "$report[0].baseName"
   publishDir "results/fastq/multiqc/", mode: 'copy'
   cpus = 1
 
   input:
-    file repport from fastqc_repport.collect()
+    file report from fastqc_report.collect()
 
   output:
     file "*multiqc_*" into multiqc_report

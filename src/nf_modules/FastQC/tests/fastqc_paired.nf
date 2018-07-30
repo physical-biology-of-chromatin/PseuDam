@@ -15,7 +15,7 @@ process fastqc_fastq {
   set pair_id, file(reads) from fastq_files
 
   output:
-    file "*.{zip,html}" into fastqc_repport
+    file "*.{zip,html}" into fastqc_report
 
   script:
 """

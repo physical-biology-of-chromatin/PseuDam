@@ -16,7 +16,7 @@ process fastqc_fastq {
     file reads from fastq_files
 
   output:
-    file "*.{zip,html}" into fastqc_repport
+    file "*.{zip,html}" into fastqc_report
 
   script:
 """
