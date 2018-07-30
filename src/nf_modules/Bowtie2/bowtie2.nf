@@ -72,7 +72,7 @@ process mapping_fastq {
   script:
   index_id = index[0]
   for (index_file in index) {
-    if (index_file =~ /.*\.1\.bt2/) {
+    if (index_file =~ /.*\.1\.bt2/ && !(index_file =~ /.*\.rev\.1\.bt2/)) {
         index_id = ( index_file =~ /(.*)\.1\.bt2/)[0][1]
     }
   }
@@ -122,7 +122,7 @@ process mapping_fastq {
   script:
   index_id = index[0]
   for (index_file in index) {
-    if (index_file =~ /.*\.1\.bt2/) {
+    if (index_file =~ /.*\.1\.bt2/ && !(index_file =~ /.*\.rev\.1\.bt2/)) {
         index_id = ( index_file =~ /(.*)\.1\.bt2/)[0][1]
     }
   }
