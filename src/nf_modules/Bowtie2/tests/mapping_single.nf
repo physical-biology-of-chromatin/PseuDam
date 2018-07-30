@@ -33,7 +33,7 @@ process mapping_fastq {
     }
   }
 """
-bowtie2 --very_sensitive -p ${task.cpus} -x ${index_id} \
+bowtie2 --very-sensitive -p ${task.cpus} -x ${index_id} \
 -U ${reads} 2> \
 ${reads.baseName}_bowtie2_report.txt | \
 samtools view -Sb - > ${reads.baseName}.bam
