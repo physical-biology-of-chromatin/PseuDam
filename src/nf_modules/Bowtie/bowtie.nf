@@ -25,6 +25,7 @@ process index_fasta {
 
   output:
     file "*.index*" into index_files
+    file "*_report.txt" into indexing_report
 
   script:
 """
@@ -68,6 +69,7 @@ process mapping_fastq {
 
   output:
   file "*.bam" into bam_files
+  file "*_report.txt" into mapping_report
 
   script:
   index_id = index[0]
@@ -119,6 +121,7 @@ process mapping_fastq {
 
   output:
   file "*.bam" into bam_files
+  file "*_report.txt" into mapping_report
 
   script:
 index_id = index[0]

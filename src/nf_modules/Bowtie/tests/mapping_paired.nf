@@ -24,11 +24,12 @@ process mapping_fastq {
 
   output:
   file "*.bam" into bam_files
+  file "*_report.txt" into mapping_report
 
   script:
   index_id = index[0]
   for (index_file in index) {
-    if (index_file =~ /.*\.1\.ebwt/) {
+  if (index_file =~ /.*\.1\.ebwt/ && !(index_file =~ /.*\.rev\.1\.ebwt/)) {
         index_id = ( index_file =~ /(.*)\.1\.ebwt/)[0][1]
     }
   }

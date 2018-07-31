@@ -17,6 +17,7 @@ process index_fasta {
 
   output:
     file "*.index*" into index_files
+    file "*_report.txt" into indexing_report
 
   script:
 """

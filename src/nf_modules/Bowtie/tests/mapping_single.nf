@@ -23,17 +23,18 @@ process mapping_fastq {
 
   output:
   file "*.bam" into bam_files
+  file "*_report.txt" into mapping_report
 
   script:
 index_id = index[0]
 for (index_file in index) {
-  if (index_file =~ /.*\.1\.ebwt/) {
+  if (index_file =~ /.*\.1\.ebwt/ && !(index_file =~ /.*\.rev\.1\.ebwt/)) {
       index_id = ( index_file =~ /(.*)\.1\.ebwt/)[0][1]
   }
 }
 """
 bowtie --best -v 3 -k 1 --sam -p ${task.cpus} ${index_id} \
--U ${reads} 2> \
+-q ${reads} 2> \
 ${reads.baseName}_bowtie_report.txt | \
 samtools view -Sb - > ${reads.baseName}.bam
 
