@@ -5,7 +5,7 @@ You can fork this repository to build your own pipeline.
 To get the last commits from this repository into your fork use the following commands:
 
 ```sh
-git remote add upstream https://gitlab.biologie.ens-lyon.fr/pipelines/nextflow.git
+git remote add upstream gitlab_lbmc:pipelines/nextflow.git
 git pull upstream master
 ```
 
