@@ -3,22 +3,23 @@ log.info "fastq files : ${params.fastq}"
 Channel
   .fromPath( params.fastq )
   .ifEmpty { error "Cannot find any fastq files matching: ${params.fastq}" }
+  .map { it -> [(it.baseName =~ /([^\.]*)/)[0][1], it]}
   .set { fastq_files }
 
 process trimming {
-  tag "$reads.baseName"
+  tag "$file_id"
 
   input:
-  file reads from fastq_files
+  set file_id, file(reads) from fastq_files
 
   output:
-  file "*_trim.fastq.gz" into fastq_files_cut
+  set file_id, "*_trim.fastq.gz" into fastq_files_cut
 
   script:
   """
   cutadapt -q 20,20 \
-  -o ${reads.baseName}_trim.fastq.gz \
-  ${reads} > ${reads.baseName}_report.txt
+  -o ${file_id}_trim.fastq.gz \
+  ${reads} > ${file_id}_report.txt
   """
 }
 

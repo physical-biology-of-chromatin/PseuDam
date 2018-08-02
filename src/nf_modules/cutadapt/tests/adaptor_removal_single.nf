@@ -3,22 +3,23 @@ log.info "fastq files : ${params.fastq}"
 Channel
   .fromPath( params.fastq )
   .ifEmpty { error "Cannot find any fastq files matching: ${params.fastq}" }
+  .map { it -> [(it.baseName =~ /([^\.]*)/)[0][1], it]}
   .set { fastq_files }
 
 process adaptor_removal {
-  tag "$reads.baseName"
+  tag "$file_id"
 
   input:
-  file reads from fastq_files
+  set file_id, file(reads) from fastq_files
 
   output:
-  file "*_cut.fastq.gz" into fastq_files_cut
+  set file_id, "*_cut.fastq.gz" into fastq_files_cut
 
   script:
   """
   cutadapt -a AGATCGGAAGAG -g CTCTTCCGATCT\
-  -o ${reads.baseName}_cut.fastq.gz \
-  ${reads} > ${reads.baseName}_report.txt
+  -o ${file_id}_cut.fastq.gz \
+  ${reads} > ${file_id}_report.txt
   """
 }
 

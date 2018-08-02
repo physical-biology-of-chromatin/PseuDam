@@ -41,32 +41,31 @@ process adaptor_removal {
 * for single-end data
 */
 
-params.fastq = "$baseDir/data/fastq/*.fastq"
-
 log.info "fastq files : ${params.fastq}"
 
 Channel
   .fromPath( params.fastq )
   .ifEmpty { error "Cannot find any fastq files matching: ${params.fastq}" }
+  .map { it -> [(it.baseName =~ /([^\.]*)/)[0][1], it]}
   .set { fastq_files }
 
 process adaptor_removal {
-  tag "$reads.baseName"
-  publishDir "results/fastq/adaptor_removal/", mode: 'copy'
+  tag "$file_id"
 
   input:
-  file reads from fastq_files
+  set file_id, file(reads) from fastq_files
 
   output:
-  file "*_cut.fastq.gz" into fastq_files_cut
+  set file_id, "*_cut.fastq.gz" into fastq_files_cut
 
   script:
   """
   cutadapt -a AGATCGGAAGAG -g CTCTTCCGATCT\
-  -o ${reads.baseName}_cut.fastq.gz \
-  ${reads} > ${reads.baseName}_report.txt
+  -o ${file_id}_cut.fastq.gz \
+  ${reads} > ${file_id}_report.txt
   """
 }
+
 
 /*                      quality trimming                                     */
 
@@ -105,30 +104,28 @@ process trimming {
 * for single-end data
 */
 
-params.fastq = "$baseDir/data/fastq/*.fastq"
-
 log.info "fastq files : ${params.fastq}"
 
 Channel
   .fromPath( params.fastq )
   .ifEmpty { error "Cannot find any fastq files matching: ${params.fastq}" }
+  .map { it -> [(it.baseName =~ /([^\.]*)/)[0][1], it]}
   .set { fastq_files }
 
 process trimming {
-  tag "$reads.baseName"
-  publishDir "results/fastq/trimming/", mode: 'copy'
+  tag "$file_id"
 
   input:
-  file reads from fastq_files
+  set file_id, file(reads) from fastq_files
 
   output:
-  file "*_trim.fastq.gz" into fastq_files_trim
+  set file_id, "*_trim.fastq.gz" into fastq_files_cut
 
   script:
   """
   cutadapt -q 20,20 \
-  -o ${reads.baseName}_trim.fastq.gz \
-  ${reads} > ${reads.baseName}_report.txt
+  -o ${file_id}_trim.fastq.gz \
+  ${reads} > ${file_id}_report.txt
   """
 }
 
