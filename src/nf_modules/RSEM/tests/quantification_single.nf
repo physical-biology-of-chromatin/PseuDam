@@ -1,6 +1,6 @@
 params.fastq = "$baseDir/data/fastq/*.fastq"
 params.index = "$baseDir/data/index/*.index*"
-params.mean = 300
+params.mean = 125
 params.sd = 100
 
 log.info "fastq files : ${params.fastq}"
@@ -24,7 +24,7 @@ process mapping_fastq {
 
   input:
   file reads from fastq_files
-  file index from index_files.toList()
+  file index from index_files.collect()
 
   output:
   file "*" into count_files
