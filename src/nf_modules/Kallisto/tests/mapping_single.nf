@@ -11,6 +11,7 @@ log.info "sd read size: ${params.sd}"
 Channel
   .fromPath( params.fastq )
   .ifEmpty { error "Cannot find any fastq files matching: ${params.fastq}" }
+  .map { it -> [(it.baseName =~ /([^\.]*)/)[0][1], it]}
   .set { fastq_files }
 Channel
   .fromPath( params.index )
@@ -18,12 +19,12 @@ Channel
   .set { index_files }
 
 process mapping_fastq {
-  tag "$reads.baseName"
+  tag "$file_id"
   cpus 4
   publishDir "results/mapping/quantification/", mode: 'copy'
 
   input:
-  file reads from fastq_files
+  set file_id, file(reads) from fastq_files
   file index from index_files.collect()
 
   output:
@@ -31,11 +32,11 @@ process mapping_fastq {
 
   script:
 """
-mkdir ${reads.baseName}
+mkdir ${file_id}
 kallisto quant -i ${index} -t ${task.cpus} --single \
---bias --bootstrap-samples 100 -o ${reads.baseName} \
+--bias --bootstrap-samples 100 -o ${file_id} \
 -l ${params.mean} -s ${params.sd} \
-${reads} > ${reads.baseName}_kallisto_report.txt
+${reads} > ${file_id}_kallisto_report.txt
 """
 }
 
