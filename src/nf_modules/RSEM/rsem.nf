@@ -96,7 +96,7 @@ rsem-calculate-expression --bowtie2 \
 
 params.fastq = "$baseDir/data/fastq/*.fastq"
 params.index = "$baseDir/data/index/*.index*"
-params.mean = 300
+params.mean = 125
 params.sd = 100
 
 log.info "fastq files : ${params.fastq}"
@@ -107,6 +107,7 @@ log.info "sd read size: ${params.sd}"
 Channel
   .fromPath( params.fastq )
   .ifEmpty { error "Cannot find any fastq files matching: ${params.fastq}" }
+  .map { it -> [(it.baseName =~ /([^\.]*)/)[0][1], it]}
   .set { fastq_files }
 Channel
   .fromPath( params.index )
@@ -114,12 +115,12 @@ Channel
   .set { index_files }
 
 process mapping_fastq {
-  tag "$reads.baseName"
+  tag "$file_id"
   cpus 4
   publishDir "results/mapping/quantification/", mode: 'copy'
 
   input:
-  file reads from fastq_files
+  set file_id, file(reads) from fastq_files
   file index from index_files.collect()
 
   output:
@@ -133,7 +134,7 @@ rsem-calculate-expression --bowtie2 \
 --bowtie2-sensitivity-level "very_sensitive" \
 --fragment-length-mean ${params.mean} --fragment-length-sd ${params.sd} \
 --output-genome-bam -p ${task.cpus} \
-${reads} ${index_name} ${tagname} > ${tagname}_rsem_bowtie2_report.txt
+${reads} ${index_name} ${file_id} \
+> ${reads.baseName}_rsem_bowtie2_report.txt
 """
 }
-
