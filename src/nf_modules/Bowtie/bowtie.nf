@@ -96,14 +96,18 @@ fi
 /*
 * for single-end data
 */
-params.fastq = "$baseDir/data/fastq/*.fastq"
+params.mean = 200
+params.sd = 100
 
 log.info "fastq files : ${params.fastq}"
 log.info "index files : ${params.index}"
+log.info "mean read size: ${params.mean}"
+log.info "sd read size: ${params.sd}"
 
 Channel
   .fromPath( params.fastq )
   .ifEmpty { error "Cannot find any fastq files matching: ${params.fastq}" }
+  .map { it -> [(it.baseName =~ /([^\.]*)/)[0][1], it]}
   .set { fastq_files }
 Channel
   .fromPath( params.index )
@@ -111,33 +115,24 @@ Channel
   .set { index_files }
 
 process mapping_fastq {
-  tag "$reads.baseName"
+  tag "$file_id"
   cpus 4
-  publishDir "results/mapping/bams/", mode: 'copy'
+  publishDir "results/mapping/quantification/", mode: 'copy'
 
   input:
-  file reads from fastq_files
+  set file_id, file(reads) from fastq_files
   file index from index_files.collect()
 
   output:
-  file "*.bam" into bam_files
-  file "*_report.txt" into mapping_report
+  file "*" into count_files
 
   script:
-index_id = index[0]
-for (index_file in index) {
-  if (index_file =~ /.*\.1\.ebwt/ && !(index_file =~ /.*\.rev\.1\.ebwt/)) {
-      index_id = ( index_file =~ /(.*)\.1\.ebwt/)[0][1]
-  }
-}
 """
-bowtie --best -v 3 -k 1 --sam -p ${task.cpus} ${index_id} \
--q ${reads} 2> \
-${reads.baseName}_bowtie_report.txt | \
-samtools view -Sb - > ${reads.baseName}.bam
+mkdir ${file_id}
+kallisto quant -i ${index} -t ${task.cpus} --single \
+--bias --bootstrap-samples 100 -o ${file_id} \
+-l ${params.mean} -s ${params.sd} \
+${reads} > ${file_id}_kallisto_report.txt
+"""
+}
 
-if grep -q "Error" ${reads.baseName}_bowtie_report.txt; then
-  exit 1
-fi
-"""
-}
