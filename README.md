@@ -35,19 +35,19 @@ To install nextflow on you computer simply run the following command:
 src/install_nextflow.sh
 ```
 
-Then to initialise a given tools run the following command:
+Then to initialize a given tools run the following command:
 
 ```sh
 src/docker_modules/<tool_name>/<tool_version>/docker_init.sh
 ```
 
-for example to initialise `file_handle` version `0.1.1`, run:
+For example to initialize `file_handle` version `0.1.1`, run:
 
 ```sh
 src/docker_modules/file_handle/0.1.1/docker_init.sh
 ```
 
-To initialise all the tools:
+To initialize all the tools:
 ```sh
 find src/docker_modules/ -name "docker_init.sh" | awk '{system($0)}'
 ```
@@ -70,7 +70,7 @@ Then to run the tests for a given tools run the following command:
 src/nf_modules/<tool_name>/<tool_version>/tests/tests.sh
 ```
 
-for example to run the tests on `Bowtie2` run:
+For example to run the tests on `Bowtie2` run:
 
 ```sh
 src/nf_modules/Bowtie2/tests/tests.sh
