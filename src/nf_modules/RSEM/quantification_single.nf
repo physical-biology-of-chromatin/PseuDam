@@ -1,6 +1,6 @@
 params.fastq = "$baseDir/data/fastq/*.fastq"
 params.index = "$baseDir/data/index/*.index*"
-params.mean = 125
+params.mean = 200
 params.sd = 100
 
 log.info "fastq files : ${params.fastq}"
@@ -25,21 +25,31 @@ process mapping_fastq {
 
   input:
   set file_id, file(reads) from fastq_files
-  file index from index_files.collect()
+  file index from index_files.toList()
 
   output:
   file "*" into count_files
 
   script:
-index_name = (index[0].baseName =~ /(.*)\.\d/)[0][1]
+  index_id = index[0]
+  for (index_file in index) {
+    if (index_file =~ /.*\.1\.bt2/ && !(index_file =~ /.*\.rev\.1\.bt2/)) {
+        index_id = ( index_file =~ /(.*)\.1\.bt2/)[0][1]
+    }
+  }
 """
+ls -l
 rsem-calculate-expression --bowtie2 \
 --bowtie2-path \$(which bowtie2 | sed 's/bowtie2\$//g') \
 --bowtie2-sensitivity-level "very_sensitive" \
 --fragment-length-mean ${params.mean} --fragment-length-sd ${params.sd} \
 --output-genome-bam -p ${task.cpus} \
-${reads} ${index_name} ${file_id} \
-> ${reads.baseName}_rsem_bowtie2_report.txt
+${reads} ${index_id} ${file_id} \
+2> ${file_id}_rsem_bowtie2_report.txt
+
+if grep -q "Error" ${file_id}_rsem_bowtie2_report.txt; then
+  exit 1
+fi
 """
 }
 
