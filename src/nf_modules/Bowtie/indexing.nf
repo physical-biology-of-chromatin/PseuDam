@@ -1,3 +1,5 @@
+/*                      fasta indexing                                     */
+
 params.fasta = "$baseDir/data/bam/*.fasta"
 
 log.info "fasta files : ${params.fasta}"
