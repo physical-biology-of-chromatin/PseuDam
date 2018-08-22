@@ -67,13 +67,13 @@ cd ..
 Then to run the tests for a given tools run the following command:
 
 ```sh
-src/nf_modules/<tool_name>/<tool_version>/tests/tests.sh
+src/nf_modules/<tool_name>/<tool_version>/tests.sh
 ```
 
 For example to run the tests on `Bowtie2` run:
 
 ```sh
-src/nf_modules/Bowtie2/tests/tests.sh
+src/nf_modules/Bowtie2/tests.sh
 ```
 
 ## Available tools
