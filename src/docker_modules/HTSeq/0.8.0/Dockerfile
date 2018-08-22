@@ -14,4 +14,5 @@ RUN apt-get update && \
     apt-get clean
 
 RUN pip3 install numpy==1.14.3
+RUN pip3 install pysam==0.15.0
 RUN pip3 install HTSeq==${HTSEQ_VERSION}
