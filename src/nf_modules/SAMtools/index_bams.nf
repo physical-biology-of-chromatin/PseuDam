@@ -5,21 +5,21 @@ log.info "bams files : ${params.bam}"
 Channel
   .fromPath( params.bam )
   .ifEmpty { error "Cannot find any bam files matching: ${params.bam}" }
+  .map { it -> [(it.baseName =~ /([^\.]*)/)[0][1], it]}
   .set { bam_files }
 
-process sort_bam {
-  tag "$bams.baseName"
-  cpus 4
+process index_bam {
+  tag "$file_id"
 
   input:
-    file bam from bam_files
+    set file_id, file(bam) from bam_files
 
   output:
-    file "*_sorted.bam" into sorted_bam_files
+    set file_id, "*.bam*" into indexed_bam_file
 
   script:
 """
-samtools sort -@ ${task.cpus} -O BAM -o ${bam.baseName}_sorted.bam ${bam}
+samtools index ${bam}
 """
 }
 

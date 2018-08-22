@@ -7,6 +7,7 @@ log.info "bed file : ${params.bed}"
 Channel
   .fromPath( params.bam )
   .ifEmpty { error "Cannot find any bam files matching: ${params.bam}" }
+  .map { it -> [(it.baseName =~ /([^\.]*)/)[0][1], it]}
   .set { bam_files }
 Channel
   .fromPath( params.bed )
@@ -14,18 +15,18 @@ Channel
   .set { bed_files }
 
 process filter_bam {
-  tag "$bam.baseName"
+  tag "$file_id"
   cpus 4
 
   input:
-    file bam from bam_files
+    set file_id, file(bam) from bam_files
     file bed from bed_files
 
   output:
-    file "*_filtered.bam*" into filtered_bam_files
+    set file_id, "*_filtered.bam*" into filtered_bam_files
   script:
 """
-samtools view -@ ${task.cpus} -hb ${bam} -L ${bed} > ${bam.baseName}_filtered.bam
+samtools view -@ ${task.cpus} -hb ${bam} -L ${bed} > ${file_id}_filtered.bam
 """
 }
 
