@@ -4,7 +4,7 @@ MAINTAINER Laurent Modolo
 ENV RSEM_VERSION=1.3.0
 ENV BOWTIE2_VERSION=2.3.4.1
 ENV SAMTOOLS_VERSION=1.7
-ENV PACKAGES git=1:2.17.0* \
+ENV PACKAGES git=1:2.17* \
    build-essential=12.4* \
    ca-certificates=20180409 \
    zlib1g-dev=1:1.2.11* \
