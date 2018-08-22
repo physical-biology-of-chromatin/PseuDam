@@ -17,11 +17,12 @@ process index_fasta {
 
   output:
     file "*.index*" into index_files
+    file "*_kallisto_report.txt" into index_files_report
 
   script:
 """
 kallisto index -k 31 --make-unique -i ${fasta.baseName}.index ${fasta} \
-> ${fasta.baseName}_kallisto_report.txt
+2> ${fasta.baseName}_kallisto_report.txt
 """
 }
 
