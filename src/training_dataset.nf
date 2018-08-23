@@ -11,6 +11,13 @@ input:
 output:
 - sort fasta
 - sort fastq
+
+example for paired-end data:
+./nextflow src/training_dataset.nf -c src/training_dataset.config --fasta "data/genome.fa" --fastq_paired "data/BNLN16.R{1,2}*" --chromosome "X" --start 5305683 --stop 5333928 -resume
+
+example for single-end data:
+./nextflow src/training_dataset.nf -c src/training_dataset.config --fasta "data/genome.fa" --fastq_single  "data/BNLN16.R1*"  --chromosome "X" --start 5305683 --stop 5333928 -resume
+
 */
 
 params.fastq_paired = ""
