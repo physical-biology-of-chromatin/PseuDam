@@ -13,10 +13,10 @@ output:
 - sort fastq
 
 example for paired-end data:
-./nextflow src/training_dataset.nf -c src/training_dataset.config --fasta "data/genome.fa" --fastq_paired "data/BNLN16.R{1,2}*" --chromosome "X" --start 5305683 --stop 5333928 -resume
+./nextflow src/training_dataset.nf -c src/training_dataset.config --fasta "data/genome.fa" --fastq_paired "data/*_R{1,2}.fastq.gz" --chromosome "X" --start 5305683 --stop 5333928 -resume
 
 example for single-end data:
-./nextflow src/training_dataset.nf -c src/training_dataset.config --fasta "data/genome.fa" --fastq_single  "data/BNLN16.R1*"  --chromosome "X" --start 5305683 --stop 5333928 -resume
+./nextflow src/training_dataset.nf -c src/training_dataset.config --fasta "data/genome.fa" --fastq_single  "data/*_R1.fastq.gz"  --chromosome "X" --start 5305683 --stop 5333928 -resume
 
 */
 
@@ -220,7 +220,7 @@ if ( params.fastq_single != "" ) {
       set file_id, "*.fastq" into fastq_files_extracted
     script:
   """
-  samtools fastq -s ${file_id}_S.fastq -f 0x2 ${bam}
+  samtools fastq -0 ${file_id}_S.fastq -F 0x4 ${bam}
   """
   }
 
@@ -237,7 +237,7 @@ if ( params.fastq_single != "" ) {
       set file_id, "*_S.bam" into filtered_bam_files
     script:
   """
-  samtools view -@ ${task.cpus} -hb ${bam} -f 0x2 > ${file_id}_S.bam
+  samtools view -@ ${task.cpus} -hb ${bam} -F 0x4 > ${file_id}_S.bam
   """
   }
 }
