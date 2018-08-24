@@ -1,4 +1,4 @@
-FROM ubuntu:18.04
+FROM samtools:1.7
 MAINTAINER Laurent Modolo
 
 ENV PACKAGES git=1:2.17* \
@@ -20,4 +20,6 @@ RUN git clone https://github.com/gersteinlab/MUSIC.git && \
   mv MUSIC/bin/generate_multimappability_signal.csh /usr/bin/ && \
   mv MUSIC/bin/run_MUSIC.csh /usr/bin/ && \
   rm -Rf MUSIC
+
+RUN chmod +x /usr/bin/*
 
