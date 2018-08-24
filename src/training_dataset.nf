@@ -160,10 +160,43 @@ if ( params.fastq_paired != "" ) {
       file bed from bed_files
 
     output:
-      set file_id, "*.bam" into filtered_bam_files
+      set file_id, "*.bam" into filtered_bam_files_paired
     script:
   """
   samtools view -@ ${task.cpus} -hb ${bam} -f 0x2 > ${file_id}_S.bam
+  """
+  }
+
+  process sort_bam_paired {
+    tag "$file_id"
+    publishDir "results/training/bams/", mode: 'copy'
+    cpus 4
+
+    input:
+      set file_id, file(bam) from filtered_bam_files_paired
+
+    output:
+      set file_id, "*_sorted.bam" into sorted_bam_files_paired
+
+    script:
+  """
+  samtools sort -@ ${task.cpus} -O BAM -o ${file_id}_sorted.bam ${bam}
+  """
+  }
+
+  process index_bam_paired {
+    tag "$file_id"
+    publishDir "results/training/bams/", mode: 'copy'
+
+    input:
+      set file_id, file(bam) from sorted_bam_files_paired
+
+    output:
+      set file_id, "*.bam*" into indexed_bam_file_paired
+
+    script:
+  """
+  samtools index ${bam}
   """
   }
 }
@@ -226,7 +259,6 @@ if ( params.fastq_single != "" ) {
 
   process filter_bam_single {
     tag "$file_id"
-    publishDir "results/training/bams/", mode: 'copy'
     cpus 4
 
     input:
@@ -234,10 +266,44 @@ if ( params.fastq_single != "" ) {
       file bed from bed_files
 
     output:
-      set file_id, "*_S.bam" into filtered_bam_files
+      set file_id, "*_S.bam" into filtered_bam_files_single
     script:
   """
   samtools view -@ ${task.cpus} -hb ${bam} -F 0x4 > ${file_id}_S.bam
   """
   }
+
+  process sort_bam_single {
+    tag "$file_id"
+    publishDir "results/training/bams/", mode: 'copy'
+    cpus 4
+
+    input:
+      set file_id, file(bam) from filtered_bam_files_single
+
+    output:
+      set file_id, "*_sorted.bam" into sorted_bam_files_single
+
+    script:
+  """
+  samtools sort -@ ${task.cpus} -O BAM -o ${file_id}_sorted.bam ${bam}
+  """
+  }
+
+  process index_bam_single {
+    tag "$file_id"
+    publishDir "results/training/bams/", mode: 'copy'
+
+    input:
+      set file_id, file(bam) from sorted_bam_files_single
+
+    output:
+      set file_id, "*.bam*" into indexed_bam_file_single
+
+    script:
+  """
+  samtools index ${bam}
+  """
+  }
 }
+
