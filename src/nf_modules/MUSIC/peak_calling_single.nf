@@ -1,8 +1,8 @@
 params.reads_size = 100
 params.frag_size = 200
-params.begin_l = 50
-params.end_l = 500
-
+params.step_l = 50
+params.min_l = 200
+params.max_l = 5000
 log.info "bam files : ${params.bam}"
 log.info "index files : ${params.index}"
 log.info "fasta files : ${params.fasta}"
@@ -94,11 +94,10 @@ tar -xf ${control} -C control/
 tar -xf ${chip} -C chip/
 
 MUSIC -get_per_win_p_vals_vs_FC -chip chip/ -control control/ \
-  -l_win_step ${params.end_l} \
-  -l_win_min ${params.end_l} -l_win_max ${params.end_l * 10}
+  -l_win_step ${params.step_l} \
+  -l_win_min ${params.min_l} -l_win_max ${params.max_l}
 MUSIC -get_multiscale_punctate_ERs \
   -chip chip/ -control control/ -mapp mappability/ \
-  -begin_l ${params.begin_l} -end_l ${params.end_l} -step 1.1 \
   -l_mapp ${params.reads_size} -l_frag ${params.frag_size} -q_val 1 -l_p 0
 ls -l
 """
