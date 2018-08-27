@@ -63,14 +63,15 @@ process fasta_from_bed {
   input:
   file fasta from fasta_file
   file bed from bed_files
+  val chromosome from params.chromosome
 
   output:
   file "*.fasta" into fasta_files_extracted
 
   script:
 """
-bedtools getfasta -name \
--fi ${fasta} -bed ${bed} -fo ${fasta.baseName}_S.fasta
+bedtools getfasta \
+-fi ${fasta} -bed ${bed} -fo s${fasta.baseName}.fasta
 """
 }
 
@@ -146,13 +147,12 @@ if ( params.fastq_paired != "" ) {
       set file_id, "*.fastq" into fastq_files_extracted
     script:
   """
-  samtools fastq -1 ${file_id}_SR1.fastq -2 ${file_id}_SR2.fastq -f 0x2 ${bam}
+  samtools fastq -1 s${file_id}_R1.fastq -2 s${file_id}_R2.fastq -f 0x2 ${bam}
   """
   }
 
   process filter_bam_paired {
     tag "$file_id"
-    publishDir "results/training/bams/", mode: 'copy'
     cpus 4
 
     input:
@@ -163,7 +163,7 @@ if ( params.fastq_paired != "" ) {
       set file_id, "*.bam" into filtered_bam_files_paired
     script:
   """
-  samtools view -@ ${task.cpus} -hb ${bam} -f 0x2 > ${file_id}_S.bam
+  samtools view -@ ${task.cpus} -hb ${bam} -f 0x2 > f${file_id}.bam
   """
   }
 
@@ -176,11 +176,11 @@ if ( params.fastq_paired != "" ) {
       set file_id, file(bam) from filtered_bam_files_paired
 
     output:
-      set file_id, "*_sorted.bam" into sorted_bam_files_paired
+      set file_id, "*.bam" into sorted_bam_files_paired
 
     script:
   """
-  samtools sort -@ ${task.cpus} -O BAM -o ${file_id}_sorted.bam ${bam}
+  samtools sort -@ ${task.cpus} -O BAM -o s${file_id}.bam ${bam}
   """
   }
 
@@ -244,7 +244,6 @@ if ( params.fastq_single != "" ) {
 
   process bam_2_fastq_single {
     tag "$file_id"
-    publishDir "results/training/fastq/", mode: 'copy'
 
     input:
       set file_id, file(bam) from bam_files_single_fa
@@ -253,7 +252,7 @@ if ( params.fastq_single != "" ) {
       set file_id, "*.fastq" into fastq_files_extracted
     script:
   """
-  samtools fastq -0 ${file_id}_S.fastq -F 0x4 ${bam}
+  samtools fastq -0 s${file_id}.fastq -F 0x4 ${bam}
   """
   }
 
@@ -266,10 +265,10 @@ if ( params.fastq_single != "" ) {
       file bed from bed_files
 
     output:
-      set file_id, "*_S.bam" into filtered_bam_files_single
+      set file_id, "*.bam" into filtered_bam_files_single
     script:
   """
-  samtools view -@ ${task.cpus} -hb ${bam} -F 0x4 > ${file_id}_S.bam
+  samtools view -@ ${task.cpus} -hb ${bam} -F 0x4 > f${file_id}.bam
   """
   }
 
@@ -282,11 +281,11 @@ if ( params.fastq_single != "" ) {
       set file_id, file(bam) from filtered_bam_files_single
 
     output:
-      set file_id, "*_sorted.bam" into sorted_bam_files_single
+      set file_id, "*.bam" into sorted_bam_files_single
 
     script:
   """
-  samtools sort -@ ${task.cpus} -O BAM -o ${file_id}_sorted.bam ${bam}
+  samtools sort -@ ${task.cpus} -O BAM -o s${file_id}.bam ${bam}
   """
   }
 
