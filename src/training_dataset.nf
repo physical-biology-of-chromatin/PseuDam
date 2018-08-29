@@ -147,7 +147,7 @@ if ( params.fastq_paired != "" ) {
       set file_id, "*.fastq" into fastq_files_extracted
     script:
   """
-  samtools fastq -1 s${file_id}_R1.fastq -2 s${file_id}_R2.fastq -f 0x2 ${bam}
+  samtools fastq -1 s${file_id}_R1.fastq -2 s${file_id}_R2.fastq -F 0x4 ${bam}
   """
   }
 
@@ -163,7 +163,7 @@ if ( params.fastq_paired != "" ) {
       set file_id, "*.bam" into filtered_bam_files_paired
     script:
   """
-  samtools view -@ ${task.cpus} -hb ${bam} -f 0x2 > f${file_id}.bam
+  samtools view -@ ${task.cpus} -hb ${bam} -F 0x4 > f${file_id}.bam
   """
   }
 
