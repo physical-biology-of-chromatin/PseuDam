@@ -1,4 +1,4 @@
-params.reads_size = 100
+params.read_size = 100
 params.frag_size = 200
 params.step_l = 50
 params.min_l = 200
@@ -35,7 +35,7 @@ process compute_mappability {
   script:
 
 """
-generate_multimappability_signal.csh ${fasta} ${params.reads_size} ./
+generate_multimappability_signal.csh ${fasta} ${params.read_size} ./
 bash temp_map_reads.csh
 bash temp_process_mapping.csh
 """
@@ -98,7 +98,7 @@ MUSIC -get_per_win_p_vals_vs_FC -chip chip/ -control control/ \
   -l_win_min ${params.min_l} -l_win_max ${params.max_l}
 MUSIC -get_multiscale_punctate_ERs \
   -chip chip/ -control control/ -mapp mappability/ \
-  -l_mapp ${params.reads_size} -l_frag ${params.frag_size} -q_val 1 -l_p 0
+  -l_mapp ${params.read_size} -l_frag ${params.frag_size} -q_val 1 -l_p 0
 ls -l
 """
 }
