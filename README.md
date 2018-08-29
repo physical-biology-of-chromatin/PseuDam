@@ -93,7 +93,7 @@ HTSeq | ok | ok | ok
 Kallisto | ok | ok | ok
 MACS2 | **no** | ok | ok
 MultiQC | ok | ok | ok
-MUSIC | **no** | ok | ok
+MUSIC | ok | ok | ok
 picard | **no** | ok | ok
 pigz | **no** | ok | ok
 RSEM | ok | ok | ok
