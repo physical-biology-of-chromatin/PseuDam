@@ -36,7 +36,7 @@ mkdir ${file_id}
 kallisto quant -i ${index} -t ${task.cpus} --single \
 --bias --bootstrap-samples 100 -o ${file_id} \
 -l ${params.mean} -s ${params.sd} \
-${reads} > ${file_id}_kallisto_report.txt
+${reads} &> ${file_id}/kallisto_report.txt
 """
 }
 

@@ -27,10 +27,10 @@ process mapping_fastq {
 
   script:
 """
-mkdir ${reads[0].baseName}
+mkdir ${pair_id}
 kallisto quant -i ${index} -t ${task.cpus} \
 --bias --bootstrap-samples 100 -o ${pair_id} \
-${reads[0]} ${reads[1]} &> ${pair_id}_kallisto_report.txt
+${reads[0]} ${reads[1]} &> ${pair_id}/kallisto_report.txt
 """
 }
 
