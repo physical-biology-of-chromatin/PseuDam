@@ -6,6 +6,7 @@ ENV PACKAGES unzip=6.0* \
    gcc=4:7.3.0* \
    g++=4:7.3.0* \
    make=4.1* \
+   python \
    curl=7.58.0* \
    ca-certificates=20180409 
 
