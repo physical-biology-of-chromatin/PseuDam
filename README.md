@@ -5,7 +5,7 @@ You can fork this repository to build your own pipeline.
 To get the last commits from this repository into your fork use the following commands:
 
 ```sh
-git remote add upstream https://gitlab.biologie.ens-lyon.fr/pipelines/nextflow.git
+git remote add upstream gitlab_lbmc:pipelines/nextflow.git
 git pull upstream master
 ```
 
@@ -35,19 +35,19 @@ To install nextflow on you computer simply run the following command:
 src/install_nextflow.sh
 ```
 
-Then to initialise a given tools run the following command:
+Then to initialize a given tools run the following command:
 
 ```sh
 src/docker_modules/<tool_name>/<tool_version>/docker_init.sh
 ```
 
-for example to initialise `file_handle` version `0.1.1`, run:
+For example to initialize `file_handle` version `0.1.1`, run:
 
 ```sh
 src/docker_modules/file_handle/0.1.1/docker_init.sh
 ```
 
-To initialise all the tools:
+To initialize all the tools:
 ```sh
 find src/docker_modules/ -name "docker_init.sh" | awk '{system($0)}'
 ```
@@ -67,14 +67,43 @@ cd ..
 Then to run the tests for a given tools run the following command:
 
 ```sh
-src/nf_modules/<tool_name>/<tool_version>/tests/tests.sh
+src/nf_modules/<tool_name>/<tool_version>/tests.sh
 ```
 
-for example to run the tests on `Bowtie2` run:
+For example to run the tests on `Bowtie2` run:
 
 ```sh
-src/nf_modules/Bowtie2/tests/tests.sh
+src/nf_modules/Bowtie2/tests.sh
 ```
+
+## Available tools
+
+| tool | nf module | docker module | sge module |
+|------|:---------:|:-------------:|:----------:|
+BEDtools | ok | ok | ok
+Bowtie | ok | ok | **no**
+Bowtie2 | ok | ok | ok
+canu | ok | ok | ok
+cutadapt | ok | ok | ok
+deepTools | **no** | ok | ok
+FastQC | ok | ok | ok
+file_handle | **no** | ok | ok
+HISAT2 | **no** | ok | **no**
+HTSeq | ok | ok | ok
+Kallisto | ok | ok | ok
+MACS2 | **no** | ok | ok
+MultiQC | ok | ok | ok
+MUSIC | ok | ok | ok
+picard | **no** | ok | ok
+pigz | **no** | ok | ok
+RSEM | ok | ok | ok
+SAMtools | ok | ok | ok
+SRAtoolkit | ok | ok | ok
+Salmon | **no** | ok | ok
+TopHat | **no** | ok | ok
+Trimmomatic | **no** | ok | ok
+UrQt | ok | ok | ok
+
 
 ## Contributing
 
