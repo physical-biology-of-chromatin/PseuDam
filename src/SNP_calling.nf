@@ -3,6 +3,10 @@ params.fasta = "$baseDir/data/*.fasta"
 params.sam = ""
 log.info "fastq files : ${params.fastq}"
 log.info "fasta files : ${params.fasta}"
+def normal_sample = Eval.me(params.normal)
+def tumor_sample = Eval.me(params.tumor)
+log.info "normal : ${normal_sample}"
+log.info "tumor : ${tumor_sample}"
 
 Channel
   .fromPath( params.fasta )
@@ -152,13 +156,46 @@ sambamba sort -t ${task.cpus} --tmpdir=./tmp -o ${file_id}_sorted.bam ${bam}
 """
 }
 
+sorted_bam_files.into {
+  sorted_bam_files_norm;
+  sorted_bam_files_tumor
+}
+collect_sorted_bam_file = sorted_bam_files_norm
+  .filter{ normal_sample.contains(it[0]) }
+  .map { it -> it[1]}
+  .collect()
+  .map { it -> ["normal_sample", it]}
+collect_sorted_bam_file.join(
+  sorted_bam_files_tumor
+    .filter{ tumor_sample.contains(it[0]) }
+    .map { it -> it[1]}
+    .collect()
+    .map { it -> ["tumor_sample", it]}
+)
+
+process merge_bam {
+  tag "$file_id"
+  cpus 4
+
+  input:
+    set file_id, file(bam) from collect_sorted_bam_file
+
+  output:
+    set file_id, "*.bam" into merged_bam_files
+
+  script:
+"""
+sambamba merge -t ${task.cpus} ${file_id}.bam ${bam}
+"""
+}
+
 process name_bam {
   tag "$file_id"
   cpus 4
   publishDir "results/mapping/bam/", mode: 'copy'
 
   input:
-    set file_id, file(bam) from sorted_bam_files
+    set file_id, file(bam) from merged_bam_files
 
   output:
     set file_id, "*_named.bam" into named_bam_files
@@ -191,7 +228,7 @@ process index_bam {
 
   script:
 """
-sambamba index -t ${task.cpus} --tmpdir=./tmp ${bam}
+sambamba index -t ${task.cpus} ${bam}
 """
 }
 
@@ -258,5 +295,75 @@ gatk Mutect2 --native-pair-hmm-threads ${task.cpus} -R ${fasta} \
 """
 }
 
+/*
+process filter_SNP {
+  tag "$file_id"
+  cpus 4
+  publishDir "results/SNP/vcf/", mode: 'copy'
 
+  input:
 
+  output:
+    set file_id, "*.vcf" into vcf_files_filtered
+
+  script:
+"""
+gatk --java-options "-Xmx2g" Mutect2 \
+-R hg38/Homo_sapiens_assembly38.fasta \
+-I tumor.bam \
+-I normal.bam \
+-tumor HCC1143_tumor \
+-normal HCC1143_normal \
+-pon resources/chr17_pon.vcf.gz \
+--germline-resource resources/chr17_af-only-gnomad_grch38.vcf.gz \
+--af-of-alleles-not-in-resource 0.0000025 \
+--disable-read-filter MateOnSameContigOrNoMappedMateReadFilter \
+-L chr17plus.interval_list \
+-O 1_somatic_m2.vcf.gz \
+-bamout 2_tumor_normal_m2.bam
+
+gatk Mutect2 \
+-R ~/Documents/ref/hg38/Homo_sapiens_assembly38.fasta \
+-I HG00190.bam \
+-tumor HG00190 \
+--disable-read-filter MateOnSameContigOrNoMappedMateReadFilter \
+-L chr17plus.interval_list \
+-O 3_HG00190.vcf.gz
+
+gatk CreateSomaticPanelOfNormals \
+-vcfs 3_HG00190.vcf.gz \
+-vcfs 4_NA19771.vcf.gz \
+-vcfs 5_HG02759.vcf.gz \
+-O 6_threesamplepon.vcf.gz
+
+gatk GetPileupSummaries \
+-I tumor.bam \
+-V resources/chr17_small_exac_common_3_grch38.vcf.gz \
+-O 7_tumor_getpileupsummaries.table
+
+gatk CalculateContamination \
+-I 7_tumor_getpileupsummaries.table \
+-O 8_tumor_calculatecontamination.table
+
+gatk FilterMutectCalls \
+-V somatic_m2.vcf.gz \
+--contamination-table tumor_calculatecontamination.table \
+-O 9_somatic_oncefiltered.vcf.gz
+
+gatk CollectSequencingArtifactMetrics \
+-I tumor.bam \
+-O 10_tumor_artifact \
+–-FILE_EXTENSION ".txt" \
+-R ~/Documents/ref/hg38/Homo_sapiens_assembly38.fasta
+
+gatk FilterByOrientationBias \
+-A G/T \
+-A C/T \
+-V 9_somatic_oncefiltered.vcf.gz \
+-P tumor_artifact.pre_adapter_detail_metrics.txt \
+-O 11_somatic_twicefiltered.vcf.gz
+
+"""
+}
+
+*/
