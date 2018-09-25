@@ -120,36 +120,71 @@ samblaster --addMateTags -i ${sam} -o ${file_id}_dedup.sam
 """
 }
 
-process sort_bam {
+process sam_to_bam {
   tag "$file_id"
   cpus 4
-  publishDir "results/mapping/bam/1_dedup/", mode: 'copy'
 
   input:
     set file_id, file(sam) from dedup_sam_files
+
+  output:
+    set file_id, "*.bam" into dedup_bam_files
+
+  script:
+"""
+sambamba view -t ${task.cpus} -S -f bam -l 0 ${sam} -o ${file_id}.bam
+"""
+}
+
+process sort_bam {
+  tag "$file_id"
+  cpus 4
+
+  input:
+    set file_id, file(bam) from dedup_bam_files
 
   output:
     set file_id, "*_sorted.bam" into sorted_bam_files
 
   script:
 """
-sambamba view -t ${task.cpus} -S -f bam -l 0 ${sam} | \
-sambamba sort -t ${task.cpus} -o ${file_id}_sorted.bam /dev/stdin
+sambamba sort -t ${task.cpus} -o ${file_id}_sorted.bam ${bam}
 """
 }
 
-sorted_bam_files.into{
-  index_sorted_bam_files;
-  haplotypecaller_sorted_bam_files
+process name_bam {
+  tag "$file_id"
+  cpus 4
+  publishDir "results/mapping/bam/", mode: 'copy'
+
+  input:
+    set file_id, file(bam) from sorted_bam_files
+
+  output:
+    set file_id, "*_named.bam" into named_bam_files
+
+  script:
+"""
+samtools view -H ${bam} > header.sam
+echo "@RG\tID:${file_id}\tLB:library1\tPL:illumina\tPU:${file_id}\tSM:${file_id}" \
+>> header.sam
+cp ${bam} ${file_id}_named.bam
+samtools reheader header.sam ${file_id}_named.bam
+"""
+}
+
+named_bam_files.into{
+  index_named_bam_files;
+  haplotypecaller_named_bam_files
 }
 
 process index_bam {
   tag "$file_id"
   cpus 4
-  publishDir "results/mapping/bam/2_realigned/", mode: 'copy'
+  publishDir "results/mapping/bam/", mode: 'copy'
 
   input:
-    set file_id, file(bam) from index_sorted_bam_files
+    set file_id, file(bam) from index_named_bam_files
 
   output:
     set file_id, "*.bam*" into indexed_bam_files
@@ -167,8 +202,8 @@ haplotypecaller_fasta_file.into{
   }
 
 process index2_fasta {
-  tag "$file_id"
-  publishDir "results/mapping/bam/2_realigned/", mode: 'copy'
+  tag "$genome_id"
+  publishDir "results/fasta/", mode: 'copy'
 
   input:
     set genome_id, file(fasta) from index2_fasta_file
@@ -183,8 +218,8 @@ gatk CreateSequenceDictionary -R ${fasta} &> gatk_output.txt
 }
 
 process index3_fasta {
-  tag "$file_id"
-  publishDir "results/mapping/bam/2_realigned/", mode: 'copy'
+  tag "$genome_id"
+  publishDir "results/fasta/", mode: 'copy'
 
   input:
     set genome_id, file(fasta) from index3_fasta_file
@@ -204,7 +239,7 @@ process HaplotypeCaller {
   publishDir "results/SNP/vcf/", mode: 'copy'
 
   input:
-    set file_id, file(bam) from haplotypecaller_sorted_bam_files.collect()
+    set file_id, file(bam) from haplotypecaller_named_bam_files.collect()
     set file_ididx, file(bamidx) from indexed_bam_files.collect()
     set genome_id, file(fasta) from haplo_fasta_file.collect()
     set genome2_idx, file(fasta2idx) from indexed2_fasta_file.collect()
