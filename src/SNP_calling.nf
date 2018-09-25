@@ -138,7 +138,7 @@ sambamba view -t ${task.cpus} -S -f bam -l 0 ${sam} -o ${file_id}.bam
 
 process sort_bam {
   tag "$file_id"
-  cpus 4
+  cpus 10
 
   input:
     set file_id, file(bam) from dedup_bam_files
@@ -148,7 +148,7 @@ process sort_bam {
 
   script:
 """
-sambamba sort -t ${task.cpus} -o ${file_id}_sorted.bam ${bam}
+sambamba sort -t ${task.cpus} --tmpdir=./tmp -o ${file_id}_sorted.bam ${bam}
 """
 }
 
@@ -191,7 +191,7 @@ process index_bam {
 
   script:
 """
-sambamba index -t ${task.cpus} ${bam}
+sambamba index -t ${task.cpus} --tmpdir=./tmp ${bam}
 """
 }
 
@@ -257,5 +257,6 @@ gatk Mutect2 --native-pair-hmm-threads ${task.cpus} -R ${fasta} \
 -bamout ${file_id}_realigned.bam
 """
 }
+
 
 
