@@ -157,21 +157,24 @@ sambamba sort -t ${task.cpus} --tmpdir=./tmp -o ${file_id}_sorted.bam ${bam}
 }
 
 sorted_bam_files.into {
-  sorted_bam_files_norm;
-  sorted_bam_files_tumor
+  sorted_bam_file_norm;
+  sorted_bam_file_tumor
 }
-collect_sorted_bam_file = sorted_bam_files_norm
+
+collect_sorted_bam_file_norm = sorted_bam_file_norm
   .filter{ normal_sample.contains(it[0]) }
   .map { it -> it[1]}
   .collect()
   .map { it -> ["normal_sample", it]}
-collect_sorted_bam_file.join(
-  sorted_bam_files_tumor
-    .filter{ tumor_sample.contains(it[0]) }
-    .map { it -> it[1]}
-    .collect()
-    .map { it -> ["tumor_sample", it]}
-)
+
+collect_sorted_bam_file_tumor = sorted_bam_file_tumor
+  .filter{ tumor_sample.contains(it[0]) }
+  .map { it -> it[1]}
+  .collect()
+  .map { it -> ["tumor_sample", it]}
+
+collect_sorted_bam_file = Channel.create()
+  .mix(collect_sorted_bam_file_norm, collect_sorted_bam_file_tumor)
 
 process merge_bam {
   tag "$file_id"
@@ -185,7 +188,11 @@ process merge_bam {
 
   script:
 """
+if ((\$(ls -l *.bam | wc -l) > 1)); then
 sambamba merge -t ${task.cpus} ${file_id}.bam ${bam}
+else
+cp ${bam} ${file_id}.bam
+fi
 """
 }
 
@@ -212,7 +219,7 @@ samtools reheader header.sam ${file_id}_named.bam
 
 named_bam_files.into{
   index_named_bam_files;
-  haplotypecaller_named_bam_files
+  haplotypecaller_bam_files
 }
 
 process index_bam {
@@ -270,14 +277,34 @@ samtools faidx ${fasta}
 """
 }
 
+haplotypecaller_bam_files.into {
+  haplo_bam_files_norm;
+  haplo_bam_files_tumor
+}
+haplotypecaller_bam_files_norm = haplo_bam_files_norm
+  .filter{ "normal_sample" == it[0] }
+haplotypecaller_bam_files_tumor = haplo_bam_files_tumor
+   .filter{ "tumor_sample" == it[0] }
+
+indexed_bam_files.into {
+  index_bam_files_norm;
+  index_bam_files_tumor
+}
+indexed_bam_files_norm = index_bam_files_norm
+  .filter{ "normal_sample" == it[0] }
+indexed_bam_files_tumor = index_bam_files_tumor
+   .filter{ "tumor_sample" == it[0] }
+
 process HaplotypeCaller {
   tag "$file_id"
   cpus 4
   publishDir "results/SNP/vcf/", mode: 'copy'
 
   input:
-    set file_id, file(bam) from haplotypecaller_named_bam_files.collect()
-    set file_ididx, file(bamidx) from indexed_bam_files.collect()
+    set file_id_norm, file(bam_norm) from haplotypecaller_bam_files_norm.collect()
+    set file_ididx_norm, file(bamidx_norm) from indexed_bam_files_norm.collect()
+    set file_id_tumor, file(bam_tumor) from haplotypecaller_bam_files_tumor.collect()
+    set file_ididx_tumor, file(bamidx_tumor) from indexed_bam_files_tumor.collect()
     set genome_id, file(fasta) from haplo_fasta_file.collect()
     set genome2_idx, file(fasta2idx) from indexed2_fasta_file.collect()
     set genome3_idx, file(fasta3idx) from indexed3_fasta_file.collect()
@@ -289,7 +316,8 @@ process HaplotypeCaller {
   script:
 """
 gatk Mutect2 --native-pair-hmm-threads ${task.cpus} -R ${fasta} \
--I ${bam} -tumor ${params.tumor} -normal ${params.normal} \
+-I ${bam_tumor} -tumor ${file_id_tumor} \
+-I ${bam_norm} -normal ${file_id_norm} \
 -O ${file_id}_raw_calls.g.vcf \
 -bamout ${file_id}_realigned.bam
 """
