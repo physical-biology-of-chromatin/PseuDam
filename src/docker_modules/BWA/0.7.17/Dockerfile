@@ -1,7 +1,9 @@
-FROM ubuntu:18.04
+FROM sambamba:0.6.7
 MAINTAINER Laurent Modolo
 
 ENV BWA_VERSION=0.7.17
+ENV SAMBLASTER_VERSION=0.1.24
+
 ENV PACKAGES curl=7.58.0* \
     ca-certificates=20180409 \
     build-essential=12.4* \
@@ -18,3 +20,11 @@ make && \
 cp bwa /usr/bin && \
 cd .. && \
 rm -R bwa-${BWA_VERSION}/
+
+RUN curl -k -L https://github.com/GregoryFaust/samblaster/releases/download/v.${SAMBLASTER_VERSION}/samblaster-v.${SAMBLASTER_VERSION}.tar.gz -o samblaster-v.${SAMBLASTER_VERSION}.tar.gz && \
+tar xvf samblaster-v.${SAMBLASTER_VERSION}.tar.gz && \
+cd samblaster-v.${SAMBLASTER_VERSION}/ && \
+make && \
+cp samblaster /usr/bin && \
+cd .. && \
+rm -R samblaster-v.${SAMBLASTER_VERSION}/
