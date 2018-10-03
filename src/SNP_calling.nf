@@ -139,19 +139,18 @@ sambamba sort -t ${task.cpus} --tmpdir=./tmp -o ${file_id}_sorted.bam ${bam}
 
 sorted_bam_files.into {
   sorted_bam_file_norm;
-  sorted_bam_file_tumor
+  sorted_bam_file_tumor;
 }
 
 collect_sorted_bam_file_norm = sorted_bam_file_norm
   .filter{ normal_sample.contains(it[0]) }
   .map { it -> it[1]}
-  .collect()
+  .buffer( size: normal_sample.size())
   .map { it -> ["normal_sample", it]}
-
 collect_sorted_bam_file_tumor = sorted_bam_file_tumor
   .filter{ tumor_sample.contains(it[0]) }
   .map { it -> it[1]}
-  .collect()
+  .buffer( size: tumor_sample.size())
   .map { it -> ["tumor_sample", it]}
 
 collect_sorted_bam_file = Channel.create()
@@ -246,7 +245,7 @@ samtools faidx ${fasta}
 haplotypecaller_bam_files_norm = haplo_bam_files_norm
   .filter{ "normal_sample" == it[0] }
 haplotypecaller_bam_files_tumor = haplo_bam_files_tumor
-   .filter{ "tumor_sample" == it[0] }
+  .filter{ "tumor_sample" == it[0] }
 
 indexed_bam_files.into {
   index_bam_files_norm;
@@ -257,6 +256,7 @@ indexed_bam_files_norm = index_bam_files_norm
 indexed_bam_files_tumor = index_bam_files_tumor
    .filter{ "tumor_sample" == it[0] }
 
+/*
 process HaplotypeCaller {
   tag "$file_id"
   cpus 4
