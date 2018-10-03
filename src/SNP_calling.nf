@@ -62,62 +62,56 @@ UrQt --t 20 --m ${task.cpus} --gz \
 }
 
 process index_fasta {
-  tag "$fasta_id"
+  tag "$file_id"
   cpus 4
   publishDir "results/mapping/index/", mode: 'copy'
 
   input:
-    set fasta_id, file(fasta) from fasta_file
+    set file_id, file(fasta) from fasta_file
 
   output:
-    set fasta_id, "${fasta.baseName}.*" into index_files
-    file "*_bwa_report.txt" into index_files_report
+    file "*.index*" into index_files
+    file "*_report.txt" into indexing_report
 
   script:
 """
-bwa index -p ${fasta_id} ${fasta} \
-&> ${fasta.baseName}_bwa_report.txt
+bowtie2-build --threads ${task.cpus} ${fasta} ${file_id}.index &> ${file_id}_bowtie2_report.txt
+
+if grep -q "Error" ${file_id}_bowtie2_report.txt; then
+  exit 1
+fi
 """
 }
-
-
-fastq_files_trim.into {
-  fastq_files_trim_norm;
-  fastq_files_trim_tumor
-}
-
-collect_fastq_files_trim_norm = fastq_files_trim_norm
-  .filter{ normal_sample.contains(it[0]) }
-  .map { it -> ["normal_sample", it[0], it[1]]}
-
-collect_fastq_files_trim_tumor = fastq_files_trim_tumor
-  .filter{ tumor_sample.contains(it[0]) }
-  .map { it -> ["tumor_sample", it[0], it[1]]}
-
-collect_fastq_files_trim = Channel.create()
-  .mix(collect_fastq_files_trim_norm, collect_fastq_files_trim_tumor)
 
 process mapping_fastq {
   tag "$pair_id"
-  cpus 6
-  publishDir "results/mapping/bam/", mode: 'copy'
+  cpus 4
+  publishDir "results/mapping/bams/", mode: 'copy'
 
   input:
-  set sample_name, pair_id, file(reads) from collect_fastq_files_trim
-  set index_id, file(index) from index_files.collect()
+  set pair_id, file(reads) from fastq_files_trim
+  file index from index_files.collect()
 
   output:
-  set pair_id, "${pair_id}.bam" into bam_files
-  file "${pair_id}_bwa_report.txt" into mapping_repport_files
+  set pair_id, "*.bam" into bam_files
+  file "*_report.txt" into mapping_report
 
   script:
+  index_id = index[0]
+  for (index_file in index) {
+    if (index_file =~ /.*\.1\.bt2/ && !(index_file =~ /.*\.rev\.1\.bt2/)) {
+        index_id = ( index_file =~ /(.*)\.1\.bt2/)[0][1]
+    }
+  }
 """
-bwa mem -t ${task.cpus} -M \
--R '@RG\\tID:${sample_name}\\tSM:${sample_name}\\tPL:Illumina' \
-${index_id} ${reads[0]} ${reads[1]} | \
-samblaster --addMateTags -M -i /dev/stdin | \
-sambamba view -t ${task.cpus} --valid -S -f bam -l 0 /dev/stdin -o ${pair_id}.bam \
-2> ${pair_id}_bwa_report.txt
+bowtie2 --very-sensitive -p ${task.cpus} -x ${index_id} \
+-1 ${reads[0]} -2 ${reads[1]} 2> \
+${pair_id}_bowtie2_report.txt | \
+samtools view -Sb - > ${pair_id}.bam
+
+if grep -q "Error" ${pair_id}_bowtie2_report.txt; then
+  exit 1
+fi
 """
 }
 
@@ -192,7 +186,7 @@ process index_bam {
     set file_id, file(bam) from index_merged_bam_files
 
   output:
-    set file_id, "*.bam*" into index_bam_files
+    set file_id, "*.bam.bai" into index_bam_files
 
   script:
 """
