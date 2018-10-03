@@ -1,6 +1,5 @@
 params.fastq = "$baseDir/data/*.fastq"
 params.fasta = "$baseDir/data/*.fasta"
-params.sam = ""
 log.info "fastq files : ${params.fastq}"
 log.info "fasta files : ${params.fasta}"
 def normal_sample = Eval.me(params.normal)
@@ -22,130 +21,112 @@ Channel
   .ifEmpty { error "Cannot find any fastq files matching: ${params.fastq}" }
   .set { fastq_files }
 
-if (params.sam == "") {
-  process adaptor_removal {
-    tag "$pair_id"
-    publishDir "results/fastq/adaptor_removal/", mode: 'copy'
-
-    input:
-    set pair_id, file(reads) from fastq_files
-
-    output:
-    set pair_id, "*_cut_R{1,2}.fastq.gz" into fastq_files_cut
-
-    script:
-  """
-  cutadapt -a AGATCGGAAGAG -g CTCTTCCGATCT -A AGATCGGAAGAG -G CTCTTCCGATCT \
-  -o ${pair_id}_cut_R1.fastq.gz -p ${pair_id}_cut_R2.fastq.gz \
-  ${reads[0]} ${reads[1]} > ${pair_id}_report.txt
-  """
-  }
-
-  process trimming {
-    tag "${reads}"
-    cpus 4
-    publishDir "results/fastq/trimming/", mode: 'copy'
-
-    input:
-    set pair_id, file(reads) from fastq_files_cut
-
-    output:
-    set pair_id, "*_trim_R{1,2}.fastq.gz" into fastq_files_trim
-
-    script:
-  """
-  UrQt --t 20 --m ${task.cpus} --gz \
-  --in ${reads[0]} --inpair ${reads[1]} \
-  --out ${pair_id}_trim_R1.fastq.gz --outpair ${pair_id}_trim_R2.fastq.gz \
-  > ${pair_id}_trimming_report.txt
-  """
-  }
-
-  process index_fasta {
-    tag "$fasta_id"
-    cpus 4
-    publishDir "results/mapping/index/", mode: 'copy'
-
-    input:
-      set fasta_id, file(fasta) from fasta_file
-
-    output:
-      set fasta_id, "${fasta.baseName}.*" into index_files
-      file "*_bwa_report.txt" into index_files_report
-
-    script:
-  """
-  bwa index -p ${fasta.baseName} ${fasta} \
-  &> ${fasta.baseName}_bwa_report.txt
-  """
-  }
-
-
-  process mapping_fastq {
-    tag "$reads"
-    cpus 4
-    publishDir "results/mapping/sam/", mode: 'copy'
-
-    input:
-    set pair_id, file(reads) from fastq_files_trim
-    set index_id, file(index) from index_files.collect()
-
-    output:
-    file "${pair_id}.sam" into sam_files
-    file "${pair_id}_bwa_report.txt" into mapping_repport_files
-
-    script:
-  """
-  bwa mem -t ${task.cpus} \
-  ${index_id} ${reads[0]} ${reads[1]} \
-  -o ${pair_id}.sam &> ${pair_id}_bwa_report.txt
-  """
-  }
-} else {
-  Channel
-    .fromPath( params.sam )
-    .ifEmpty { error "Cannot find any sam files matching: ${params.sam}" }
-    .map { it -> [(it.baseName =~ /([^\.]*)/)[0][1], it]}
-    .set { sam_files }
-}
-
-process dedup_sam {
-  tag "$file_id"
-  cpus 4
+process adaptor_removal {
+  tag "$pair_id"
+  publishDir "results/fastq/adaptor_removal/", mode: 'copy'
 
   input:
-    set file_id, file(sam) from sam_files
+  set pair_id, file(reads) from fastq_files
 
   output:
-    set file_id, "*_dedup.sam*" into dedup_sam_files
-  script:
-"""
-samblaster --addMateTags -i ${sam} -o ${file_id}_dedup.sam
-"""
-}
-
-process sam_to_bam {
-  tag "$file_id"
-  cpus 4
-
-  input:
-    set file_id, file(sam) from dedup_sam_files
-
-  output:
-    set file_id, "*.bam" into dedup_bam_files
+  set pair_id, file("*.fastq.gz") into fastq_files_cut
+  file "*_cutadapt_report.txt" into cut_files_report
 
   script:
 """
-sambamba view -t ${task.cpus} -S -f bam -l 0 ${sam} -o ${file_id}.bam
+cutadapt -a AGATCGGAAGAG -g CTCTTCCGATCT -A AGATCGGAAGAG -G CTCTTCCGATCT \
+-o ${pair_id}_cut_R1.fastq.gz -p ${pair_id}_cut_R2.fastq.gz \
+${reads[0]} ${reads[1]} > ${pair_id}_cutadapt_report.txt
+"""
+}
+
+process trimming {
+  tag "${pair_id}"
+  cpus 4
+  publishDir "results/fastq/trimming/", mode: 'copy'
+
+  input:
+  set pair_id, file(reads) from fastq_files_cut
+
+  output:
+  set pair_id, file("*.fastq.gz") into fastq_files_trim
+  file "*_trimming_report.txt" into trimming_files_report
+
+  script:
+"""
+UrQt --t 20 --m ${task.cpus} --gz \
+--in ${reads[0]} --inpair ${reads[1]} \
+--out ${pair_id}_trim_R1.fastq.gz --outpair ${pair_id}_trim_R2.fastq.gz \
+> ${pair_id}_trimming_report.txt
+"""
+}
+
+process index_fasta {
+  tag "$fasta_id"
+  cpus 4
+  publishDir "results/mapping/index/", mode: 'copy'
+
+  input:
+    set fasta_id, file(fasta) from fasta_file
+
+  output:
+    set fasta_id, "${fasta.baseName}.*" into index_files
+    file "*_bwa_report.txt" into index_files_report
+
+  script:
+"""
+bwa index -p ${fasta_id} ${fasta} \
+&> ${fasta.baseName}_bwa_report.txt
+"""
+}
+
+
+fastq_files_trim.into {
+  fastq_files_trim_norm;
+  fastq_files_trim_tumor
+}
+
+collect_fastq_files_trim_norm = fastq_files_trim_norm
+  .filter{ normal_sample.contains(it[0]) }
+  .map { it -> ["normal_sample", it[0], it[1]]}
+
+collect_fastq_files_trim_tumor = fastq_files_trim_tumor
+  .filter{ tumor_sample.contains(it[0]) }
+  .map { it -> ["tumor_sample", it[0], it[1]]}
+
+collect_fastq_files_trim = Channel.create()
+  .mix(collect_fastq_files_trim_norm, collect_fastq_files_trim_tumor)
+
+process mapping_fastq {
+  tag "$pair_id"
+  cpus 6
+  publishDir "results/mapping/bam/", mode: 'copy'
+
+  input:
+  set sample_name, pair_id, file(reads) from collect_fastq_files_trim
+  set index_id, file(index) from index_files.collect()
+
+  output:
+  set pair_id, "${pair_id}.bam" into bam_files
+  file "${pair_id}_bwa_report.txt" into mapping_repport_files
+
+  script:
+"""
+bwa mem -t ${task.cpus} -M \
+-R '@RG\\tID:${sample_name}\\tSM:${sample_name}\\tPL:Illumina' \
+${index_id} ${reads[0]} ${reads[1]} | \
+samblaster --addMateTags -M -i /dev/stdin | \
+sambamba view -t ${task.cpus} --valid -S -f bam -l 0 /dev/stdin -o ${pair_id}.bam \
+2> ${pair_id}_bwa_report.txt
 """
 }
 
 process sort_bam {
   tag "$file_id"
-  cpus 10
+  cpus 4
 
   input:
-    set file_id, file(bam) from dedup_bam_files
+    set file_id, file(bam) from bam_files
 
   output:
     set file_id, "*_sorted.bam" into sorted_bam_files
@@ -196,30 +177,10 @@ fi
 """
 }
 
-process name_bam {
-  tag "$file_id"
-  cpus 4
-  publishDir "results/mapping/bam/", mode: 'copy'
-
-  input:
-    set file_id, file(bam) from merged_bam_files
-
-  output:
-    set file_id, "*_named.bam" into named_bam_files
-
-  script:
-"""
-samtools view -H ${bam} > header.sam
-echo "@RG\tID:${file_id}\tLB:library1\tPL:illumina\tPU:${file_id}\tSM:${file_id}" \
->> header.sam
-cp ${bam} ${file_id}_named.bam
-samtools reheader header.sam ${file_id}_named.bam
-"""
-}
-
-named_bam_files.into{
-  index_named_bam_files;
-  haplotypecaller_bam_files
+merged_bam_files.into{
+  index_merged_bam_files;
+  haplo_bam_files_norm;
+  haplo_bam_files_tumor
 }
 
 process index_bam {
@@ -228,15 +189,20 @@ process index_bam {
   publishDir "results/mapping/bam/", mode: 'copy'
 
   input:
-    set file_id, file(bam) from index_named_bam_files
+    set file_id, file(bam) from index_merged_bam_files
 
   output:
-    set file_id, "*.bam*" into indexed_bam_files
+    set file_id, "*.bam*" into index_bam_files
 
   script:
 """
 sambamba index -t ${task.cpus} ${bam}
 """
+}
+
+index_bam_files.into{
+  named_index_bam_files;
+  indexed_bam_files
 }
 
 haplotypecaller_fasta_file.into{
@@ -277,10 +243,6 @@ samtools faidx ${fasta}
 """
 }
 
-haplotypecaller_bam_files.into {
-  haplo_bam_files_norm;
-  haplo_bam_files_tumor
-}
 haplotypecaller_bam_files_norm = haplo_bam_files_norm
   .filter{ "normal_sample" == it[0] }
 haplotypecaller_bam_files_tumor = haplo_bam_files_tumor
