@@ -256,32 +256,32 @@ indexed_bam_files_norm = index_bam_files_norm
 indexed_bam_files_tumor = index_bam_files_tumor
    .filter{ "tumor_sample" == it[0] }
 
-/*
 process HaplotypeCaller {
-  tag "$file_id"
-  cpus 4
+  tag "$file_id_norm"
+  cpus 10
   publishDir "results/SNP/vcf/", mode: 'copy'
 
   input:
-    set file_id_norm, file(bam_norm) from haplotypecaller_bam_files_norm.collect()
-    set file_ididx_norm, file(bamidx_norm) from indexed_bam_files_norm.collect()
-    set file_id_tumor, file(bam_tumor) from haplotypecaller_bam_files_tumor.collect()
-    set file_ididx_tumor, file(bamidx_tumor) from indexed_bam_files_tumor.collect()
-    set genome_id, file(fasta) from haplo_fasta_file.collect()
-    set genome2_idx, file(fasta2idx) from indexed2_fasta_file.collect()
-    set genome3_idx, file(fasta3idx) from indexed3_fasta_file.collect()
+    set file_id_norm, file(bam_norm) from haplotypecaller_bam_files_norm
+    set file_ididx_norm, file(bamidx_norm) from indexed_bam_files_norm
+    set file_id_tumor, file(bam_tumor) from haplotypecaller_bam_files_tumor
+    set file_ididx_tumor, file(bamidx_tumor) from indexed_bam_files_tumor
+    set genome_id, file(fasta) from haplo_fasta_file
+    set genome2_idx, file(fasta2idx) from indexed2_fasta_file
+    set genome3_idx, file(fasta3idx) from indexed3_fasta_file
 
   output:
-    set file_id, "*.vcf" into vcf_files
-    set file_id, "*.bam" into realigned_bams_files
+    set file_id_norm, "*.vcf" into vcf_files
+    set file_id_norm, "*.bam" into realigned_bams_files
+    set "*_mutect2_report.txt" into mutect2_report
 
   script:
 """
 gatk Mutect2 --native-pair-hmm-threads ${task.cpus} -R ${fasta} \
 -I ${bam_tumor} -tumor ${file_id_tumor} \
 -I ${bam_norm} -normal ${file_id_norm} \
--O ${file_id}_raw_calls.g.vcf \
--bamout ${file_id}_realigned.bam
+-O ${file_id_norm}_raw_calls.g.vcf \
+-bamout ${file_id_norm}_realigned.bam 2> ${file_id_norm}_mutect2_report.txt
 """
 }
 
