@@ -13,12 +13,12 @@ cd ~/projects/JU28_59vs17_SNP/
 
 mkdir tests
 cd tests
-../nextflow ../src/SNP_calling.nf -c ../src/SNP_calling.config -profile docker --fasta "../data/fasta/DBG2OLC-output2.fasta" --fastq "../data/samples/*_{1,2}.fastq.gz" -resume -w ~/data/work_s/ --tumor "[\"s_NG-10944_JU2859_bis_lib169352_5217_1\"]" --normal "[\"s_MR_550_clean\", \"s_MR_350_clean\"]"
+../nextflow ../src/SNP_calling.nf -c ../src/SNP_calling.config -profile docker --fasta "../data/fasta/DBG2OLC_output2.fasta" --fastq "../data/samples/*_{1,2}.fastq.gz" -resume -w ~/data/work_s/ --tumor "[\"s_NG-10944_JU2859_bis_lib169352_5217_1\"]" --normal "[\"s_MR_550_clean\", \"s_MR_350_clean\"]" --seq_number 800000
 ~/scripts/sms.sh "SNP done"
 
 # real set analysis
 
-./nextflow src/SNP_calling.nf -c src/SNP_calling.config -profile docker --fasta "data/fasta/DBG2OLC-output2.fasta" --fastq "data/fastq/*_{1,2}.fastq.gz" -resume -w ~/data/work/ --tumor "[\"NG-10944_JU2859_bis_lib169352_5217_1\"]" --normal "[\"MR_550_clean\", \"MR_350_clean\"]"
+./nextflow src/SNP_calling.nf -c src/SNP_calling.config -profile docker --fasta "data/fasta/DBG2OLC_output2.fasta" --fastq "data/fastq/*_{1,2}.fastq.gz" -resume -w ~/data/work/ --tumor "[\"NG-10944_JU2859_bis_lib169352_5217_1\"]" --normal "[\"MR_550_clean\", \"MR_350_clean\"]"
 ~/scripts/sms.sh "SNP done"
 
 ./nextflow src/SNP_calling.nf -c src/SNP_calling.config -profile docker --fasta "data/fasta/DBG2OLC-output2.fasta" --fastq "data/fastq/*_{1,2}.fastq.gz" --sam "results/mapping/sam/*.sam" -resume -w ~/data/work/
