@@ -87,11 +87,11 @@ filter_fasta_files.into{
 
 process index_fasta {
   tag "$file_id"
-  cpus 4
+  cpus 12
   publishDir "results/mapping/index/", mode: 'copy'
 
   input:
-    set fasta_id, file(fasta) from filtered_fasta_files
+    set file_id, file(fasta) from filtered_fasta_files
 
   output:
     file "*.index*" into index_files
@@ -109,8 +109,8 @@ fi
 
 process mapping_fastq {
   tag "$pair_id"
-  cpus 4
-  publishDir "results/mapping/bams/", mode: 'copy'
+  cpus 12
+  publishDir "results/mapping/bam/", mode: 'copy'
 
   input:
   set pair_id, file(reads) from fastq_files_trim
