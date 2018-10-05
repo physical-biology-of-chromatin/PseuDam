@@ -129,6 +129,9 @@ process mapping_fastq {
   }
 """
 bowtie2 --very-sensitive -p ${task.cpus} -x ${index_id} \
+--rg-id ${sample_name} \
+--rg SM:${sample_name} \
+--rg PL:Illumina \
 -1 ${reads[0]} -2 ${reads[1]} 2> \
 ${pair_id}_bowtie2_report.txt | \
 samtools view -Sb - > ${pair_id}.bam
