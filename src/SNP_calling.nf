@@ -183,6 +183,7 @@ collect_sorted_bam_file = Channel.create()
 process merge_bam {
   tag "$file_id"
   cpus 4
+  publishDir "results/mapping/bam/", mode: 'copy'
 
   input:
     set file_id, file(bam) from collect_sorted_bam_file
@@ -297,16 +298,19 @@ final_indexed_bam_files_tumor.into{
   pileup_index_bam_files_tumor
 }
 final_fasta_file.into{
-  haplo_fasta_file
-  artifact_fasta_file
+  haplo_fasta_file;
+  artifact_fasta_file;
+  filter_fasta_file
 }
 indexed2_fasta_file.into{
-  haplo_indexed2_fasta_file
-  artifact_indexed2_fasta_file
+  haplo_indexed2_fasta_file;
+  artifact_indexed2_fasta_file;
+  filter_indexed2_fasta_file
 }
 indexed3_fasta_file.into{
   haplo_indexed3_fasta_file;
-  artifact_indexed3_fasta_file
+  artifact_indexed3_fasta_file;
+  filter_indexed3_fasta_file
 }
 
 process HaplotypeCaller {
@@ -428,6 +432,9 @@ process filter_SNP {
   input:
     set file_id_norm, file(vcf) from filter_vcf_files
     set fileidx_id_norm, file(vcfid) from filter_index_vcf_files
+    set genome_id, file(fasta) from filter_fasta_file
+    set genome2_idx, file(fasta2idx) from filter_indexed2_fasta_file
+    set genome3_idx, file(fasta3idx) from filter_indexed3_fasta_file
 
   output:
     set file_id_norm, "*.vcf" into vcf_files_filtered
@@ -439,6 +446,12 @@ gatk FilterMutectCalls \
 -V ${vcf} \
 -O ${file_id_norm}_filtered.vcf \
 2> ${file_id_norm}_filter_report.txt
+gatk SelectVariants \
+-R ${fasta} \
+--variant ${file_id_norm}_filtered.vcf \
+--exclude-filtered \
+-O ${file_id_norm}_filtered_pass.vcf \
+2>> ${file_id_norm}_filter_report.txt
 """
 }
 
