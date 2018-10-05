@@ -107,13 +107,29 @@ fi
 """
 }
 
+fastq_files_trim.into{
+  fastq_files_trim_norm;
+  fastq_files_trim_tumor
+}
+
+collect_fastq_files_trim_norm = fastq_files_trim_norm
+  .filter{ normal_sample.contains(it[0]) }
+  .map { it -> ["normal_sample", it[0], it[1]]}
+
+collect_fastq_files_trim_tumor = fastq_files_trim_tumor
+  .filter{ tumor_sample.contains(it[0]) }
+  .map { it -> ["tumor_sample", it[0], it[1]]}
+
+collect_fastq_files_trim = Channel.create()
+  .mix(collect_fastq_files_trim_norm, collect_fastq_files_trim_tumor)
+
 process mapping_fastq {
   tag "$pair_id"
   cpus 12
   publishDir "results/mapping/bam/", mode: 'copy'
 
   input:
-  set pair_id, file(reads) from fastq_files_trim
+  set sample_name, pair_id, file(reads) from collect_fastq_files_trim
   file index from index_files.collect()
 
   output:
