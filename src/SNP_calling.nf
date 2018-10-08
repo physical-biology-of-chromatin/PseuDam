@@ -150,7 +150,9 @@ bowtie2 --very-sensitive -p ${task.cpus} -x ${index_id} \
 --rg SM:${sample_name} \
 -1 ${reads[0]} -2 ${reads[1]} 2> \
 ${pair_id}_bowtie2_report.txt | \
-samtools view -Sb - > ${pair_id}.bam
+samblaster --addMateTags -M -i /dev/stdin | \
+sambamba view -t ${task.cpus} --valid -S -f bam -l 0 /dev/stdin \
+-o ${pair_id}.bam
 
 if grep -q "Error" ${pair_id}_bowtie2_report.txt; then
   exit 1
@@ -294,36 +296,98 @@ final_indexed_bam_files_norm = index_bam_files_norm
 final_indexed_bam_files_tumor = index_bam_files_tumor
    .filter{ "tumor_sample" == it[0] }
 
-final_bam_files_norm.set{
-  haplotypecaller_bam_files_norm
+final_bam_files_norm.into{
+  haplotypecaller_bam_files_norm;
+  samtools_SNP_bam_files_norm
 }
 final_bam_files_tumor.into{
   haplotypecaller_bam_files_tumor;
+  samtools_SNP_bam_files_tumor;
   artifact_bam_files_tumor;
   pileup_bam_files_tumor
 }
-final_indexed_bam_files_norm.set{
-  haplo_index_bam_files_norm
+final_indexed_bam_files_norm.into{
+  haplo_index_bam_files_norm;
+  samtools_SNP_index_bam_files_norm
 }
 final_indexed_bam_files_tumor.into{
   haplo_index_bam_files_tumor;
+  samtools_SNP_index_bam_files_tumor;
   artifact_index_bam_files_tumor;
   pileup_index_bam_files_tumor
 }
 final_fasta_file.into{
   haplo_fasta_file;
+  samtools_SNP_fasta_file_tumor;
+  samtools_SNP_fasta_file_norm;
   artifact_fasta_file;
   filter_fasta_file
 }
 indexed2_fasta_file.into{
   haplo_indexed2_fasta_file;
+  samtools_SNP_indexed2_fasta_file_tumor;
+  samtools_SNP_indexed2_fasta_file_norm;
   artifact_indexed2_fasta_file;
   filter_indexed2_fasta_file
 }
 indexed3_fasta_file.into{
   haplo_indexed3_fasta_file;
+  samtools_SNP_indexed3_fasta_file_tumor;
+  samtools_SNP_indexed3_fasta_file_norm;
   artifact_indexed3_fasta_file;
   filter_indexed3_fasta_file
+}
+
+process samtools_SNP_tumor {
+  tag "$file_id_norm"
+  cpus 1
+  publishDir "results/SNP/vcf_samtools/", mode: 'copy'
+
+  input:
+    set file_id_tumor, file(bam_tumor) from samtools_SNP_bam_files_tumor
+    set file_ididx_tumor, file(bamidx_tumor) from samtools_SNP_index_bam_files_tumor
+    set genome_id, file(fasta) from samtools_SNP_fasta_file_tumor
+    set genome2_idx, file(fasta2idx) from samtools_SNP_indexed2_fasta_file_tumor
+    set genome3_idx, file(fasta3idx) from samtools_SNP_indexed3_fasta_file_tumor
+
+  output:
+    set file_id_norm, "*.vcf" into vcf_files_tumor
+    set file_id_norm, "*.vcf.idx" into index_vcf_files_tumor
+    file "*_samtools_SNP_report.txt" into samptools_SNP_report_tumor
+
+  script:
+"""
+samtools mpileup -AE -uf ${fasta} ${bam_tumor} | \
+bcftools call -mv --output-type v > ${file_id_tumor}_raw.vcf
+bcftools filter -s LowQual -e '%QUAL<20 || DP>100' ${file_id_tumor}_raw.vcf \
+> ${file_id_tumor}_raw.vcf
+"""
+}
+
+process samtools_SNP_norm {
+  tag "$file_id_norm"
+  cpus 1
+  publishDir "results/SNP/vcf_samtools/", mode: 'copy'
+
+  input:
+    set file_id_norm, file(bam_norm) from samtools_SNP_bam_files_norm
+    set file_ididx_norm, file(bamidx_norm) from samtools_SNP_index_bam_files_norm
+    set genome_id, file(fasta) from samtools_SNP_fasta_file_norm
+    set genome2_idx, file(fasta2idx) from samtools_SNP_indexed2_fasta_file_norm
+    set genome3_idx, file(fasta3idx) from samtools_SNP_indexed3_fasta_file_norm
+
+  output:
+    set file_id_norm, "*.vcf" into vcf_files_norm
+    set file_id_norm, "*.vcf.idx" into index_vcf_files_norm
+    file "*_samtools_SNP_report.txt" into samtools_SNP_report_norm
+
+  script:
+"""
+samtools mpileup -AE -uf ${fasta} ${bam_norm} | \
+bcftools call -mv --output-type v  > ${file_id_norm}_raw.vcf
+bcftools filter -s LowQual -e '%QUAL<20 || DP>100' ${file_id_norm}_raw.vcf \
+> ${file_id_norm}_raw.vcf
+"""
 }
 
 process HaplotypeCaller {
@@ -411,7 +475,7 @@ gatk --java-options "-Xmx32G" CalculateContamination \
 """
 }
 */
-
+/*
 process CollectSequencingArtifactMetrics {
   tag "$file_id_tumor"
   cpus 1
@@ -436,6 +500,7 @@ gatk CollectSequencingArtifactMetrics \
 2> ${file_id_tumor}_artifact_report.txt
 """
 }
+*/
 
 process filter_SNP {
   tag "$file_id_norm"
