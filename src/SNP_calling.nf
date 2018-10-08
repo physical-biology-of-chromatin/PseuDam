@@ -339,7 +339,7 @@ indexed3_fasta_file.into{
 }
 
 process samtools_SNP_tumor {
-  tag "$file_id_norm"
+  tag "$file_id_tumor"
   cpus 1
   publishDir "results/SNP/vcf_samtools/", mode: 'copy'
 
@@ -351,8 +351,7 @@ process samtools_SNP_tumor {
     set genome3_idx, file(fasta3idx) from samtools_SNP_indexed3_fasta_file_tumor
 
   output:
-    set file_id_norm, "*.vcf" into vcf_files_tumor
-    set file_id_norm, "*.vcf.idx" into index_vcf_files_tumor
+    set file_id_tumor, "*.vcf" into vcf_files_tumor
     file "*_samtools_SNP_report.txt" into samptools_SNP_report_tumor
 
   script:
@@ -360,7 +359,7 @@ process samtools_SNP_tumor {
 samtools mpileup -AE -uf ${fasta} ${bam_tumor} | \
 bcftools call -mv --output-type v > ${file_id_tumor}_raw.vcf
 bcftools filter -s LowQual -e '%QUAL<20 || DP>100' ${file_id_tumor}_raw.vcf \
-> ${file_id_tumor}_raw.vcf
+> ${file_id_tumor}_filtered.vcf
 """
 }
 
@@ -378,7 +377,6 @@ process samtools_SNP_norm {
 
   output:
     set file_id_norm, "*.vcf" into vcf_files_norm
-    set file_id_norm, "*.vcf.idx" into index_vcf_files_norm
     file "*_samtools_SNP_report.txt" into samtools_SNP_report_norm
 
   script:
@@ -386,10 +384,56 @@ process samtools_SNP_norm {
 samtools mpileup -AE -uf ${fasta} ${bam_norm} | \
 bcftools call -mv --output-type v  > ${file_id_norm}_raw.vcf
 bcftools filter -s LowQual -e '%QUAL<20 || DP>100' ${file_id_norm}_raw.vcf \
-> ${file_id_norm}_raw.vcf
+> ${file_id_norm}_filtered.vcf
 """
 }
 
+process vcf_to_csv_tumor {
+  tag "$file_id_tumor"
+  cpus 1
+  publishDir "results/SNP/vcf_samtools/", mode: 'copy'
+
+  input:
+    set file_id_tumor, file(vcf) from vcf_files_tumor
+
+  output:
+    set file_id_tumor, "*.csv" into csv_files_tumor
+
+  script:
+"""
+gatk VariantsToTable -V ${file_id_tumor}_raw.vcf \
+-F CHROM -F POS -F TYPE -GF GT -GF AD -GF AF \
+-O ${file_id_tumor}_raw.csv
+gatk VariantsToTable -V ${file_id_tumor}_filtered.vcf \
+-F CHROM -F POS -F TYPE -GF GT -GF AD -GF AF \
+-O ${file_id_tumor}_filtered.csv
+"""
+}
+
+process vcf_to_csv_norm {
+  tag "$file_id_norm"
+  cpus 1
+  publishDir "results/SNP/vcf_samtools/", mode: 'copy'
+
+  input:
+    set file_id_norm, file(vcf) from vcf_files_norm
+
+  output:
+    set file_id_norm, "*.csv" into csv_files_norm
+
+  script:
+"""
+gatk VariantsToTable -V ${file_id_norm}_raw.vcf \
+-F CHROM -F POS -F TYPE -GF GT -GF AD -GF AF \
+-O ${file_id_norm}_raw.csv
+gatk VariantsToTable -V ${file_id_norm}_filtered.vcf \
+-F CHROM -F POS -F TYPE -GF GT -GF AD -GF AF \
+-O ${file_id_norm}_filtered.csv
+"""
+}
+
+
+/*
 process HaplotypeCaller {
   tag "$file_id_norm"
   cpus 10
@@ -429,7 +473,6 @@ index_vcf_files.into{
   filter_index_vcf_files
 }
 
-/*
 process GetPileupSummaries {
   tag "$file_id_norm"
   cpus 1
@@ -500,7 +543,6 @@ gatk CollectSequencingArtifactMetrics \
 2> ${file_id_tumor}_artifact_report.txt
 """
 }
-*/
 
 process filter_SNP {
   tag "$file_id_norm"
@@ -532,4 +574,5 @@ gatk SelectVariants \
 2>> ${file_id_norm}_filter_report.txt
 """
 }
+*/
 
