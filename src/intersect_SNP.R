@@ -24,7 +24,6 @@ snp$seq_list <- snp %>%
       begin <- as.integer(x[ POS ]) - 10
       end <- as.integer(x[ POS ]) + 10
       chrom <- x[ CHROM ]
-      print(paste0(chrom, ":", begin, "-", end))
       seq_restric <- fastafile[[ chrom ]] %>%
         c2s() %>%
         substr(begin, end) %>%
