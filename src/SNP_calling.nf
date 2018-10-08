@@ -355,7 +355,8 @@ process samtools_SNP_tumor {
 
   script:
 """
-samtools mpileup -AE -uf ${fasta} ${bam_tumor} | \
+bcftools mpileup -AE -f ${fasta} ${bam_tumor} --output-type v \
+-a FORMAT/AD,FORMAT/ADF,FORMAT/ADR,FORMAT/DP,FORMAT/SP,INFO/AD,INFO/ADF,INFO/ADR | \
 bcftools call -mv --output-type v > ${file_id_tumor}_raw.vcf
 bcftools filter -s LowQual -e '%QUAL<20 || DP>100' ${file_id_tumor}_raw.vcf \
 > ${file_id_tumor}_filtered.vcf
@@ -379,7 +380,8 @@ process samtools_SNP_norm {
 
   script:
 """
-samtools mpileup -AE -uf ${fasta} ${bam_norm} | \
+bcftools mpileup -AE -f ${fasta} ${bam_norm} --output-type v \
+-a FORMAT/AD,FORMAT/ADF,FORMAT/ADR,FORMAT/DP,FORMAT/SP,INFO/AD,INFO/ADF,INFO/ADR | \
 bcftools call -mv --output-type v  > ${file_id_norm}_raw.vcf
 bcftools filter -s LowQual -e '%QUAL<20 || DP>100' ${file_id_norm}_raw.vcf \
 > ${file_id_norm}_filtered.vcf
@@ -400,10 +402,10 @@ process vcf_to_csv_tumor {
   script:
 """
 gatk VariantsToTable -V ${file_id_tumor}_raw.vcf \
--F CHROM -F POS -F TYPE -GF GT -GF AD -GF AF \
+-F CHROM -F POS -F TYPE -GF GT -GF AD -F AD -F DP \
 -O ${file_id_tumor}_raw.csv
 gatk VariantsToTable -V ${file_id_tumor}_filtered.vcf \
--F CHROM -F POS -F TYPE -GF GT -GF AD -GF AF \
+-F CHROM -F POS -F TYPE -GF GT -GF AD -F AD -F DP \
 -O ${file_id_tumor}_filtered.csv
 """
 }
@@ -422,10 +424,10 @@ process vcf_to_csv_norm {
   script:
 """
 gatk VariantsToTable -V ${file_id_norm}_raw.vcf \
--F CHROM -F POS -F TYPE -GF GT -GF AD -GF AF \
+-F CHROM -F POS -F TYPE -GF GT -GF AD -F AD -F DP \
 -O ${file_id_norm}_raw.csv
 gatk VariantsToTable -V ${file_id_norm}_filtered.vcf \
--F CHROM -F POS -F TYPE -GF GT -GF AD -GF AF \
+-F CHROM -F POS -F TYPE -GF GT -GF AD -F AD -F DP \
 -O ${file_id_norm}_filtered.csv
 """
 }
