@@ -17,7 +17,7 @@ snp <- snp_b %>%
   filter(cords %in% only_b)
 
 fastafile <- read.fasta(file = args[3],
-                        as.string = TRUE) 
+                        as.string = TRUE)
 
 snp$seq_list <- snp %>%
   apply(1, FUN = function(x, fastafile, POS, CHROM){
@@ -38,5 +38,6 @@ snp$seq_list <- snp %>%
   )
 
 snp %>%
+  arrange(desc(tumor_sample.AF)) %>%
   write_csv(paste0("only_", args[2]))
 
