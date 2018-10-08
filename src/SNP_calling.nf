@@ -352,7 +352,6 @@ process samtools_SNP_tumor {
 
   output:
     set file_id_tumor, "*.vcf" into vcf_files_tumor
-    file "*_samtools_SNP_report.txt" into samptools_SNP_report_tumor
 
   script:
 """
@@ -377,7 +376,6 @@ process samtools_SNP_norm {
 
   output:
     set file_id_norm, "*.vcf" into vcf_files_norm
-    file "*_samtools_SNP_report.txt" into samtools_SNP_report_norm
 
   script:
 """
