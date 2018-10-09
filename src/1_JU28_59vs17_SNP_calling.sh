@@ -27,3 +27,8 @@ src/intersect_SNP.R \
   data/list_of_enzymes.csv
 ~/scripts/sms.sh "SNP analysis done"
 
+mkdir -p results/blastall/
+makeblastdb -in data/fasta/DBG2OLC_output2.fasta -parse_seqids -dbtype nucl
+blastn -query data/RNA5S_belari.fasta -db data/fasta/DBG2OLC_output2.fasta -out results/blastall/RNA5S.out
+less results/blastall/RNA5S.out
+
