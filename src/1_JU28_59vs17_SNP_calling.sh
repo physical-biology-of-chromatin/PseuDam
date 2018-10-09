@@ -29,6 +29,13 @@ src/intersect_SNP.R \
 
 mkdir -p results/blastall/
 makeblastdb -in data/fasta/DBG2OLC_output2.fasta -parse_seqids -dbtype nucl
-blastn -query data/RNA5S_belari.fasta -db data/fasta/DBG2OLC_output2.fasta -out results/blastall/RNA5S.out
-less results/blastall/RNA5S.out
+blastn -query data/RNA5S_belari.fasta -db data/fasta/DBG2OLC_output2.fasta -out results/blastall/RNA5S_2.out
+less results/blastall/RNA5S_2.out
 
+makeblastdb -in data/fasta/DBG2OLC_output1.fasta -parse_seqids -dbtype nucl
+blastn -query data/RNA5S_belari.fasta -db data/fasta/DBG2OLC_output1.fasta -out results/blastall/RNA5S_1.out
+less results/blastall/RNA5S_1.out
+
+makeblastdb -in data/fasta/nanoport_denovo.fasta -parse_seqids -dbtype nucl
+blastn -query data/RNA5S_belari.fasta -db data/fasta/nanoport_denovo.fasta -out results/blastall/RNA5S_nanoport.out
+less results/blastall/RNA5S_nanoport.out
