@@ -27,6 +27,14 @@ src/intersect_SNP.R \
   data/list_of_enzymes.csv
 ~/scripts/sms.sh "SNP analysis done"
 
+
+# on the PSMN
+find ~/data/ -name "MR_350_clean*"
+find ~/data/ -name "MR_550_clean*"
+find ~/data/ -name "10944_JU2859_bis_lib169352_5217_1*"
+
+./nextflow src/SNP_calling.nf -c src/SNP_calling.config -profile sge --fasta "data/fasta/final_assembly.fasta" --fastq "/Xnfs/lbmcdb/Delattre_team/Request/Clean_data_for_assembly/*_{1,2}.fastq.gz" -resume -w /scratch/lmodolo/work/ --tumor "[\"NG-10944_JU2859_bis_lib169352_5217_1\"]" --normal "[\"MR_550_clean\", \"MR_350_clean\"]"
+
 mkdir -p results/blastall/
 makeblastdb -in data/fasta/DBG2OLC_output2.fasta -parse_seqids -dbtype nucl
 blastn -query data/RNA5S_belari.fasta -db data/fasta/DBG2OLC_output2.fasta -out results/blastall/RNA5S_2.out
