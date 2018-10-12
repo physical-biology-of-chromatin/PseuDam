@@ -55,7 +55,8 @@ snp$seq_list <- snp %>%
     },
     fastafile = fastafile,
     POS = which(colnames(snp) %in% "POS"),
-    CHROM = which(colnames(snp) %in% "CHROM")
+    CHROM = which(colnames(snp) %in% "CHROM"),
+    seq_restric_size = seq_restric_size
   )
 
 snp %>%
