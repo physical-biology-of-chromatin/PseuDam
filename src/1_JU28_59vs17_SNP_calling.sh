@@ -32,7 +32,7 @@ src/intersect_SNP.R \
 src/intersect_SNP.R \
   results/SNP/vcf_samtools/normal_sample_filtered.csv \
   results/SNP/vcf_samtools/tumor_sample_filtered.csv \
-  results/fasta/DBG2OLC_output2_filtered.fasta \
+  results/fasta/final_assembly_filtered.fasta \
   data/list_of_enzymes.csv
 ~/scripts/sms.sh "SNP analysis done"
 
