@@ -81,13 +81,17 @@ src/nf_modules/Bowtie2/tests.sh
 | tool | nf module | docker module | sge module |
 |------|:---------:|:-------------:|:----------:|
 BEDtools | ok | ok | ok
+BFCtools |**no**  | ok | ok
+bioawk |**no**  | ok | ok
 Bowtie | ok | ok | **no**
 Bowtie2 | ok | ok | ok
+BWA | ok | ok | ok
 canu | ok | ok | ok
 cutadapt | ok | ok | ok
 deepTools | **no** | ok | ok
 FastQC | ok | ok | ok
 file_handle | **no** | ok | ok
+GATK | **no** | ok | ok
 HISAT2 | **no** | ok | **no**
 HTSeq | ok | ok | ok
 Kallisto | ok | ok | ok
@@ -97,6 +101,8 @@ MUSIC | ok | ok | ok
 picard | **no** | ok | ok
 pigz | **no** | ok | ok
 RSEM | ok | ok | ok
+sambamba | ok | ok | ok
+samblaster | ok | ok | ok
 SAMtools | ok | ok | ok
 SRAtoolkit | ok | ok | ok
 Salmon | **no** | ok | ok
