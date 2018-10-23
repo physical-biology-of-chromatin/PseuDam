@@ -51,7 +51,7 @@ The [results](https://gitlab.biologie.ens-lyon.fr/pipelines/nextflow/tree/master
 
 The [doc](https://gitlab.biologie.ens-lyon.fr/pipelines/nextflow/tree/master/doc) folder contains the documentation of this practical course.
 
-And most interestingly for you, the [src](https://gitlab.biologie.ens-lyon.fr/pipelines/nextflow/tree/master/src) contains code to wrap tools. This folder contains two subdirectories. A `docker_modules`, a `nf_modules` and a `sge_modules` folder. 
+And most interestingly for you, the [src](https://gitlab.biologie.ens-lyon.fr/pipelines/nextflow/tree/master/src) contains code to wrap tools. This folder contains two subdirectories. A `docker_modules`, a `nf_modules` and a `psmn_modules` folder. 
 
 ### `docker_modules`
 
@@ -82,9 +82,9 @@ By running this script you will be able to easily install tools in different ver
 - You don’t have to bother with tedious installation procedures, somebody else already did the job and wrote a `Dockerfile`.
 - You can easily keep [containers](https://www.docker.com/what-container) for different version of the same tools.
 
-### `sge_modules`
+### `psmn_modules`
 
-The `src/sge_modules` folder is not really there. It’s a submodule of the project [PSMN/modules](https://gitlab.biologie.ens-lyon.fr/PSMN/modules). To populate it locally you can use the following command:
+The `src/psmn_modules` folder is not really there. It’s a submodule of the project [PSMN/modules](https://gitlab.biologie.ens-lyon.fr/PSMN/modules). To populate it locally you can use the following command:
 
 ```sh
 git submodule init
@@ -95,7 +95,7 @@ The [README.md](https://gitlab.biologie.ens-lyon.fr/PSMN/modules/blob/master/REA
 
 ### `nf_modules`
 
-The `src/nf_modules` folder contains templates of [nextflow](https://www.nextflow.io/) wrappers for the tools available in [Docker](https://www.docker.com/what-docker) and [SGE](http://www.ens-lyon.fr/PSMN/doku.php?id=documentation:tools:sge). The details of the [nextflow](https://www.nextflow.io/) wrapper will be presented in the next section. Alongside the `.nf` and `.config` files, there is a `tests.sh` script to run test on the tool.
+The `src/nf_modules` folder contains templates of [nextflow](https://www.nextflow.io/) wrappers for the tools available in [Docker](https://www.docker.com/what-docker) and [psmn](http://www.ens-lyon.fr/PSMN/doku.php?id=documentation:tools:psmn). The details of the [nextflow](https://www.nextflow.io/) wrapper will be presented in the next section. Alongside the `.nf` and `.config` files, there is a `tests.sh` script to run test on the tool.
 
 # Nextflow pipeline
 
@@ -293,7 +293,7 @@ For the `fastq_sampler.nf` pipeline we used the command `head` present in most b
 
 - install cutadapt locally so nextflow can use it
 - launch the process in a Docker container that has cutadapt installed
-- launch the process with SGE while loading the correct module to have cutadapt available
+- launch the process with psmn while loading the correct module to have cutadapt available
 
 We are not going to use the first option which requires no configuration for nextflow but tedious tools installations. Instead, we are going to use existing *wrappers* and tell nextflow about it. This is what the [src/nf_modules/cutadapt/adaptor_removal_paired.config](https://gitlab.biologie.ens-lyon.fr/pipelines/nextflow/blob/master/src/nf_modules/cutadapt/adaptor_removal_paired.config) is used for.
 
@@ -411,7 +411,7 @@ As we don’t want nextflow to be killed in case of disconnection, we start by l
 ```sh
 tmux
 module load nextflow/0.28.2
-nextflow src/RNASeq.nf -c src/RNASeq.config -profile sge --fastq "data/tiny_dataset/fastq/*_R{1,2}.fastq" --fasta "data/tiny_dataset/fasta/tiny_v2.fasta" --bed "data/tiny_dataset/annot/tiny.bed" -w /scratch/<login>
+nextflow src/RNASeq.nf -c src/RNASeq.config -profile psmn --fastq "data/tiny_dataset/fastq/*_R{1,2}.fastq" --fasta "data/tiny_dataset/fasta/tiny_v2.fasta" --bed "data/tiny_dataset/annot/tiny.bed" -w /scratch/<login>
 ```
 
 To use the scratch for nextflow computations add the option :
