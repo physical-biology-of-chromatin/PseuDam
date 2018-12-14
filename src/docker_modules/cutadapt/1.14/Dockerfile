@@ -2,7 +2,8 @@ FROM alpine:3.8
 MAINTAINER Laurent Modolo
 
 ENV CUTADAPT_VERSION=1.14
-ENV PACKAGES python3 \
+ENV PACKAGES bash \
+             python3 \
              python3-dev \
              musl-dev \
              gcc
