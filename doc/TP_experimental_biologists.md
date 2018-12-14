@@ -120,14 +120,14 @@ head ${fasta} > sample.fasta
 }
 ```
 
-We have the process `sample_fasta` that takes as `fasta_file` channel as input and output a `fasta_sample` channel. The process itself is defined in the `script:` block and within `"""`.
+We have the process `sample_fasta` that takes a `fasta_file` **channel** as input and as output a `fasta_sample` **channel**. The process itself is defined in the `script:` block and within `"""`.
 
 ```Groovy
 input:
 file fasta from fasta_file
 ```
 
-When we zoom on the `input:` block we see that we define a variable `fasta` of type `file` from the `fasta_file` channel. This mean that groovy is going to write a file named as the content of the variable `fasta` in the root of the folder where `script:` is executed.
+When we zoom on the `input:` block we see that we define a variable `fasta` of type `file` from the `fasta_file` **channel**. This mean that groovy is going to write a file named as the content of the variable `fasta` in the root of the folder where `script:` is executed.
 
 
 ```Groovy
@@ -135,9 +135,9 @@ output:
 file "sample.fasta" into fasta_sample
 ```
 
-At the end of the script, a file named `sample.fasta` is found in the root the folder where `script:` is executed and send into the pipeline `fasta_sample`
+At the end of the script, a file named `sample.fasta` is found in the root the folder where `script:` is executed and send into the **channel** `fasta_sample`.
 
-Using the WebIDE of Gitlab, create a file `src/fasta_sampler.nf` with this process and commit to your repository.
+Using the WebIDE of Gitlab, create a file `src/fasta_sampler.nf` with this process and commit it to your repository.
 
 ![webide](img/webide.png)
 
@@ -145,7 +145,7 @@ Using the WebIDE of Gitlab, create a file `src/fasta_sampler.nf` with this proce
 
 Why bother with channels? In the above example, the advantages of channels are not really clear. We could have just given the `fasta` file to the process. But what if we have many fasta files to process? What if we have sub processes to run on each of the sampled fasta files? Nextflow can easily deal with these problems with the help of channels.
 
-Channels are streams of items that are emitted by a source and consumed by a process. A process with a channel as input will be run on every item send through the channel.
+> **Channels** are streams of items that are emitted by a source and consumed by a process. A process with a channel as input will be run on every item send through the channel.
 
 ```Groovy
 Channel
@@ -155,7 +155,7 @@ Channel
 
 Here we defined the channel `fasta_file` that is going to send every fasta file from the folder `data/tiny_dataset/fasta/` into the process that take it as input.
 
-Add the definition of the channel to the `src/fasta_sampler.nf` file and commit to your repository.
+Add the definition of the channel to the `src/fasta_sampler.nf` file and commit it to your repository.
 
 
 ## Run your pipeline locally
@@ -208,7 +208,7 @@ You can run your pipeline again and check the content of the folder `results/sam
 
 ## Fasta everywhere
 
-We ran our pipeline on one fasta file. How nextflow would handle 100 of them? To test that we need to duplicate the `tiny_v2.fasta` file: 
+We ran our pipeline on one fasta file. How would nextflow handle 100 of them? To test that we need to duplicate the `tiny_v2.fasta` file: 
 
 ```sh
 for i in {1..100}
@@ -231,7 +231,7 @@ head ${fasta} > ${fasta.baseName}_sample.fasta
 """
 ```
 
-Add this to your `src/fasta_sampler.nf` file with the WebIDE and commit to your repository before pulling your modifications locally.
+Add this to your `src/fasta_sampler.nf` file with the WebIDE and commit it to your repository before pulling your modifications locally.
 You can run your pipeline again and check the content of the folder `results/sampling`.
 
 # Build your own RNASeq pipeline
@@ -248,7 +248,7 @@ For this practical, we are going to need the following tools:
 
 To initialize these tools, follow the **Installing** section of the [README.md](https://gitlab.biologie.ens-lyon.fr/pipelines/nextflow/blob/master/README.md) file.
 
-**If you are using a CBP computer don’t forget to clean up your docker containers at the end of the practical with the following command:**
+**If you are using a CBP computer don’t forget to clean up your docker containers at the end of the practical with the following commands:**
 
 ```sh
 docker rm $(docker stop $(docker ps -aq))
@@ -259,7 +259,7 @@ docker rmi $(docker images -qf "dangling=true")
 
 The first step of the pipeline is to remove any Illumina adaptors left in your read files.
 
-Open the WebIDE and create a `src/RNASeq.nf` file. Browse for [src/nf_modules/cutadapt/adaptor_removal_paired.nf](https://gitlab.biologie.ens-lyon.fr/pipelines/nextflow/blob/master/src/nf_modules/cutadapt/adaptor_removal_paired.nf), this file contains examples for cutadapt. We are interested in the *Illumina adaptor removal*, *for paired-end data* section of the code. Copy this code in your pipeline and commit.
+Open the WebIDE and create a `src/RNASeq.nf` file. Browse for [src/nf_modules/cutadapt/adaptor_removal_paired.nf](https://gitlab.biologie.ens-lyon.fr/pipelines/nextflow/blob/master/src/nf_modules/cutadapt/adaptor_removal_paired.nf), this file contains examples for cutadapt. We are interested in the *Illumina adaptor removal*, *for paired-end data* section of the code. Copy this code in your pipeline and commit it.
 
 Compared to before, we have few new lines:
 
@@ -267,7 +267,8 @@ Compared to before, we have few new lines:
 params.fastq = "$baseDir/data/fastq/*_{1,2}.fastq"
 ```
 
-We declare a variable that contain the path of the fastq file to look for. The advantage of using `params.fastq` is that now the option `--fastq` in our call to the pipeline allows us to define this variable:
+We declare a variable that contains the path of the fastq file to look for. The advantage of using `params.fastq` is that the option `--fastq` is now a parameter of your pipeline.
+Thus, you can call your pipeline with the `--fastq` option:
 
 ```sh
 ./nextflow src/RNASeq.nf --fastq "data/tiny_dataset/fastq/*_R{1,2}.fastq"
@@ -297,7 +298,7 @@ For the `fastq_sampler.nf` pipeline we used the command `head` present in most b
 
 We are not going to use the first option which requires no configuration for nextflow but tedious tools installations. Instead, we are going to use existing *wrappers* and tell nextflow about it. This is what the [src/nf_modules/cutadapt/adaptor_removal_paired.config](https://gitlab.biologie.ens-lyon.fr/pipelines/nextflow/blob/master/src/nf_modules/cutadapt/adaptor_removal_paired.config) is used for.
 
-Copy the content of this config file to an `src/RNASeq.config` file. This file is structured in process blocks. Here we are only interested in configuring `adaptor_removal` process not `trimming` process. So you can remove the `trimming` block and commit.
+Copy the content of this config file to an `src/RNASeq.config` file. This file is structured in process blocks. Here we are only interested in configuring `adaptor_removal` process not `trimming` process. So you can remove the `trimming` block and commit it.
 
 You can test your pipeline with the following command:
 
@@ -310,7 +311,7 @@ You can test your pipeline with the following command:
 
 The second step of the pipeline is to trim reads by quality.
 
-Browse for [src/nf_modules/UrQt/trimming_paired.nf](https://gitlab.biologie.ens-lyon.fr/pipelines/nextflow/blob/master/src/nf_modules/UrQt/trimming_paired.nf), this file contains examples for UrQt. We are interested in the *for paired-end data* section of the code. Copy the process section code in your pipeline and commit.
+Browse for [src/nf_modules/UrQt/trimming_paired.nf](https://gitlab.biologie.ens-lyon.fr/pipelines/nextflow/blob/master/src/nf_modules/UrQt/trimming_paired.nf), this file contains examples for UrQt. We are interested in the *for paired-end data* section of the code. Copy the process section code in your pipeline and commit it.
 
 This code won’t work if you try to run it: the `fastq_file` channel is already consumed by the `adaptor_removal` process. In nextflow once a channel is used by a process, it ceases to exist. Moreover, we don’t want to trim the input fastq, we want to trim the fastq that comes from the `adaptor_removal` process.
 
@@ -328,7 +329,7 @@ set pair_id, file(reads) from fastq_files_cut
 
 The two processes are now connected by the channel `fastq_files_cut`.
 
-Add the content of the [src/nf_modules/UrQt/trimming_paired.config](https://gitlab.biologie.ens-lyon.fr/pipelines/nextflow/blob/master/src/nf_modules/UrQt/trimming_paired.config) file to your `src/RNASeq.config` file and commit.
+Add the content of the [src/nf_modules/UrQt/trimming_paired.config](https://gitlab.biologie.ens-lyon.fr/pipelines/nextflow/blob/master/src/nf_modules/UrQt/trimming_paired.config) file to your `src/RNASeq.config` file and commit it.
 
 You can test your pipeline.
 
@@ -398,7 +399,7 @@ Then you need to clone your pipeline and get the data:
 
 ```sh
 git config --global http.sslVerify false
-git clone https://gitlab.biologie.ens-lyon.fr/lmodolo/nextflow.git
+git clone https://gitlab.biologie.ens-lyon.fr/<usr_name>/nextflow.git
 cd nextflow/data
 git clone https://gitlab.biologie.ens-lyon.fr/LBMC/tiny_dataset.git
 cd ..

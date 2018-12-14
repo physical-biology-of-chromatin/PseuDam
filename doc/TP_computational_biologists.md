@@ -25,11 +25,11 @@ To run a tool within a [Docker container](https://www.docker.com/what-container)
 
 ```sh
 $ ls -l src/docker_modules/Kallisto/0.43.1/
-total 16K                                                                        
-drwxr-xr-x 2 laurent users 4.0K Jun 5 19:06 ./                                  
-drwxr-xr-x 3 laurent users 4.0K Jun 6 09:49 ../                                 
--rw-r--r-- 1 laurent users  587 Jun  5 19:06 Dockerfile                          
--rwxr-xr-x 1 laurent users 79 Jun 5 19:06 docker_init.sh*                     
+total 16K
+drwxr-xr-x 2 laurent users 4.0K Jun 5 19:06 ./
+drwxr-xr-x 3 laurent users 4.0K Jun 6 09:49 ../
+-rw-r--r-- 1 laurent users  587 Jun  5 19:06 Dockerfile
+-rwxr-xr-x 1 laurent users 79 Jun 5 19:06 docker_init.sh*
 ```
 
 ## [`docker_init.sh`](./src/docker_modules/Kallisto/0.44.0/docker_init.sh)
@@ -83,24 +83,18 @@ The last step to wrap your tool is to make it available in nextflow. For this yo
 ls -lR src/nf_modules/Kallisto
 src/nf_modules/Kallisto/:
 total 12
--rw-r--r-- 1 laurent users 866 Jun 18 17:13 kallisto.config
--rw-r--r-- 1 laurent users 2711 Jun 18 17:13 kallisto.nf
-drwxr-xr-x 2 laurent users 4096 Jun 18 17:14 tests/
-
-src/nf_modules/Kallisto/tests:
-total 16
 -rw-r--r-- 1 laurent users 551 Jun 18 17:14 index.nf
 -rw-r--r-- 1 laurent users 901 Jun 18 17:14 mapping_paired.nf
 -rw-r--r-- 1 laurent users 1037 Jun 18 17:14 mapping_single.nf
 -rwxr-xr-x 1 laurent users 627 Jun 18 17:14 tests.sh*
 ```
 
-The [`kallisto.config`](./src/nf_modules/Kallisto/kallisto.config) file contains instructions for two profiles : `psmn` and `docker`.
-The [`kallisto.nf`](./src/nf_modules/Kallisto/kallisto.nf) file contains nextflow processes to use `Kallisto`.
+The [`.config` files](./src/nf_modules/Kallisto/) file contains instructions for two profiles : `psmn` and `docker`.
+The [`.nf` files](./src/nf_modules/Kallisto/) file contains nextflow processes to use `Kallisto`.
 
-The [`tests/tests.sh`](./src/nf_modules/Kallisto/tests/tests.sh) script (with executable rights), contains a series of nextflow calls on the other `.nf` files of the [`tests/`](./src/nf_modules/kallisto/tests/) folder. Those tests correspond to execution of the processes present in the [`kallisto.nf`](./src/nf_modules/Kallisto/kallisto.nf) file on the [LBMC/tiny_dataset](https://gitlab.biologie.ens-lyon.fr/LBMC/tiny_dataset) dataset with the `docker` profile. You can read the *Running the tests* section of the [README.md](https://gitlab.biologie.ens-lyon.fr/pipelines/nextflow/blob/master/README.md).
+The [`tests/tests.sh`](./src/nf_modules/Kallisto/tests/tests.sh) script (with executable rights), contains a series of nextflow calls on the other `.nf` files of the folder. Those tests correspond to execution of the `*.nf` files present in the [`kallisto folder`](./src/nf_modules/Kallisto/) on the [LBMC/tiny_dataset](https://gitlab.biologie.ens-lyon.fr/LBMC/tiny_dataset) dataset with the `docker` profile. You can read the *Running the tests* section of the [README.md](https://gitlab.biologie.ens-lyon.fr/pipelines/nextflow/blob/master/README.md).
 
-## [`kallisto.config`](./src/nf_modules/Kallisto/kallisto.config)
+## [`kallisto.config`](./src/nf_modules/Kallisto/)
 
 The `.config` file defines the configuration to apply to your process conditionally to the value of the `-profile` option. You must define configuration for at least the `psmn` and `docker` profile.
 
@@ -125,10 +119,10 @@ For example, for `Kallisto` with the version `0.44.0`, we have:
 
 ```Groovy
 process {
-  $index_fasta {
+  withName: index_fasta {
     container = "kallisto:0.44.0"
   }
-  $mapping_fastq {
+  withName: mapping_fastq {
     container = "kallisto:0.44.0"
   }
 }
@@ -141,27 +135,25 @@ For example, for `Kallisto`, we have:
 
 ```Groovy
 process{
-  $index_fasta {
-    beforeScript = "module purge; module load Kallisto/0.44.0"
-    executor = "psmn"
-    cpus = 1
-    memory = "5GB"
-    time = "6h"
-    queueSize = 1000
-    pollInterval = '60sec'
-    queue = 'h6-E5-2667v4deb128'
-    penv = 'openmp8'
+  withName: index_fasta {
+    beforeScript = "source /usr/share/lmod/lmod/init/bash; module use ~/privatemodules"
+    module = "Kallisto/0.44.0"
+    executor = "sge"
+    cpus = 16
+    memory = "30GB"
+    time = "24h"
+    queue = 'E5-2670deb128A,E5-2670deb128B,E5-2670deb128C,E5-2670deb128D,E5-2670deb128E,E5-2670deb128F'
+    penv = 'openmp16'
   }
-  $mapping_fastq {
-    beforeScript = "module purge; module load Kallisto/0.44.0"
-    executor = "psmn"
-    cpus = 4
-    memory = "5GB"
-    time = "6h"
-    queueSize = 1000
-    pollInterval = '60sec'
-    queue = 'h6-E5-2667v4deb128'
-    penv = 'openmp8'
+  withName: mapping_fastq {
+    beforeScript = "source /usr/share/lmod/lmod/init/bash; module use ~/privatemodules"
+    module = "Kallisto/0.44.0"
+    executor = "sge"
+    cpus = 16
+    memory = "30GB"
+    time = "24h"
+    queue = 'E5-2670deb128A,E5-2670deb128B,E5-2670deb128C,E5-2670deb128D,E5-2670deb128E,E5-2670deb128F'
+    penv = 'openmp16'
   }
 }
 ```
