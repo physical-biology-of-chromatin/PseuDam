@@ -4,3 +4,4 @@
 
 ./nextflow src/nf_modules/deepTools/compute_matrix.nf -c src/nf_modules/deepTools/compute_matrix.config -profile docker --bw "results/mapping/bigwig/*.bw" --bed "data/tiny_dataset/annot/tiny.bed"
 
+./nextflow src/nf_modules/deepTools/plot_profile.nf -c src/nf_modules/deepTools/plot_profile.config -profile docker --matrix "results/mapping/region_matrix/*.mat.gz" --title "plot title"

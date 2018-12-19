@@ -19,7 +19,6 @@ Channel
 process compute_matrix {
   tag "$file_id"
   cpus 4
-  echo true
   publishDir "results/mapping/region_matrix/", mode: 'copy'
 
   input:
