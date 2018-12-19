@@ -88,7 +88,7 @@ Bowtie2 | ok | ok | ok
 BWA | ok | ok | ok
 canu | ok | ok | ok
 cutadapt | ok | ok | ok
-deepTools | **no** | ok | ok
+deepTools | ok | ok | ok
 FastQC | ok | ok | ok
 file_handle | **no** | ok | ok
 GATK | **no** | ok | ok
