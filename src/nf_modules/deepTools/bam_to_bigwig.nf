@@ -1,5 +1,4 @@
 params.bam = "$baseDir/data/bam/*.bam"
-params.bamidx = "$baseDir/data/bam/*.idx"
 
 log.info "bams files : ${params.bam}"
 
