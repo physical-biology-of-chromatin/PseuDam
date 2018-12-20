@@ -40,7 +40,7 @@ process bam_to_bigwig {
     set file_id, file(bam), file(idx) from bam_files_indexed
 
   output:
-    set file_id, "*.bw" into sorted_bam_files
+    set file_id, "*.bw" into bw_files
 
   script:
 """
