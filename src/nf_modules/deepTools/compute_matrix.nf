@@ -1,4 +1,4 @@
-params.bam = "$baseDir/data/bigwig/*.bw"
+params.bw = "$baseDir/data/bigwig/*.bw"
 params.bed = "$baseDir/data/annot/*.bed"
 
 log.info "bigwig files : ${params.bw}"
@@ -7,7 +7,6 @@ log.info "bed files : ${params.bed}"
 Channel
   .fromPath( params.bw )
   .ifEmpty { error "Cannot find any bigwig files matching: ${params.bw}" }
-  .map { it -> [(it.baseName =~ /([^\.]*)/)[0][1], it]}
   .set { bw_files }
 
 Channel
@@ -17,12 +16,12 @@ Channel
   .set { bed_files }
 
 process compute_matrix {
-  tag "$file_id"
+  tag "$bed_file_id"
   cpus 4
   publishDir "results/mapping/region_matrix/", mode: 'copy'
 
   input:
-    set bw_file_id, file(bw) from bw_files.collect()
+    file bw from bw_files.collect()
     set bed_file_id, file(bed) from bed_files.collect()
 
   output:
