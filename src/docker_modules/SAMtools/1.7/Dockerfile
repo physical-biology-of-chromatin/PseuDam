@@ -9,7 +9,8 @@ ENV PACKAGES git \
              zlib-dev \
              ncurses-dev \
              bzip2-dev \
-             xz-dev
+             xz-dev \
+             bash
 
 RUN apk update && \
     apk add ${PACKAGES}
