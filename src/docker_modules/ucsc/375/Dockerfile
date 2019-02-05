@@ -19,4 +19,7 @@ ENV UCSC_VERSION=375
 RUN curl -k -L http://hgdownload.soe.ucsc.edu/admin/exe/userApps.v${UCSC_VERSION}.src.tgz -o userApps.v${UCSC_VERSION}.src.tgz &&\
 tar xvf userApps.v${UCSC_VERSION}.src.tgz &&\
 cd userApps/ && \
-make
+make &&\
+mv userApps/bin/* /usr/bin/ &&\
+rm -R userApps.v${UCSC_VERSION}.src.tgz &&\
+rm -R userApps
