@@ -3,7 +3,13 @@ MAINTAINER Laurent Modolo
 
 ENV PACKAGES apt-utils \
              curl \
-             build-essential
+             build-essential \
+             libssl-dev \
+             libpng-dev \
+             uuid-dev \
+             libmysqlclient-dev \
+             rsync
+
 
 RUN apt-get update && \
     apt-get install -y ${PACKAGES}
