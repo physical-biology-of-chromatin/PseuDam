@@ -17,6 +17,9 @@ RUN apt-get update && \
 RUN locale-gen en_US.UTF-8
 ENV LC_ALL=en_US.utf-8
 ENV LANG=en_US.utf-8
+ENV LC_ALL=C.UTF-8
+ENV LANG=C.UTF-8
+
 
 RUN pip3 install multiqc==${MULTIQC_VERSION}
 
