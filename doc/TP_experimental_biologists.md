@@ -47,7 +47,7 @@ The [CONTRIBUTING.md](https://gitlab.biologie.ens-lyon.fr/pipelines/nextflow/blo
 The [data](https://gitlab.biologie.ens-lyon.fr/pipelines/nextflow/tree/master/data) folder will be the place where you store the raw data for your analysis.
 The [results](https://gitlab.biologie.ens-lyon.fr/pipelines/nextflow/tree/master/results) folder will be the place where you store the results of your analysis.
 
-> Note that the content of `data` and `results` folders should never be saved on git.
+> **The content of `data` and `results` folders should never be saved on git.**
 
 The [doc](https://gitlab.biologie.ens-lyon.fr/pipelines/nextflow/tree/master/doc) folder contains the documentation of this practical course.
 
@@ -164,8 +164,19 @@ After writing this first pipeline, you may want to test it. To do that, first cl
 
 You can then run the following commands to download your project on your computer:
 
+If you are on a PSMN computer:
+
 ```sh
+pip install cutadapt=1.14
+PATH="/scratch/lmodolo/:$PATH"
 git config --global http.sslVerify false
+```
+
+and then :
+
+> Don't forget to replace *https://gitlab.biologie.ens-lyon.fr/* by *gitlab_lbmc* if you are using your own computer
+
+```sh
 git clone https://gitlab.biologie.ens-lyon.fr/<usr_name>/nextflow.git
 cd nextflow
 src/install_nextflow.sh
