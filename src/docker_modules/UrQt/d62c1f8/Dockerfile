@@ -1,6 +1,7 @@
 FROM ubuntu:18.04
 MAINTAINER Laurent Modolo
 
+ENV URQT_VERSION=d62c1f8
 ENV PACKAGES git=1:2.17* \
    build-essential=12.4* \
    ca-certificates=20180409 \
