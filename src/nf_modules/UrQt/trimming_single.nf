@@ -10,7 +10,7 @@ Channel
 
 process trimming {
   tag "$file_id"
-  cpus 4
+  echo true
 
   input:
   set file_id, file(reads) from fastq_files

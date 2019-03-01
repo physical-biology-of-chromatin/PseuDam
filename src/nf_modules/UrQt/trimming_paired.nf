@@ -7,7 +7,6 @@ Channel
 
 process trimming {
   tag "${reads}"
-  cpus 4
   publishDir "results/fastq/trimming/", mode: 'copy'
 
   input:
