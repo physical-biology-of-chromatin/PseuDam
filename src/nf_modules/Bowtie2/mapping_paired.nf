@@ -15,7 +15,6 @@ Channel
 
 process mapping_fastq {
   tag "$pair_id"
-  cpus 4
   publishDir "results/mapping/bams/", mode: 'copy'
 
   input:
