@@ -1,0 +1,31 @@
+Bootstrap: library
+From: debian:9
+
+%labels
+MAINTAINER Laurent Modolo
+
+%post
+URQT_VERSION=d62c1f8
+PACKAGES="git \
+g++ \
+make \
+ca-certificates \
+zlib1g-dev"
+
+apt-get update && \
+apt-get install -y --no-install-recommends ${PACKAGES} && \
+apt-get clean
+
+git clone https://github.com/l-modolo/UrQt.git && \
+cd UrQt && \
+git checkout ${URQT_VERSION} && \
+make && \
+cd .. && \
+mv UrQt/UrQt /usr/bin/ && \
+rm -Rf UrQt
+
+%environment
+export URQT_VERSION=d62c1f8
+
+%runscript
+exec /bin/bash "$@"
