@@ -10,7 +10,6 @@ Channel
 
 process index_fasta {
   tag "$fasta_id"
-  cpus 4
   publishDir "results/mapping/index/", mode: 'copy'
 
   input:
