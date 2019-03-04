@@ -11,7 +11,6 @@ Channel
 process fastqc_fastq {
   tag "$file_id"
   publishDir "results/fastq/fastqc/", mode: 'copy'
-  cpus = 1
 
   input:
   set file_id, file(reads) from fastq_files
