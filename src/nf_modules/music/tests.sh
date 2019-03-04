@@ -1,6 +1,6 @@
 cp results/training/bams/sBNLN18.bam results/training/bams/sBNLN18_control.bam
-./nextflow src/nf_modules/MUSIC/peak_calling_single.nf \
-  -c src/nf_modules/MUSIC/peak_calling_single.config \
+./nextflow src/nf_modules/music/peak_calling_single.nf \
+  -c src/nf_modules/music/peak_calling_single.config \
   -profile docker \
   --fasta "results/training/fasta/*.fasta" \
   --bam "results/training/bams/s*.bam" \

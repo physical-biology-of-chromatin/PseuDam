@@ -73,7 +73,7 @@ src/nf_modules/<tool_name>/<tool_version>/tests.sh
 For example to run the tests on `Bowtie2` run:
 
 ```sh
-src/nf_modules/Bowtie2/tests.sh
+src/nf_modules/bowtie2/tests.sh
 ```
 
 ## Available tools

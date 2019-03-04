@@ -1,4 +1,4 @@
-./nextflow src/nf_modules/SRAtoolkit/fastqdump.nf \
-  -c src/nf_modules/SRAtoolkit/fastqdump.config \
+./nextflow src/nf_modules/sratoolkit/fastqdump.nf \
+  -c src/nf_modules/sratoolkit/fastqdump.config \
   -profile docker \
-  --list_srr "src/nf_modules/SRAtoolkit/list-srr.txt"
+  --list_srr "src/nf_modules/sratoolkit/list-srr.txt"
