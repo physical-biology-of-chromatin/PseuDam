@@ -1,0 +1,20 @@
+Bootstrap: docker
+From: ubuntu:18.04
+
+%labels
+MAINTAINER Laurent Modolo
+
+%post
+PIGZ_VERSION=2.4
+PACKAGES=pigz=${PIGZ_VERSION}*
+
+apt-get update && \
+apt-get install -y --no-install-recommends ${PACKAGES} && \
+apt-get clean
+
+%environment
+export PIGZ_VERSION=2.4
+export PACKAGES=pigz=${PIGZ_VERSION}*
+
+%runscript
+exec /bin/bash "$@"
