@@ -1,0 +1,30 @@
+Bootstrap: docker
+From: ubuntu:18.04
+
+%labels
+MAINTAINER Laurent Modolo
+
+%post
+SAMBLASTER_VERSION=0.1.24
+PACKAGES="curl \
+ca-certificates \
+build-essential \
+zlib1g-dev"
+
+apt-get update && \
+apt-get install -y --no-install-recommends ${PACKAGES} && \
+apt-get clean
+
+curl -k -L https://github.com/GregoryFaust/samblaster/releases/download/v.${SAMBLASTER_VERSION}/samblaster-v.${SAMBLASTER_VERSION}.tar.gz -o samblaster-v.${SAMBLASTER_VERSION}.tar.gz && \
+tar xvf samblaster-v.${SAMBLASTER_VERSION}.tar.gz && \
+cd samblaster-v.${SAMBLASTER_VERSION}/ && \
+make && \
+cp samblaster /usr/bin && \
+cd .. && \
+rm -R samblaster-v.${SAMBLASTER_VERSION}/
+
+%environment
+export SAMBLASTER_VERSION=0.1.24
+
+%runscript
+exec /bin/bash "$@"
