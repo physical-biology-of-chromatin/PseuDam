@@ -12,7 +12,6 @@ Channel
 
 process plot_profile {
   tag "$file_id"
-  cpus 4
   publishDir "results/mapping/region_matrix/", mode: 'copy'
 
   input:

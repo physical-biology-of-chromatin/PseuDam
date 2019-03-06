@@ -15,7 +15,6 @@ bam_files.into{
 
 process index_bam {
   tag "$file_id"
-  cpus 4
 
   input:
     set file_id, file(bam) from bam_files_index
@@ -33,7 +32,7 @@ bam_files_indexed = bam_files_bigwig.join(indexed_bam_file, by: 0)
 
 process bam_to_bigwig {
   tag "$file_id"
-  cpus 4
+
   publishDir "results/mapping/bigwig/", mode: 'copy'
 
   input:

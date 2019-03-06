@@ -17,7 +17,6 @@ Channel
 
 process compute_matrix {
   tag "$bed_file_id"
-  cpus 4
   publishDir "results/mapping/region_matrix/", mode: 'copy'
 
   input:
