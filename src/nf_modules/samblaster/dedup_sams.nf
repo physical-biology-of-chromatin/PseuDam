@@ -10,7 +10,6 @@ Channel
 
 process dedup_sam {
   tag "$file_id"
-  cpus 4
 
   input:
     set file_id, file(bam) from bam_files

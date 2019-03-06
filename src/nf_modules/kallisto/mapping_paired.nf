@@ -15,7 +15,6 @@ Channel
 
 process mapping_fastq {
   tag "$reads"
-  cpus 4
   publishDir "results/mapping/quantification/", mode: 'copy'
 
   input:

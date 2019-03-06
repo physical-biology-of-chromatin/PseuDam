@@ -14,7 +14,6 @@ Channel
 
 process index_fasta {
   tag "$fasta.baseName"
-  cpus 4
   publishDir "results/mapping/index/", mode: 'copy'
 
   input:

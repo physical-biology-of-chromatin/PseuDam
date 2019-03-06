@@ -10,7 +10,6 @@ Channel
 
 process split_bam {
   tag "$file_id"
-  cpus 2
 
   input:
     set file_id, file(bam) from bam_files
