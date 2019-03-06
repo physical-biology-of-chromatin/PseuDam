@@ -1,14 +1,11 @@
 FROM samtools:1.7
 MAINTAINER Laurent Modolo
 
-ENV PACKAGES git=1:2.17* \
-   build-essential=12.4* \
-   ca-certificates=20180409 \
-   zlib1g-dev=1:1.2.11*
+ENV MUSIC_VERSION=6613c53
+ENV PACKAGES g++
 
-RUN apt-get update && \
-    apt-get install -y --no-install-recommends ${PACKAGES} && \
-    apt-get clean
+RUN apk update && \
+    apk add ${PACKAGES}
 
 RUN git clone https://github.com/gersteinlab/MUSIC.git && \
   cd MUSIC && \
