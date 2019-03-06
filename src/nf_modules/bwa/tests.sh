@@ -13,7 +13,7 @@
 ./nextflow src/nf_modules/bwa/mapping_paired.nf \
   -c src/nf_modules/bwa/mapping_paired.config \
   -profile docker \
-  --index "results/mapping/index/tiny_v2*" \
+  --index "results/mapping/index/tiny_v2.*" \
   --fastq "data/tiny_dataset/fastq/tiny*_R{1,2}.fastq" \
   -resume
 
@@ -35,7 +35,7 @@ if [ -x "$(command -v singularity)" ]; then
 ./nextflow src/nf_modules/bwa/mapping_paired.nf \
   -c src/nf_modules/bwa/mapping_paired.config \
   -profile singularity \
-  --index "results/mapping/index/tiny_v2*" \
+  --index "results/mapping/index/tiny_v2.*" \
   --fastq "data/tiny_dataset/fastq/tiny*_R{1,2}.fastq" \
   -resume
 
