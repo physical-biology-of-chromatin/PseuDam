@@ -5,4 +5,5 @@ cp results/training/bams/sBNLN18.bam results/training/bams/sBNLN18_control.bam
   --fasta "results/training/fasta/*.fasta" \
   --bam "results/training/bams/s*.bam" \
   --index "results/training/mapping/index/*" \
-  --read_size 50 --frag_size 300
+  --read_size 50 --frag_size 300 \
+  -resume

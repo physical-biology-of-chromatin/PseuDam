@@ -23,7 +23,6 @@ Channel
 
 process fasta_from_bed {
   tag "${bed.baseName}"
-  cpus 4
   publishDir "results/fasta/", mode: 'copy'
 
   input:
