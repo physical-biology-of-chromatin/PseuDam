@@ -1,9 +1,9 @@
-cp results/training/bams/sBNLN18.bam results/training/bams/sBNLN18_control.bam
+cp data/tiny_dataset/map/tiny_v2.sort.bam data/tiny_dataset/map/tiny_v2_control.sort.bam
 ./nextflow src/nf_modules/music/peak_calling_single.nf \
   -c src/nf_modules/music/peak_calling_single.config \
   -profile docker \
-  --fasta "results/training/fasta/*.fasta" \
-  --bam "results/training/bams/s*.bam" \
-  --index "results/training/mapping/index/*" \
+  --fasta "data/tiny_dataset/fasta/tiny_v2.fasta" \
+  --bam "data/tiny_dataset/map/*.sort.bam" \
+  --index "data/tiny_dataset/map/*.sort.bam.bai*" \
   --read_size 50 --frag_size 300 \
   -resume
