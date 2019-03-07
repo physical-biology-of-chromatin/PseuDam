@@ -24,7 +24,7 @@ process mapping_fastq {
 
   input:
   set file_id, file(reads) from fastq_files
-  file index from index_files.toList()
+  file index from index_files.collect()
 
   output:
   file "*" into count_files
@@ -37,7 +37,6 @@ process mapping_fastq {
     }
   }
 """
-ls -l
 rsem-calculate-expression --bowtie2 \
 --bowtie2-path \$(which bowtie2 | sed 's/bowtie2\$//g') \
 --bowtie2-sensitivity-level "very_sensitive" \

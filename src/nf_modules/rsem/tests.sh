@@ -9,7 +9,7 @@
   -c src/nf_modules/rsem/quantification_single.config \
   -profile docker \
   --index "results/mapping/index/tiny_v2.index*" \
-  --fastq "data/tiny_dataset/fastq/tiny*_S.fastq" \
+  --fastq "data/tiny_dataset/fastq/tiny*_R1.fastq" \
   -resume
 
 ./nextflow src/nf_modules/rsem/quantification_paired.nf \
@@ -32,7 +32,7 @@ if [ -x "$(command -v singularity)" ]; then
   -c src/nf_modules/rsem/quantification_single.config \
   -profile docker \
   --index "results/mapping/index/tiny_v2.index*" \
-  --fastq "data/tiny_dataset/fastq/tiny*_S.fastq" \
+  --fastq "data/tiny_dataset/fastq/tiny*_R1.fastq" \
   -resume
 
 ./nextflow src/nf_modules/rsem/quantification_paired.nf \
