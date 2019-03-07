@@ -2,7 +2,9 @@ FROM ubuntu:18.04
 MAINTAINER Laurent Modolo
 
 ENV SAMBLASTER_VERSION=0.1.24
+ENV SAMTOOLS_VERSION=1.7
 ENV PACKAGES curl=7.58.0* \
+    samtools=${SAMTOOLS_VERSION}* \
     ca-certificates=20180409 \
     build-essential=12.4* \
     zlib1g-dev=1:1.2.11*

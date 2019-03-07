@@ -10,6 +10,7 @@ SAMTOOLS_VERSION=1.7
 PACKAGES="git \
              make \
              gcc \
+             g++ \
              musl-dev \
              zlib-dev \
              ncurses-dev \
@@ -21,9 +22,13 @@ PACKAGES="git \
 apk update && \
 apk add ${PACKAGES}
 
-apt-get update && \
-apt-get install -y --no-install-recommends ${PACKAGES} && \
-apt-get clean
+curl -L -o samtools-${SAMTOOLS_VERSION}.tar.bz2 \
+    http://jaist.dl.sourceforge.net/project/samtools/samtools/${SAMTOOLS_VERSION}/samtools-${SAMTOOLS_VERSION}.tar.bz2 \
+ && tar jxvf samtools-${SAMTOOLS_VERSION}.tar.bz2  \
+ && cd samtools-${SAMTOOLS_VERSION}/ \
+ && ./configure --without-curses \
+ && make \
+ && make install
 
 git clone https://github.com/gersteinlab/MUSIC.git && \
 cd MUSIC && \
