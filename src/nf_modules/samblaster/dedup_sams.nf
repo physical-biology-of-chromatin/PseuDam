@@ -19,8 +19,8 @@ process dedup_sam {
   script:
 """
 samtools view -h ${bam} | \
-samblaster --addMateTags | \
-samtools view -Sb - > ${file_id}_dedub.bam
+samblaster --addMateTags 2> /dev/null | \
+samtools view -Sb - > ${file_id}_dedup.bam
 """
 }
 
