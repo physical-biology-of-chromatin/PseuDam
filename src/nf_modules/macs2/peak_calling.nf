@@ -2,6 +2,7 @@ params.genome_size = "hs"
 params.control_tag = "control"
 log.info "bam files : ${params.bam}"
 log.info "genome size : ${params.genome_size}"
+log.info "control tag : ${params.control_tag}"
 
 Channel
   .fromPath( params.bam )
@@ -22,7 +23,11 @@ process peak_calling {
 
   input:
     set file_id, file(file_ip) from bam_files_ip
-    set file_id_control, file(file_control) from bam_files_control.collect()
+    set file_id_control, file(file_control) from bam_files_control
+      .ifEmpty {
+        error "Cannot find any bam files matching: ${params.control_tag}"
+      }
+      .collect()
 
   output:
     file "*" into peak_output
