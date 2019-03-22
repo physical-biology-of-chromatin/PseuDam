@@ -95,7 +95,7 @@ GATK | **no** | ok | ok
 HISAT2 | **no** | ok | **no**
 HTSeq | ok | ok | ok
 Kallisto | ok | ok | ok
-MACS2 | **no** | ok | ok
+MACS2 | ok | ok | ok
 MultiQC | ok | ok | ok
 MUSIC | ok | ok | ok
 picard | **no** | ok | ok
@@ -108,6 +108,7 @@ SRAtoolkit | ok | ok | ok
 Salmon | **no** | ok | ok
 TopHat | **no** | ok | ok
 Trimmomatic | **no** | ok | ok
+UMItools  | **no** | ok | ok
 UrQt | ok | ok | ok
 
 
@@ -117,7 +118,7 @@ Please read [CONTRIBUTING.md](CONTRIBUTING.md) for details on our code of conduc
 
 ## Versioning
 
-We use [SemVer](http://semver.org/) for versioning. For the versions available, see the [tags on this repository](https://gitlab.biologie.ens-lyon.fr/pipelines/nextflow/tags). 
+We use [SemVer](http://semver.org/) for versioning. For the versions available, see the [tags on this repository](https://gitlab.biologie.ens-lyon.fr/pipelines/nextflow/tags).
 
 ## Authors
 
@@ -128,4 +129,3 @@ See also the list of [contributors](https://gitlab.biologie.ens-lyon.fr/pipeline
 ## License
 
 This project is licensed under the CeCiLL License- see the [LICENSE](LICENSE) file for details
-
