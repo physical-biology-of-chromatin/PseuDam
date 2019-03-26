@@ -89,6 +89,7 @@ BWA | ok | ok | ok
 canu | ok | ok | ok
 cutadapt | ok | ok | ok
 deepTools | ok | ok | ok
+fastp | ok | ok | ok
 FastQC | ok | ok | ok
 file_handle | **no** | ok | ok
 GATK | **no** | ok | ok
@@ -101,11 +102,12 @@ MUSIC | ok | ok | ok
 picard | **no** | ok | ok
 pigz | **no** | ok | ok
 RSEM | ok | ok | ok
+Salmon | **no** | ok | ok
 sambamba | ok | ok | ok
 samblaster | ok | ok | ok
 SAMtools | ok | ok | ok
 SRAtoolkit | ok | ok | ok
-Salmon | **no** | ok | ok
+subread | **no** | ok | ok
 TopHat | **no** | ok | ok
 Trimmomatic | **no** | ok | ok
 UMItools  | **no** | ok | ok
