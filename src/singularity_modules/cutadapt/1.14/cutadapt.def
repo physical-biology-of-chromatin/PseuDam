@@ -1,0 +1,27 @@
+Bootstrap: docker
+From: ubuntu:18.04
+
+%labels
+MAINTAINER Laurent Modolo
+
+%post
+CUTADAPT_VERSION=1.14
+PACKAGES="bash \
+             python3 \
+             python3-dev \
+             musl-dev \
+             python3-pip \
+             gcc"
+
+apt-get update && \
+apt-get install -y --no-install-recommends ${PACKAGES} && \
+apt-get clean
+
+pip3 install setuptools
+pip3 install cutadapt==${CUTADAPT_VERSION}
+
+%environment
+export CUTADAPT_VERSION=1.14
+
+%runscript
+exec /bin/bash "$@"

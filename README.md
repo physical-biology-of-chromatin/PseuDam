@@ -73,35 +73,44 @@ src/nf_modules/<tool_name>/<tool_version>/tests.sh
 For example to run the tests on `Bowtie2` run:
 
 ```sh
-src/nf_modules/Bowtie2/tests.sh
+src/nf_modules/bowtie2/tests.sh
 ```
 
 ## Available tools
 
-| tool | nf module | docker module | sge module |
+| tool | nf module | docker module | psmn module |
 |------|:---------:|:-------------:|:----------:|
 BEDtools | ok | ok | ok
+BFCtools |**no**  | ok | ok
+bioawk |**no**  | ok | ok
 Bowtie | ok | ok | **no**
 Bowtie2 | ok | ok | ok
+BWA | ok | ok | ok
 canu | ok | ok | ok
 cutadapt | ok | ok | ok
-deepTools | **no** | ok | ok
+deepTools | ok | ok | ok
+fastp | ok | ok | ok
 FastQC | ok | ok | ok
 file_handle | **no** | ok | ok
+GATK | **no** | ok | ok
 HISAT2 | **no** | ok | **no**
 HTSeq | ok | ok | ok
 Kallisto | ok | ok | ok
-MACS2 | **no** | ok | ok
+MACS2 | ok | ok | ok
 MultiQC | ok | ok | ok
 MUSIC | ok | ok | ok
 picard | **no** | ok | ok
 pigz | **no** | ok | ok
 RSEM | ok | ok | ok
+Salmon | **no** | ok | ok
+sambamba | ok | ok | ok
+samblaster | ok | ok | ok
 SAMtools | ok | ok | ok
 SRAtoolkit | ok | ok | ok
-Salmon | **no** | ok | ok
+subread | **no** | ok | ok
 TopHat | **no** | ok | ok
 Trimmomatic | **no** | ok | ok
+UMItools  | **no** | ok | ok
 UrQt | ok | ok | ok
 
 
@@ -111,7 +120,7 @@ Please read [CONTRIBUTING.md](CONTRIBUTING.md) for details on our code of conduc
 
 ## Versioning
 
-We use [SemVer](http://semver.org/) for versioning. For the versions available, see the [tags on this repository](https://gitlab.biologie.ens-lyon.fr/pipelines/nextflow/tags). 
+We use [SemVer](http://semver.org/) for versioning. For the versions available, see the [tags on this repository](https://gitlab.biologie.ens-lyon.fr/pipelines/nextflow/tags).
 
 ## Authors
 
@@ -122,4 +131,3 @@ See also the list of [contributors](https://gitlab.biologie.ens-lyon.fr/pipeline
 ## License
 
 This project is licensed under the CeCiLL License- see the [LICENSE](LICENSE) file for details
-

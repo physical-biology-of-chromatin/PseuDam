@@ -1,0 +1,19 @@
+Bootstrap: docker
+From: ubuntu:18.04
+
+%labels
+MAINTAINER Laurent Modolo
+
+%post
+CANU_VERSION=1.6
+PACKAGES=canu=${CANU_VERSION}*
+
+apt-get update && \
+apt-get install -y --no-install-recommends ${PACKAGES} && \
+apt-get clean
+
+%environment
+export CANU_VERSION=1.6
+
+%runscript
+exec /bin/bash "$@"

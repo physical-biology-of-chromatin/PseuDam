@@ -1,0 +1,30 @@
+Bootstrap: docker
+From: ubuntu:18.04
+
+%files
+src/singularity_modules/picard/2.18.11/PicardCommandLine /usr/bin/
+
+%labels
+MAINTAINER Laurent Modolo
+
+%post
+PICARD_VERSION=2.18.11
+PACKAGES="default-jre \
+curl \
+ca-certificates"
+
+
+apt-get update && \
+apt-get install -y --no-install-recommends ${PACKAGES} && \
+apt-get clean
+
+curl -k -L https://github.com/broadinstitute/picard/releases/download/${PICARD_VERSION}/picard.jar -o picard.jar && \
+mkdir -p /usr/share/java/  && \
+mv picard.jar /usr/share/java/
+chmod +x /usr/bin/PicardCommandLine
+
+%environment
+export PICARD_VERSION=2.18.11
+
+%runscript
+exec /bin/bash "$@"

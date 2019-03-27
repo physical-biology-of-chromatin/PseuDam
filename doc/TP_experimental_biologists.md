@@ -42,15 +42,16 @@ You are now on the main page of your fork of the [pipelines/nextflow](https://gi
 
 The [README.md](https://gitlab.biologie.ens-lyon.fr/pipelines/nextflow/blob/master/README.md) file contains instructions to run your pipeline and test its installation.
 
-The [CONTRIBUTING.md](https://gitlab.biologie.ens-lyon.fr/pipelines/nextflow/blob/master/CONTRIBUTING.md) file contains guidelines to follow if you want to contribute to the [pipelines/nextflow](https://gitlab.biologie.ens-lyon.fr/pipelines/nextflow) (making a merge request for example).
+The [CONTRIBUTING.md](https://gitlab.biologie.ens-lyon.fr/pipelines/nextflow/blob/master/CONTRIBUTING.md) file contains guidelines if you want to contribute to the [pipelines/nextflow](https://gitlab.biologie.ens-lyon.fr/pipelines/nextflow) (making a merge request for example).
 
 The [data](https://gitlab.biologie.ens-lyon.fr/pipelines/nextflow/tree/master/data) folder will be the place where you store the raw data for your analysis.
 The [results](https://gitlab.biologie.ens-lyon.fr/pipelines/nextflow/tree/master/results) folder will be the place where you store the results of your analysis.
-Note that the content of these two folders should never be saved on git.
+
+> **The content of `data` and `results` folders should never be saved on git.**
 
 The [doc](https://gitlab.biologie.ens-lyon.fr/pipelines/nextflow/tree/master/doc) folder contains the documentation of this practical course.
 
-And most interestingly for you, the [src](https://gitlab.biologie.ens-lyon.fr/pipelines/nextflow/tree/master/src) contains code to wrap tools. This folder contains two subdirectories. A `docker_modules`, a `nf_modules` and a `sge_modules` folder. 
+And most interestingly for you, the [src](https://gitlab.biologie.ens-lyon.fr/pipelines/nextflow/tree/master/src) contains code to wrap tools. This folder contains two subdirectories. A `docker_modules`, a `nf_modules` and a `psmn_modules` folder. 
 
 ### `docker_modules`
 
@@ -58,16 +59,16 @@ The `src/docker_modules` contains the code to wrap tools in [Docker](https://www
 
 ```sh
 ls -l src/docker_modules/
-rwxr-xr-x  3 laurent _lpoperator   96 May 25 15:42 BEDtools/
-drwxr-xr-x  4 laurent _lpoperator  128 Jun 5 16:14 Bowtie2/
-drwxr-xr-x  3 laurent _lpoperator   96 May 25 15:42 FastQC/
-drwxr-xr-x  4 laurent _lpoperator  128 Jun 5 16:14 HTSeq/
+rwxr-xr-x  3 laurent _lpoperator   96 May 25 15:42 bedtools/
+drwxr-xr-x  4 laurent _lpoperator  128 Jun 5 16:14 bowtie2/
+drwxr-xr-x  3 laurent _lpoperator   96 May 25 15:42 fastqc/
+drwxr-xr-x  4 laurent _lpoperator  128 Jun 5 16:14 htseq/
 ```
 
 To each `tools/version` corresponds two files:
 
 ```sh
-ls -l src/docker_modules/Bowtie2/2.3.4.1/
+ls -l src/docker_modules/bowtie2/2.3.4.1/
 -rw-r--r-- 1 laurent _lpoperator  283 Jun  5 15:07 Dockerfile
 -rwxr-xr-x  1 laurent _lpoperator   79 Jun 5 16:18 docker_init.sh*
 ```
@@ -81,9 +82,9 @@ By running this script you will be able to easily install tools in different ver
 - You don’t have to bother with tedious installation procedures, somebody else already did the job and wrote a `Dockerfile`.
 - You can easily keep [containers](https://www.docker.com/what-container) for different version of the same tools.
 
-### `sge_modules`
+### `psmn_modules`
 
-The `src/sge_modules` folder is not really there. It’s a submodule of the project [PSMN/modules](https://gitlab.biologie.ens-lyon.fr/PSMN/modules). To populate it locally you can use the following command:
+The `src/psmn_modules` folder is not really there. It’s a submodule of the project [PSMN/modules](https://gitlab.biologie.ens-lyon.fr/PSMN/modules). To populate it locally you can use the following command:
 
 ```sh
 git submodule init
@@ -94,7 +95,7 @@ The [README.md](https://gitlab.biologie.ens-lyon.fr/PSMN/modules/blob/master/REA
 
 ### `nf_modules`
 
-The `src/nf_modules` folder contains templates of [nextflow](https://www.nextflow.io/) wrappers for the tools available in [Docker](https://www.docker.com/what-docker) and [SGE](http://www.ens-lyon.fr/PSMN/doku.php?id=documentation:tools:sge). The details of the [nextflow](https://www.nextflow.io/) wrapper will be presented in the next section. Alongside the `.nf` and `.config` there is a `tests` folder that contains a `tests.sh` script to run test on the tool.
+The `src/nf_modules` folder contains templates of [nextflow](https://www.nextflow.io/) wrappers for the tools available in [Docker](https://www.docker.com/what-docker) and [psmn](http://www.ens-lyon.fr/PSMN/doku.php?id=documentation:tools:psmn). The details of the [nextflow](https://www.nextflow.io/) wrapper will be presented in the next section. Alongside the `.nf` and `.config` files, there is a `tests.sh` script to run test on the tool.
 
 # Nextflow pipeline
 
@@ -119,14 +120,14 @@ head ${fasta} > sample.fasta
 }
 ```
 
-We have the process `sample_fasta` that takes as `fasta_file` channel as input and output a `fasta_sample` channel. The process itself is defined in the `script:` block and within `"""`.
+We have the process `sample_fasta` that takes a `fasta_file` **channel** as input and as output a `fasta_sample` **channel**. The process itself is defined in the `script:` block and within `"""`.
 
 ```Groovy
 input:
 file fasta from fasta_file
 ```
 
-When we zoom on the `input:` block we see that we define a variable `fasta` of type `file` from the `fasta_file` channel. This mean that groovy is going to write a file named as the content of the variable `fasta` in the root of the folder where `script:` is executed.
+When we zoom on the `input:` block we see that we define a variable `fasta` of type `file` from the `fasta_file` **channel**. This mean that groovy is going to write a file named as the content of the variable `fasta` in the root of the folder where `script:` is executed.
 
 
 ```Groovy
@@ -134,9 +135,9 @@ output:
 file "sample.fasta" into fasta_sample
 ```
 
-At the end of the script, a file named `sample.fasta` is found in the root the folder where `script:` is executed and send into the pipeline `fasta_sample`
+At the end of the script, a file named `sample.fasta` is found in the root the folder where `script:` is executed and send into the **channel** `fasta_sample`.
 
-Using the WebIDE of Gitlab, create a file `src/fasta_sampler.nf` with this process and commit to your repository.
+Using the WebIDE of Gitlab, create a file `src/fasta_sampler.nf` with this process and commit it to your repository.
 
 ![webide](img/webide.png)
 
@@ -144,7 +145,7 @@ Using the WebIDE of Gitlab, create a file `src/fasta_sampler.nf` with this proce
 
 Why bother with channels? In the above example, the advantages of channels are not really clear. We could have just given the `fasta` file to the process. But what if we have many fasta files to process? What if we have sub processes to run on each of the sampled fasta files? Nextflow can easily deal with these problems with the help of channels.
 
-Channels are streams of items that are emitted by a source and consumed by a process. A process with a channel as input will be run on every item send through the channel.
+> **Channels** are streams of items that are emitted by a source and consumed by a process. A process with a channel as input will be run on every item send through the channel.
 
 ```Groovy
 Channel
@@ -152,9 +153,9 @@ Channel
   .set { fasta_file }
 ```
 
-Here we defined the channel `fasta_file` that is going to send every fasta file from the folder `data/fasta/` into the process that take it as input.
+Here we defined the channel `fasta_file` that is going to send every fasta file from the folder `data/tiny_dataset/fasta/` into the process that take it as input.
 
-Add the definition of the channel to the `src/fasta_sampler.nf` file and commit to your repository.
+Add the definition of the channel to the `src/fasta_sampler.nf` file and commit it to your repository.
 
 
 ## Run your pipeline locally
@@ -163,8 +164,20 @@ After writing this first pipeline, you may want to test it. To do that, first cl
 
 You can then run the following commands to download your project on your computer:
 
+If you are on a PSMN computer:
+
 ```sh
-git clone -c http.sslVerify=false https://gitlab.biologie.ens-lyon.fr/<usr_name>/nextflow.git
+pip install cutadapt=1.14
+PATH="/scratch/lmodolo/:$PATH"
+git config --global http.sslVerify false
+```
+
+and then :
+
+> Don't forget to replace *https://gitlab.biologie.ens-lyon.fr/* by *gitlab_lbmc* if you are using your own computer
+
+```sh
+git clone https://gitlab.biologie.ens-lyon.fr/<usr_name>/nextflow.git
 cd nextflow
 src/install_nextflow.sh
 ```
@@ -173,7 +186,7 @@ We also need data to run our pipeline:
 
 ```
 cd data
-git clone -c http.sslVerify=false https://gitlab.biologie.ens-lyon.fr/LBMC/tiny_dataset.git
+git clone https://gitlab.biologie.ens-lyon.fr/LBMC/tiny_dataset.git
 cd ..
 ```
 
@@ -206,7 +219,7 @@ You can run your pipeline again and check the content of the folder `results/sam
 
 ## Fasta everywhere
 
-We ran our pipeline on one fasta file. How nextflow would handle 100 of them? To test that we need to duplicate the `tiny_v2.fasta` file: 
+We ran our pipeline on one fasta file. How would nextflow handle 100 of them? To test that we need to duplicate the `tiny_v2.fasta` file: 
 
 ```sh
 for i in {1..100}
@@ -229,7 +242,7 @@ head ${fasta} > ${fasta.baseName}_sample.fasta
 """
 ```
 
-Add this to your `src/fasta_sampler.nf` file with the WebIDE and commit to your repository before pulling your modifications locally.
+Add this to your `src/fasta_sampler.nf` file with the WebIDE and commit it to your repository before pulling your modifications locally.
 You can run your pipeline again and check the content of the folder `results/sampling`.
 
 # Build your own RNASeq pipeline
@@ -246,7 +259,7 @@ For this practical, we are going to need the following tools:
 
 To initialize these tools, follow the **Installing** section of the [README.md](https://gitlab.biologie.ens-lyon.fr/pipelines/nextflow/blob/master/README.md) file.
 
-If you are using a CBP computer don’t forget to clean up your docker containers at the end of the practical with the following command:
+**If you are using a CBP computer don’t forget to clean up your docker containers at the end of the practical with the following commands:**
 
 ```sh
 docker rm $(docker stop $(docker ps -aq))
@@ -255,9 +268,9 @@ docker rmi $(docker images -qf "dangling=true")
 
 ## Cutadapt
 
-The first step of the pipeline is to remove any Illumina adaptor left in your read files.
+The first step of the pipeline is to remove any Illumina adaptors left in your read files.
 
-Open the WebIDE and create a `src/RNASeq.nf` file. Browse for [src/nf_modules/cutadapt/cutadapt.nf](https://gitlab.biologie.ens-lyon.fr/pipelines/nextflow/blob/master/src/nf_modules/cutadapt/cutadapt.nf), this file contains examples for cutadapt. We are interested in the *Illumina adaptor removal*, *for paired-end data* section of the code. Copy this code in your pipeline and commit.
+Open the WebIDE and create a `src/RNASeq.nf` file. Browse for [src/nf_modules/cutadapt/adaptor_removal_paired.nf](https://gitlab.biologie.ens-lyon.fr/pipelines/nextflow/blob/master/src/nf_modules/cutadapt/adaptor_removal_paired.nf), this file contains examples for cutadapt. We are interested in the *Illumina adaptor removal*, *for paired-end data* section of the code. Copy this code in your pipeline and commit it.
 
 Compared to before, we have few new lines:
 
@@ -265,7 +278,8 @@ Compared to before, we have few new lines:
 params.fastq = "$baseDir/data/fastq/*_{1,2}.fastq"
 ```
 
-We declare a variable that contain the path of the fastq file to look for. The advantage of using `params.fastq` is that now the option `--fastq` in our call to the pipeline allows us to define this variable:
+We declare a variable that contains the path of the fastq file to look for. The advantage of using `params.fastq` is that the option `--fastq` is now a parameter of your pipeline.
+Thus, you can call your pipeline with the `--fastq` option:
 
 ```sh
 ./nextflow src/RNASeq.nf --fastq "data/tiny_dataset/fastq/*_R{1,2}.fastq"
@@ -291,11 +305,11 @@ For the `fastq_sampler.nf` pipeline we used the command `head` present in most b
 
 - install cutadapt locally so nextflow can use it
 - launch the process in a Docker container that has cutadapt installed
-- launch the process with SGE while loading the correct module to have cutadapt available
+- launch the process with psmn while loading the correct module to have cutadapt available
 
-We are not going to use the first option which requires no configuration for nextflow but tedious tools installations. Instead, we are going to use existing *wrappers* and tell nextflow about it. This is what the [src/nf_modules/cutadapt/cutadapt.config](https://gitlab.biologie.ens-lyon.fr/pipelines/nextflow/blob/master/src/nf_modules/cutadapt/cutadapt.config) is used for.
+We are not going to use the first option which requires no configuration for nextflow but tedious tools installations. Instead, we are going to use existing *wrappers* and tell nextflow about it. This is what the [src/nf_modules/cutadapt/adaptor_removal_paired.config](https://gitlab.biologie.ens-lyon.fr/pipelines/nextflow/blob/master/src/nf_modules/cutadapt/adaptor_removal_paired.config) is used for.
 
-Copy the content of this config file to an `src/RNASeq.config` file. This file is structured in process blocks. Here we are only interested in configuring `adaptor_removal` process not `trimming` process. So you can remove the `trimming` block and commit.
+Copy the content of this config file to an `src/RNASeq.config` file. This file is structured in process blocks. Here we are only interested in configuring `adaptor_removal` process not `trimming` process. So you can remove the `trimming` block and commit it.
 
 You can test your pipeline with the following command:
 
@@ -308,7 +322,7 @@ You can test your pipeline with the following command:
 
 The second step of the pipeline is to trim reads by quality.
 
-Browse for [src/nf_modules/UrQt/urqt.nf](https://gitlab.biologie.ens-lyon.fr/pipelines/nextflow/blob/master/src/nf_modules/UrQt/urqt.nf), this file contains examples for UrQt. We are interested in the *for paired-end data* section of the code. Copy the process section code in your pipeline and commit.
+Browse for [src/nf_modules/urqt/trimming_paired.nf](https://gitlab.biologie.ens-lyon.fr/pipelines/nextflow/blob/master/src/nf_modules/urqt/trimming_paired.nf), this file contains examples for UrQt. We are interested in the *for paired-end data* section of the code. Copy the process section code in your pipeline and commit it.
 
 This code won’t work if you try to run it: the `fastq_file` channel is already consumed by the `adaptor_removal` process. In nextflow once a channel is used by a process, it ceases to exist. Moreover, we don’t want to trim the input fastq, we want to trim the fastq that comes from the `adaptor_removal` process.
 
@@ -326,7 +340,7 @@ set pair_id, file(reads) from fastq_files_cut
 
 The two processes are now connected by the channel `fastq_files_cut`.
 
-Add the content of the [src/nf_modules/UrQt/urqt.config](https://gitlab.biologie.ens-lyon.fr/pipelines/nextflow/blob/master/src/nf_modules/UrQt/urqt.config) file to your `src/RNASeq.config` file and commit.
+Add the content of the [src/nf_modules/urqt/trimming_paired.config](https://gitlab.biologie.ens-lyon.fr/pipelines/nextflow/blob/master/src/nf_modules/urqt/trimming_paired.config) file to your `src/RNASeq.config` file and commit it.
 
 You can test your pipeline.
 
@@ -334,7 +348,7 @@ You can test your pipeline.
 
 Kallisto need the sequences of the transcripts that need to be quantified. We are going to extract these sequences from the reference `data/tiny_dataset/fasta/tiny_v2.fasta` with the `bed` annotation `data/tiny_dataset/annot/tiny.bed`.
 
-You can copy to your `src/RNASeq.nf` file the content of [src/nf_modules/BEDtools/bedtools.nf](https://gitlab.biologie.ens-lyon.fr/pipelines/nextflow/blob/master/src/nf_modules/BEDtools/bedtools.nf) and to your `src/RNASeq.config` file the content of [src/nf_modules/BEDtools/bedtools.config](https://gitlab.biologie.ens-lyon.fr/pipelines/nextflow/blob/master/src/nf_modules/BEDtools/bedtools.config).
+You can copy to your `src/RNASeq.nf` file the content of [src/nf_modules/bedtools/fasta_from_bed.nf](https://gitlab.biologie.ens-lyon.fr/pipelines/nextflow/blob/master/src/nf_modules/bedtools/fasta_from_bed.nf) and to your `src/RNASeq.config` file the content of [src/nf_modules/bedtools/fasta_from_bed.config](https://gitlab.biologie.ens-lyon.fr/pipelines/nextflow/blob/master/src/nf_modules/bedtools/fasta_from_bed.config).
 
 Commit your work and test your pipeline with the following command:
 
@@ -346,7 +360,7 @@ Commit your work and test your pipeline with the following command:
 
 Kallisto run in two steps: the indexation of the reference and the quantification on this index.
 
-You can copy to your `src/RNASeq.nf` file the relevant content of [src/nf_modules/Kallisto/kallisto.nf](https://gitlab.biologie.ens-lyon.fr/pipelines/nextflow/blob/master/src/nf_modules/Kallisto/kallisto.nf) and to your `src/RNASeq.config` file the content of [src/nf_modules/Kallisto/kallisto.config](https://gitlab.biologie.ens-lyon.fr/pipelines/nextflow/blob/master/src/nf_modules/Kallisto/kallisto.config).
+You can copy to your `src/RNASeq.nf` file the content of the files [src/nf_modules/kallisto/indexing.nf](https://gitlab.biologie.ens-lyon.fr/pipelines/nextflow/blob/master/src/nf_modules/kallisto/indexing.nf) and [src/nf_modules/kallisto/mapping_paired.nf](https://gitlab.biologie.ens-lyon.fr/pipelines/nextflow/blob/master/src/nf_modules/kallisto/mapping_paired.nf). You can add to your file `src/RNASeq.config` file the content of the files [src/nf_modules/kallisto/indexing.config](https://gitlab.biologie.ens-lyon.fr/pipelines/nextflow/blob/master/src/nf_modules/kallisto/indexing.config) and [src/nf_modules/kallisto/mapping_paired.config](https://gitlab.biologie.ens-lyon.fr/pipelines/nextflow/blob/master/src/nf_modules/kallisto/mapping_paired.config).
 
 We are going to work with paired-end so only copy the relevant processes. The `index_fasta` process needs to take as input the output of your `fasta_from_bed` process. The `fastq` input of your `mapping_fastq` process needs to take as input the output of your `index_fasta` process and the `trimming` process.
 
@@ -384,12 +398,21 @@ ln -s /Xnfs/lbmcdb/common/modules/modulefiles ~/privatemodules
 echo "module use ~/privatemodules" >> .bashrc
 ```
 
+Create and go to your `scratch` folder:
+
+```sh
+mkdir -p /scratch/<login>
+cd /scratch/<login>
+echo "module use ~/privatemodules" >> .bashrc
+```
+
 Then you need to clone your pipeline and get the data:
 
 ```sh
-git clone -c http.sslVerify=false https://gitlab.biologie.ens-lyon.fr/lmodolo/nextflow.git
+git config --global http.sslVerify false
+git clone https://gitlab.biologie.ens-lyon.fr/<usr_name>/nextflow.git
 cd nextflow/data
-git clone -c http.sslVerify=false https://gitlab.biologie.ens-lyon.fr/LBMC/tiny_dataset.git
+git clone https://gitlab.biologie.ens-lyon.fr/LBMC/tiny_dataset.git
 cd ..
 ```
 
@@ -400,13 +423,13 @@ As we don’t want nextflow to be killed in case of disconnection, we start by l
 ```sh
 tmux
 module load nextflow/0.28.2
-nextflow src/RNASeq.nf -c src/RNASeq.config -profile sge --fastq "data/tiny_dataset/fastq/*_R{1,2}.fastq" --fasta "data/tiny_dataset/fasta/tiny_v2.fasta" --bed "data/tiny_dataset/annot/tiny.bed"
+nextflow src/RNASeq.nf -c src/RNASeq.config -profile psmn --fastq "data/tiny_dataset/fastq/*_R{1,2}.fastq" --fasta "data/tiny_dataset/fasta/tiny_v2.fasta" --bed "data/tiny_dataset/annot/tiny.bed" -w /scratch/<login>
 ```
 
 To use the scratch for nextflow computations add the option :
 
 ```sh
--w /scratch/login
+-w /scratch/<login>
 ```
 
 You just ran your pipeline on the PSMN!

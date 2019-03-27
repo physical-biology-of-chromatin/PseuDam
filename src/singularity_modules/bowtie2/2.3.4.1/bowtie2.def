@@ -1,0 +1,23 @@
+Bootstrap: docker
+From: ubuntu:18.04
+
+%labels
+MAINTAINER Laurent Modolo
+
+%post
+BOWTIE2_VERSION=2.3.4.1
+SAMTOOLS_VERSION=1.7
+PACKAGES="bowtie2=${BOWTIE2_VERSION}* \
+samtools=${SAMTOOLS_VERSION}* \
+perl=5.26.1*"
+
+apt-get update && \
+apt-get install -y --no-install-recommends ${PACKAGES} && \
+apt-get clean
+
+%environment
+export BOWTIE2_VERSION=2.3.4.1
+export SAMTOOLS_VERSION=1.7
+
+%runscript
+exec /bin/bash "$@"

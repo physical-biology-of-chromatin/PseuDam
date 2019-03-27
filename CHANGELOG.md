@@ -4,6 +4,24 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+
+## [0.2.9] - 2019-03-26
+### Added
+- Add new tools (fastq, macs2, umitools, ...)
+- singularity support
+
+### Changed
+- every tool name is now in lowercase in each module section
+
+## [0.2.7] - 2018-10-23
+### Added
+- Add new tools (BWA, GATK, sambamba, ...)
+
+### Changed
+- `sge` profile is now called `psmn` profile to prepare tests in the CCIN2P3
+- every `psmn` config file has an update configuration for mono or 16 cpus queues
+- update process naming to follow new nextflow format
+
 ## [0.2.6] - 2018-08-23
 ### Added
 - Added `src/training_dataset.nf` to build a small training dataset from NGS data
@@ -78,4 +96,3 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.1.0] - 2018-05-06
 This is the first working version of the repository as a nextflow module repository
-

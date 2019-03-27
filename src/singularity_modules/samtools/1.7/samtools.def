@@ -1,0 +1,35 @@
+Bootstrap: docker
+From: alpine:3.8
+
+%labels
+MAINTAINER Laurent Modolo
+
+%post
+SAMTOOLS_VERSION=1.7
+PACKAGES="git \
+             make \
+             gcc \
+             musl-dev \
+             zlib-dev \
+             ncurses-dev \
+             bzip2-dev \
+             xz-dev \
+             bash"
+apk update && \
+apk add ${PACKAGES}
+
+git clone https://github.com/samtools/htslib.git && \
+cd htslib && \
+git checkout ${SAMTOOLS_VERSION}  && \
+cd .. && \
+git clone https://github.com/samtools/samtools.git && \
+cd samtools && \
+git checkout ${SAMTOOLS_VERSION} && \
+make && \
+cp samtools /usr/bin/
+
+%environment
+export SAMTOOLS_VERSION=1.7
+
+%runscript
+exec /bin/bash "$@"

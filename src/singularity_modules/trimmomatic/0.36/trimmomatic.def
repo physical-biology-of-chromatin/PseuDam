@@ -1,0 +1,19 @@
+Bootstrap: docker
+From: ubuntu:18.04
+
+%labels
+MAINTAINER Laurent Modolo
+
+%post
+TRIMMOMATIC_VERSION=0.36
+PACKAGES=trimmomatic=${TRIMMOMATIC_VERSION}*
+
+apt-get update && \
+apt-get install -y --no-install-recommends ${PACKAGES} && \
+apt-get clean
+
+%environment
+export TRIMMOMATIC_VERSION=0.36
+
+%runscript
+exec /bin/bash "$@"

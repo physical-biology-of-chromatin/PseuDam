@@ -1,0 +1,19 @@
+Bootstrap: docker
+From: ubuntu:18.04
+
+%labels
+MAINTAINER Laurent Modolo
+
+%post
+TOPHAT_VERSION=2.1.1
+PACKAGES=tophat=${BOWTIE2_VERSION}*
+
+apt-get update && \
+apt-get install -y --no-install-recommends ${PACKAGES} && \
+apt-get clean
+
+%environment
+export TOPHAT_VERSION=2.1.1
+
+%runscript
+exec /bin/bash "$@"
