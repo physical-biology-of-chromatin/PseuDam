@@ -93,7 +93,7 @@ fastp | ok | ok | ok
 FastQC | ok | ok | ok
 file_handle | **no** | ok | ok
 GATK | **no** | ok | ok
-HISAT2 | **no** | ok | **no**
+HISAT2 | ok | ok | ok
 HTSeq | ok | ok | ok
 Kallisto | ok | ok | ok
 MACS2 | ok | ok | ok
