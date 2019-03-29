@@ -28,15 +28,26 @@ process mapping_fastq {
 
   output:
   file "*" into count_files
+  set file_id, "*.bam" into bam_files
+  file "*_report.txt" into mapping_report
 
   script:
   index_id = index[0]
   for (index_file in index) {
-    if (index_file =~ /.*\.1\.bt2/ && !(index_file =~ /.*\.rev\.1\.bt2/)) {
-        index_id = ( index_file =~ /(.*)\.1\.bt2/)[0][1]
+    if (index_file =~ /.*\.1\.ht2/ && !(index_file =~ /.*\.rev\.1\.ht2/)) {
+        index_id = ( index_file =~ /(.*)\.1\.ht2/)[0][1]
     }
   }
 """
-hisat2 -x ${index_id} -U ${reads} -S ${file_id}.sam -p ${task.cpus}
+hisat2 -p ${task.cpus} \
+ -x ${index_id} \
+ -U ${reads} 2> \
+${file_id}_hisat2_report.txt | \
+samtools view -Sb - > ${file_id}.bam
+
+if grep -q "Error" ${file_id}_hisat2_report.txt; then
+  exit 1
+fi
+
 """
 }
