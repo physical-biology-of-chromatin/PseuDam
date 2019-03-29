@@ -11,6 +11,7 @@ log.info "index files : ${params.index}"
 Channel
   .fromPath( params.fastq )
   .ifEmpty { error "Cannot find any fastq files matching: ${params.fastq}" }
+  .map { it -> [(it.baseName =~ /([^\.]*)/)[0][1], it]}
   .set { fastq_files }
 Channel
   .fromPath( params.index )
@@ -18,19 +19,24 @@ Channel
   .set { index_files }
 
 process mapping_fastq {
-  tag "$reads.baseName"
-  cpus 4
+  tag "$file_id"
   publishDir "results/mapping/", mode: 'copy'
 
   input:
-  file reads from fastq_files
-  file index from index_files.toList()
+  set file_id, file(reads) from fastq_files
+  file index from index_files.collect()
 
   output:
   file "*" into count_files
 
   script:
+  index_id = index[0]
+  for (index_file in index) {
+    if (index_file =~ /.*\.1\.bt2/ && !(index_file =~ /.*\.rev\.1\.bt2/)) {
+        index_id = ( index_file =~ /(.*)\.1\.bt2/)[0][1]
+    }
+  }
 """
-hisat2 -x ${file(file(index[0]).baseName).baseName} -U ${reads} -S ${reads.baseName}.sam -p ${task.cpus}
+hisat2 -x ${index_id} -U ${reads} -S ${file_id}.sam -p ${task.cpus}
 """
 }

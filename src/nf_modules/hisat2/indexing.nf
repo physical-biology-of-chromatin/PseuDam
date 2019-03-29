@@ -27,6 +27,6 @@ process index_fasta {
 
   script:
 """
-hisat2-build ${fasta} ${fasta.baseName}.index
+hisat2-build -p {task.cpus} ${fasta} ${fasta.baseName}.index
 """
 }
