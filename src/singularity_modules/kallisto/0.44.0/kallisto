@@ -1,2 +1,2 @@
 #/bin/bash
-singularity exec /sps/lbmc/common/singularity/kallisto:0.44.0.sif kallisto $@
+singularity exec /sps/lbmc/common/singularity/kallisto:0.44.0.img kallisto $@
