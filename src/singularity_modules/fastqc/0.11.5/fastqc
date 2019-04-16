@@ -1,0 +1,2 @@
+#/bin/bash
+singularity exec /sps/lbmc/common/singularity/fastqc:0.11.5.img fastqc $@

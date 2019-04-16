@@ -1,0 +1,2 @@
+#/bin/bash
+singularity exec /sps/lbmc/common/singularity/bwa:0.7.17.img bwa $@

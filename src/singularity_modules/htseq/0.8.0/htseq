@@ -1,0 +1,2 @@
+#/bin/bash
+singularity exec /sps/lbmc/common/singularity/htseq:0.8.0.img htseq $@

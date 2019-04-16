@@ -1,0 +1,2 @@
+#/bin/bash
+singularity exec /sps/lbmc/common/singularity/bedtools:2.25.0.img bedtools $@

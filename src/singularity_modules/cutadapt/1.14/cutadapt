@@ -1,0 +1,2 @@
+#/bin/bash
+singularity exec /sps/lbmc/common/singularity/cutadapt:1.14.img cutadapt $@
