@@ -1,0 +1,26 @@
+#!/bin/sh
+#####################################
+# job script example with GE options
+#####################################
+#$ -S "/usr/local/bin/bash -l"
+#$ -q demon
+#$ -P P_lbmc
+#$ -N nf_pipe
+#$ -o /sps/inter/lbmc/lmodolo/logs/
+#$ -e /sps/inter/lbmc/lmodolo/logs/
+#$ -r n       # relaunch y/n
+#$ -M laurent.modolo@ens-lyon.fr
+#$ -m be      ## send an email when the job starts and ends
+#$ -l os=cl7  ## choose OS
+#$ -l sps=1   ## acces /sps directory
+#####################################
+
+PIPELINE=/sps/lbmc/common/nextflow/src/nf_modules/kallisto/indexing.nf
+CONFIG=/sps/lbmc/common/nextflow/src/nf_modules/kallisto/indexing.config
+OPTIONx="--fasta \"data/tiny_dataset/fasta/tiny_v2.fasta\""
+
+time /pbs/throng/lbmc/cl7/nextflow/19.01/nextflow \
+-profile ccin2p3_conda \
+$PIPELINE \
+-c $CONFIG \
+$OPTIONS
