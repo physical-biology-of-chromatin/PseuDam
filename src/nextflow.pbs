@@ -1,4 +1,4 @@
-#!/bin/sh
+#! /usr/local/bin/bash -l
 #####################################
 # job script example with GE options
 #####################################
@@ -20,8 +20,8 @@ PIPELINE=/sps/lbmc/common/nextflow/src/nf_modules/kallisto/indexing.nf
 CONFIG=/sps/lbmc/common/nextflow/src/nf_modules/kallisto/indexing.config
 OPTIONx="--fasta \"data/tiny_dataset/fasta/tiny_v2.fasta\""
 
-time $NF \
--profile ccin2p3_conda \
+$NF \
 $PIPELINE \
 -c $CONFIG \
+-profile ccin2p3_conda \
 $OPTIONS
