@@ -7,8 +7,8 @@
 #$ -l demon=1
 #$ -P P_lbmc
 #$ -N nf_pipe
-#$ -o /sps/inter/lbmc/lmodolo/logs/
-#$ -e /sps/inter/lbmc/lmodolo/logs/
+#$ -o /sps/lbmc/lmodolo/logs/ # change to your username !
+#$ -e /sps/lbmc/lmodolo/logs/ # change to your username !
 #$ -r n       # relaunch y/n
 #$ -M laurent.modolo@ens-lyon.fr
 #$ -m be      ## send an email when the job starts and ends
