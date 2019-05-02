@@ -18,10 +18,9 @@
 NF=/pbs/throng/lbmc/cl7/nextflow/19.04/nextflow
 PIPELINE=/sps/lbmc/common/nextflow/src/nf_modules/kallisto/indexing.nf
 CONFIG=/sps/lbmc/common/nextflow/src/nf_modules/kallisto/indexing.config
-OPTIONx="--fasta \"data/tiny_dataset/fasta/tiny_v2.fasta\""
 
 $NF \
 $PIPELINE \
 -c $CONFIG \
 -profile ccin2p3_conda \
-$OPTIONS
+--fasta "/sps/lbmc/common/nextflow/data/tiny_dataset/fasta/tiny_v2.fasta"
