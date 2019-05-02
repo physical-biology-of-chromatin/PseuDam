@@ -2,7 +2,6 @@
 #####################################
 # job script example with GE options
 #####################################
-#$ -S "/usr/local/bin/bash -l"
 #$ -q demon
 #$ -l demon=1
 #$ -P P_lbmc
@@ -16,11 +15,12 @@
 #$ -l sps=1   ## acces /sps directory
 #####################################
 
+NF=/pbs/throng/lbmc/cl7/nextflow/19.04/nextflow
 PIPELINE=/sps/lbmc/common/nextflow/src/nf_modules/kallisto/indexing.nf
 CONFIG=/sps/lbmc/common/nextflow/src/nf_modules/kallisto/indexing.config
 OPTIONx="--fasta \"data/tiny_dataset/fasta/tiny_v2.fasta\""
 
-time /pbs/throng/lbmc/cl7/nextflow/19.01/nextflow \
+time $NF \
 -profile ccin2p3_conda \
 $PIPELINE \
 -c $CONFIG \
