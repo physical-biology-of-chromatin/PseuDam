@@ -4,6 +4,7 @@
 #####################################
 #$ -S "/usr/local/bin/bash -l"
 #$ -q demon
+#$ -l demon=1
 #$ -P P_lbmc
 #$ -N nf_pipe
 #$ -o /sps/inter/lbmc/lmodolo/logs/
