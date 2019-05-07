@@ -6,21 +6,20 @@
 #$ -l demon=1
 #$ -P P_lbmc
 #$ -N nf_pipe
-#$ -o /sps/lbmc/lmodolo/logs/ # change to your username !
-#$ -e /sps/lbmc/lmodolo/logs/ # change to your username !
+#$ -o /sps/lbmc/<user>/logs/ # change to your username !
+#$ -e /sps/lbmc/<user>/logs/ # change to your username !
 #$ -r n       # relaunch y/n
-#$ -M laurent.modolo@ens-lyon.fr
+#$ -M <email>@ens-lyon.fr # change to your mail !
 #$ -m be      ## send an email when the job starts and ends
 #$ -l os=cl7  ## choose OS
 #$ -l sps=1   ## acces /sps directory
 #####################################
 
-NF=/pbs/throng/lbmc/cl7/nextflow/19.04/nextflow
+NF_VERSION=19.04
+NF=/pbs/throng/lbmc/cl7/nextflow/${NF_VERSION}/nextflow
 PIPELINE=/sps/lbmc/common/nextflow/src/nf_modules/kallisto/indexing.nf
 CONFIG=/sps/lbmc/common/nextflow/src/nf_modules/kallisto/indexing.config
 
-$NF \
-$PIPELINE \
--c $CONFIG \
--profile ccin2p3_conda \
---fasta "/sps/lbmc/common/nextflow/data/tiny_dataset/fasta/tiny_v2.fasta"
+${NF} ${PIPELINE} -c ${CONFIG} -profile ccin2p3 \
+--fasta "/sps/lbmc/common/nextflow/data/tiny_dataset/fasta/tiny_v2.fasta" \
+-w "/sps/lbmc/<user>/"
