@@ -1,6 +1,6 @@
 #!/bin/sh
 function install_env {
-  if [ -d "${CONDA_PREFIX}/envs/${1}_${2}" ]; then
+  if [ ! -d "${CONDA_PREFIX}/envs/${1}_${2}" ]; then
     install_env ${1}_${2} ${3}
   fi
 }
