@@ -48,6 +48,7 @@ install_env deeptools 3.0.2 deeptools
 install_env htseq 0.9.1 htseq
 install_env htseq 0.11.2 htseq
 install_env python 3.7 python
+install_env R 3.5.1 R
 install_env R 3.4.3 R
 install_env R 3.3.1 R
 install_env file handle 0.1.1 file handle
