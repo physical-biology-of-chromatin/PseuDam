@@ -29,9 +29,11 @@ install_env kallisto 0.44.0 kallisto
 install_env kallisto 0.43.1 kallisto
 install_env music 1.0.0 music
 install_env umitools 0.3.4 umitools
+install_env umi_tools 1.0.0 umi_tools
 install_env fastp 0.19.7 fastp
 install_env gatk 3.8 gatk
 install_env cutadapt 1.14 cutadapt
+install_env cutadapt 2.1 cutadapt
 install_env bioawk 1.0 bioawk
 install_env canu 1.7 canu
 install_env fastqc 0.11.5 fastqc
