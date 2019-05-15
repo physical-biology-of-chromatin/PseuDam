@@ -17,9 +17,13 @@
 
 NF_VERSION=19.04
 NF=/pbs/throng/lbmc/cl7/nextflow/${NF_VERSION}/nextflow
-PIPELINE=/sps/lbmc/common/nextflow/src/nf_modules/kallisto/indexing.nf
-CONFIG=/sps/lbmc/common/nextflow/src/nf_modules/kallisto/indexing.config
+# change to your username
+SCRATCH=/sps/lbmc/<user>/
+# change to your project / pipeline !
+PIPELINE=${SCRATCH}/<project>/src/<pipeline>.nf
+# change to your project / pipeline !
+CONFIG=${SCRATCH}/<project>/src/<pipeline>.config
 
 ${NF} ${PIPELINE} -c ${CONFIG} -profile ccin2p3 \
---fasta "/sps/lbmc/common/nextflow/data/tiny_dataset/fasta/tiny_v2.fasta" \
--w "/sps/lbmc/<user>/"
+--fasta "${SCRATCH}/<project>/data/fasta" \
+-w "${SCRATCH}"

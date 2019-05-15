@@ -57,4 +57,5 @@ install_env file handle 0.1.1 file handle
 install_env ncdu 1.13 ncdu
 install_env picard 2.18.11 picard
 install_env sambamba 0.6.7 sambamba
+install_env subread 1.6.4 subread
 
