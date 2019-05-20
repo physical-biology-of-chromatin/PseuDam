@@ -26,4 +26,4 @@ CONFIG=${SCRATCH}/nextflow/src/nf_modules/kallisto/indexing.config
 
 ${NF} ${PIPELINE} -c ${CONFIG} -profile ccin2p3_singularity \
 --fasta "${SCRATCH}/nextflow/data/tiny_dataset/fasta/tiny_v2.fasta" \
--w "${SCRATCH}"
+-w "${SCRATCH}" -ansi-log false
