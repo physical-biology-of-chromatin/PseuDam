@@ -4,7 +4,7 @@ From: broadinstitute/gatk:4.0.8.1
 %labels
 MAINTAINER Laurent Modolo
 
-%pos
+%post
 mkdir -p /sps /pbs /scratch
 
 GATK_VERSION=4.0.8.1

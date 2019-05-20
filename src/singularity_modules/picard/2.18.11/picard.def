@@ -7,7 +7,7 @@ src/singularity_modules/picard/2.18.11/PicardCommandLine /usr/bin/
 %labels
 MAINTAINER Laurent Modolo
 
-%pos
+%post
 mkdir -p /sps /pbs /scratch
 PICARD_VERSION=2.18.11
 PACKAGES="default-jre \

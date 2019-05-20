@@ -4,7 +4,7 @@ From: ubuntu:18.04
 %labels
 MAINTAINER Laurent Modolo
 
-%pos
+%post
 mkdir -p /sps /pbs /scratch
 HTSEQ_VERSION=0.11.2
 PACKAGES="build-essential \

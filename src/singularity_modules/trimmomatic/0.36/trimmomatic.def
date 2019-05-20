@@ -4,7 +4,7 @@ From: ubuntu:18.04
 %labels
 MAINTAINER Laurent Modolo
 
-%pos
+%post
 mkdir -p /sps /pbs /scratch
 TRIMMOMATIC_VERSION=0.36
 PACKAGES=trimmomatic=${TRIMMOMATIC_VERSION}*

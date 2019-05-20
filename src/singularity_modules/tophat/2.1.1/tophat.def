@@ -4,7 +4,7 @@ From: ubuntu:18.04
 %labels
 MAINTAINER Laurent Modolo
 
-%pos
+%post
 mkdir -p /sps /pbs /scratch
 TOPHAT_VERSION=2.1.1
 PACKAGES=tophat=${BOWTIE2_VERSION}*

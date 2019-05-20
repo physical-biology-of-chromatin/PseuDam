@@ -4,7 +4,7 @@ From: ubuntu:18.04
 %labels
 MAINTAINER Laurent Modolo
 
-%pos
+%post
 mkdir -p /sps /pbs /scratch
 SAMBAMBA_VERSION=0.6.7
 PACKAGES="curl=7.58.0* \

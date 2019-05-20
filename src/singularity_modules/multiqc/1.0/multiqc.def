@@ -4,7 +4,7 @@ From: debian:stretch
 %labels
 MAINTAINER Laurent Modolo
 
-%pos
+%post
 mkdir -p /sps /pbs /scratch
 MULTIQC_VERSION=1.0
 PACKAGES="build-essential \

@@ -4,7 +4,7 @@ From: debian:stretch
 %labels
 MAINTAINER Laurent Modolo
 
-%pos
+%post
 mkdir -p /sps /pbs /scratch
 DEEPTOOLS_VERSION=3.0.2
 PACKAGES="build-essential \

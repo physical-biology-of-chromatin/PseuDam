@@ -4,7 +4,7 @@ From: ubuntu:18.04
 %labels
 MAINTAINER Laurent Modolo
 
-%pos
+%post
 mkdir -p /sps /pbs /scratch
 BCFTOOLS_VERSION=1.7
 PACKAGES=bcftools=${BCFTOOLS_VERSION}*

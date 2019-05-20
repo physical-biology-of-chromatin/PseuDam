@@ -4,7 +4,7 @@ From: ubuntu:18.04
 %labels
 MAINTAINER Laurent Modolo
 
-%pos
+%post
 mkdir -p /sps /pbs /scratch
 PIGZ_VERSION=2.4
 PACKAGES=pigz=${PIGZ_VERSION}*

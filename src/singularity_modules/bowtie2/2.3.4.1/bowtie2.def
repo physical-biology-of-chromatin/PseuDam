@@ -4,7 +4,7 @@ From: ubuntu:18.04
 %labels
 MAINTAINER Laurent Modolo
 
-%pos
+%post
 mkdir -p /sps /pbs /scratch
 BOWTIE2_VERSION=2.3.4.1
 SAMTOOLS_VERSION=1.7

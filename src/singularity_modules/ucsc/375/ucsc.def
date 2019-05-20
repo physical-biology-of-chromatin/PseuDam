@@ -4,7 +4,7 @@ From: debian:jessie
 %labels
 MAINTAINER Laurent Modolo
 
-%pos
+%post
 mkdir -p /sps /pbs /scratch
 UCSC_VERSION=375
 PACKAGES="apt-utils \

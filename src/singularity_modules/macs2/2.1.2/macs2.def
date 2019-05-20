@@ -2,7 +2,7 @@ Bootstrap: docker
 From: ubuntu:18.04
 %labels
 MAINTAINER Laurent Modolo
-%pos
+%post
 mkdir -p /sps /pbs /scratch
 
 MACS_VERSION=2.1.2
