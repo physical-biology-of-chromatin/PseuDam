@@ -1,0 +1,29 @@
+#! /usr/local/bin/bash -l
+#####################################
+# job script example with GE options
+#####################################
+#$ -q demon
+#$ -l demon=1
+#$ -P P_lbmc
+#$ -N nf_pipe
+#$ -o /sps/lbmc/<user>/logs/ # change to your username !
+#$ -e /sps/lbmc/<user>/logs/ # change to your username !
+#$ -r n       # relaunch y/n
+#$ -M <email>@ens-lyon.fr # change to your mail !
+#$ -m be      ## send an email when the job starts and ends
+#$ -l os=cl7  ## choose OS
+#$ -l sps=1   ## acces /sps directory
+#####################################
+
+NF_VERSION=19.04
+NF=/pbs/throng/lbmc/cl7/nextflow/${NF_VERSION}/nextflow
+# change to your username
+SCRATCH=/sps/lbmc/lmodolo/
+# change to your project / pipeline !
+PIPELINE=${SCRATCH}/nextflow/src/nf_modules/kallisto/indexing.nf
+# change to your project / pipeline !
+CONFIG=${SCRATCH}/nextflow/src/nf_modules/kallisto/indexing.config
+
+${NF} ${PIPELINE} -c ${CONFIG} -profile ccin2p3 \
+--fasta "${SCRATCH}/<project>/data/fasta" \
+-w "${SCRATCH}"
