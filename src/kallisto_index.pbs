@@ -6,10 +6,10 @@
 #$ -l demon=1
 #$ -P P_lbmc
 #$ -N nf_pipe
-#$ -o /sps/lbmc/<user>/logs/ # change to your username !
-#$ -e /sps/lbmc/<user>/logs/ # change to your username !
+#$ -o /sps/lbmc/lmodolo/logs/ # change to your username !
+#$ -e /sps/lbmc/lmodolo/logs/ # change to your username !
 #$ -r n       # relaunch y/n
-#$ -M <email>@ens-lyon.fr # change to your mail !
+#$ -M laurent.modolo@ens-lyon.fr # change to your mail !
 #$ -m be      ## send an email when the job starts and ends
 #$ -l os=cl7  ## choose OS
 #$ -l sps=1   ## acces /sps directory
