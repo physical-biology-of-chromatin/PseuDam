@@ -4,7 +4,8 @@ From: debian:9
 %labels
 MAINTAINER Laurent Modolo
 
-%post
+%pos
+mkdir -p /sps /pbs /scratch
 URQT_VERSION=d62c1f8
 PACKAGES="git \
 g++ \

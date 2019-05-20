@@ -4,7 +4,8 @@ From: debian:stretch
 %labels
 MAINTAINER Laurent Modolo
 
-%post
+%pos
+mkdir -p /sps /pbs /scratch
 MULTIQC_VERSION=1.7
 PACKAGES="build-essential \
              python3-pip \

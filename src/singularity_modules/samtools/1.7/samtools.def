@@ -4,7 +4,8 @@ From: alpine:3.8
 %labels
 MAINTAINER Laurent Modolo
 
-%post
+%pos
+mkdir -p /sps /pbs /scratch
 SAMTOOLS_VERSION=1.7
 PACKAGES="git \
              make \

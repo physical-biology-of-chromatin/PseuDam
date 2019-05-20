@@ -4,7 +4,8 @@ From: ubuntu:18.04
 %labels
 MAINTAINER Laurent Modolo
 
-%post
+%pos
+mkdir -p /sps /pbs /scratch
 SRATOOLKIT_VERSION=2.8.2
 PACKAGES=sra-toolkit=${SRATOOLKIT_VERSION}*
 

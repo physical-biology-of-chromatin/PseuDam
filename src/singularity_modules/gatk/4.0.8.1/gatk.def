@@ -4,7 +4,8 @@ From: broadinstitute/gatk:4.0.8.1
 %labels
 MAINTAINER Laurent Modolo
 
-%post
+%pos
+mkdir -p /sps /pbs /scratch
 
 GATK_VERSION=4.0.8.1
 cp gatk/gatk /usr/bin/

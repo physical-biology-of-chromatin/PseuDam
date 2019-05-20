@@ -4,7 +4,8 @@ From: ubuntu:18.04
 %labels
 MAINTAINER Laurent Modolo
 
-%post
+%pos
+mkdir -p /sps /pbs /scratch
 FASTQC_VERSION=0.11.5
 PACKAGES="fastqc=${FASTQC_VERSION}* \
 perl=5.26*"

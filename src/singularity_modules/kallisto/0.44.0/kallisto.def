@@ -4,7 +4,9 @@ From: ubuntu:18.04
 %labels
 MAINTAINER Laurent Modolo
 
-%post
+%pos
+mkdir -p /sps /pbs /scratch
+
 KALLISTO_VERSION=0.44.0
 PACKAGES="curl \
 ca-certificates"
@@ -17,6 +19,7 @@ curl -k -L  https://github.com/pachterlab/kallisto/releases/download/v${KALLISTO
 tar xzf kallisto_linux-v${KALLISTO_VERSION}.tar.gz && \
 cp kallisto_linux-v${KALLISTO_VERSION}/kallisto /usr/bin && \
 rm -Rf kallisto_linux-v${KALLISTO_VERSION}*
+
 
 %environment
 export KALLISTO_VERSION=0.44.0

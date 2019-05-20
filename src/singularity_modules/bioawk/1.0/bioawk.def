@@ -4,7 +4,8 @@ From: ubuntu:18.04
 %labels
 MAINTAINER Laurent Modolo
 
-%post
+%pos
+mkdir -p /sps /pbs /scratch
 BIOAWK_VERSION=1.0
 PACKAGES="git \
    build-essential \

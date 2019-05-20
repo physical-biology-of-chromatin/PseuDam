@@ -4,7 +4,8 @@ From: ubuntu:18.04
 %labels
 MAINTAINER Laurent Modolo
 
-%post
+%pos
+mkdir -p /sps /pbs /scratch
 CANU_VERSION=1.6
 PACKAGES=canu=${CANU_VERSION}*
 

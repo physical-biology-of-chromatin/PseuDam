@@ -4,7 +4,8 @@ From: debian:stretch
 %labels
 MAINTAINER Laurent Modolo
 
-%post
+%pos
+mkdir -p /sps /pbs /scratch
 DEEPTOOLS_VERSION=3.0.2
 PACKAGES="build-essential \
              python3-pip \
