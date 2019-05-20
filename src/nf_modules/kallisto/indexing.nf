@@ -10,7 +10,6 @@ Channel
 process index_fasta {
   tag "$fasta.baseName"
   publishDir "results/mapping/index/", mode: 'copy'
-  echo true
 
   input:
     file fasta from fasta_file
@@ -21,10 +20,8 @@ process index_fasta {
 
   script:
 """
-pwd
 kallisto index -k 31 --make-unique -i ${fasta.baseName}.index ${fasta} \
 2> ${fasta.baseName}_kallisto_report.txt
-pwd
 """
 }
 
