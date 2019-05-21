@@ -11,6 +11,7 @@ PACKAGES="git \
 g++ \
 make \
 ca-certificates \
+procps \
 zlib1g-dev"
 
 apt-get update && \
