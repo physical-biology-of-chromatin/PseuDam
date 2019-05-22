@@ -25,11 +25,11 @@ PIPELINE=<pipeline_name>
 NF_VERSION=19.04
 
 
-NF=/pbs/throng/lbmc/cl7/nextflow/${NF_VERSION}/nextflow
-PIPELINE=${SCRATCH}/${PROJECT}/src/${PIPELINE}.nf
+NEXTFLOW=/pbs/throng/lbmc/cl7/nextflow/${NF_VERSION}/nextflow
+NF=${SCRATCH}/${PROJECT}/src/${PIPELINE}.nf
 CONFIG=${SCRATCH}/${PROJECT}/src/${PIPELINE}.config
 
-${NF} ${PIPELINE} -c ${CONFIG} -profile ccin2p3 \
+${NEXTFLOW} ${NF} -c ${CONFIG} -profile ccin2p3 \
 --fasta "${SCRATCH}/<project>/data/fasta" \
 -w "${SCRATCH}/${PROJECT}/work/" \
 -with-report "${SCRATCH}/${PROJECT}/results/${PIPELINE}_report.html" \
