@@ -10,6 +10,7 @@ PACKAGES="libssl-dev \
 libcurl4-openssl-dev \
 libxml2-dev \
 zlib1g-dev \
+procps \
 git"
 
 apt-get update && \
