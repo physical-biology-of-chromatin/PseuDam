@@ -15,15 +15,23 @@
 #$ -l sps=1   ## acces /sps directory
 #####################################
 
-NF_VERSION=19.04
-NF=/pbs/throng/lbmc/cl7/nextflow/${NF_VERSION}/nextflow
-# change to your username
+# change to your username !
 SCRATCH=/sps/lbmc/<user>/
-# change to your project / pipeline !
-PIPELINE=${SCRATCH}/<project>/src/<pipeline>.nf
-# change to your project / pipeline !
-CONFIG=${SCRATCH}/<project>/src/<pipeline>.config
+# change to your project name !
+PROJECT=<project>
+#change to your project version !
+PIPELINE=<pipeline_name>
+#NF version to user
+NF_VERSION=19.04
+
+
+NF=/pbs/throng/lbmc/cl7/nextflow/${NF_VERSION}/nextflow
+PIPELINE=${SCRATCH}/${PROJECT}/src/${PIPELINE}.nf
+CONFIG=${SCRATCH}/${PROJECT}/src/${PIPELINE}.config
 
 ${NF} ${PIPELINE} -c ${CONFIG} -profile ccin2p3 \
 --fasta "${SCRATCH}/<project>/data/fasta" \
--w "${SCRATCH}"
+-w "${SCRATCH}/${PROJECT}/work/" \
+-with-report "${SCRATCH}/${PROJECT}/results/${PIPELINE}_report.html" \
+-with-timeline "${SCRATCH}/${PROJECT}/results/${PIPELINE}_timeline.html" \
+-with-dag "${SCRATCH}/${PROJECT}/results/${PIPELINE}_dag.pdf"
