@@ -28,9 +28,11 @@ NF_VERSION=19.04
 NEXTFLOW=/pbs/throng/lbmc/cl7/nextflow/${NF_VERSION}/nextflow
 NF=${SCRATCH}/${PROJECT}/src/${PIPELINE}.nf
 CONFIG=${SCRATCH}/${PROJECT}/src/${PIPELINE}.config
+DATA=${SCRATCH}/${PROJECT}/data
 
 ${NEXTFLOW} ${NF} -c ${CONFIG} -profile ccin2p3 \
---fasta "${SCRATCH}/<project>/data/fasta" \
+--fasta "${DATA}/fasta" \
+--results "${SCRATCH}/${PROJECT}/results/"
 -w "${SCRATCH}/${PROJECT}/work/" \
 -with-report "${SCRATCH}/${PROJECT}/results/${PIPELINE}_report.html" \
 -with-timeline "${SCRATCH}/${PROJECT}/results/${PIPELINE}_timeline.html" \
