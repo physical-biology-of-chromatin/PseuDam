@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.3.0] - 2019-05-23
+### Added
+- Add new tools (umi_tools, fastp,...)
+- singularity support at in2p3 with `-profile in2p3`
+- conda support at in2p3 with `-profile in2p3_conda`
+
 
 ## [0.2.9] - 2019-03-26
 ### Added
