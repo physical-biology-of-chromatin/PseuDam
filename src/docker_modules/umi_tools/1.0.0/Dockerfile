@@ -5,6 +5,7 @@ ENV UMI_TOOLS_VERSION=1.0.0
 ENV PACKAGES bash \
              python3 \
              python3-pip \
+             procps \
              gcc
 
 RUN apt update && \

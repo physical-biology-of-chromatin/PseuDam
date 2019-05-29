@@ -8,6 +8,7 @@ ENV PACKAGES apt-utils \
              libpng-dev \
              uuid-dev \
              libmysqlclient-dev \
+             procps \
              rsync
 
 

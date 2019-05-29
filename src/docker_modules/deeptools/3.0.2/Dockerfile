@@ -8,6 +8,7 @@ ENV PACKAGES build-essential \
              python3-dev \
              python3-wheel \
              zlib1g-dev \
+             procps \
              libcurl4-gnutls-dev
 
 RUN apt-get update && \
