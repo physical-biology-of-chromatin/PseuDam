@@ -32,7 +32,7 @@ DATA=${SCRATCH}/${PROJECT}/data
 NF_OPTIONS="-w \"${SCRATCH}/${PROJECT}/work/\" \
 -with-report \"${SCRATCH}/${PROJECT}/results/${PIPELINE}_report.html\" \
 -with-timeline \"${SCRATCH}/${PROJECT}/results/${PIPELINE}_timeline.html\" \
--with-dag \"${SCRATCH}/${PROJECT}/results/${PIPELINE}_dag.pdf\""
+-with-dag \"${SCRATCH}/${PROJECT}/results/${PIPELINE}_dag.html\""
 
 ${NEXTFLOW} ${NF} -c ${CONFIG} -profile ccin2p3 ${NF_OPTIONS} \
 --fasta "${DATA}/fasta" \
