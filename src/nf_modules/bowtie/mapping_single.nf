@@ -39,11 +39,12 @@ for (index_file in index) {
 """
 bowtie --best -v 3 -k 1 --sam -p ${task.cpus} ${index_id} \
 -q ${reads} 2> \
-${file_id}_bowtie_report.txt | \
+${file_id}_bowtie_report_tmp.txt | \
 samtools view -Sb - > ${file_id}.bam
 
-if grep -q "Error" ${file_id}_bowtie_report.txt; then
+if grep -q "Error" ${file_id}_bowtie_report_tmp.txt; then
   exit 1
 fi
+tail -n 15 ${file_id}_bowtie_report_tmp.txt > ${file_id}_bowtie_report.txt
 """
 }
