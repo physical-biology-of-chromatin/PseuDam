@@ -41,12 +41,13 @@ process mapping_fastq {
 # reads
 bowtie --best -v 3 -k 1 --sam -p ${task.cpus} ${index_id} \
 -1 ${reads[0]} -2 ${reads[1]} 2> \
-${pair_id}_bowtie_report.txt | \
+${pair_id}_bowtie_report_tmp.txt | \
 samtools view -Sb - > ${pair_id}.bam
 
-if grep -q "Error" ${pair_id}_bowtie_report.txt; then
+if grep -q "Error" ${pair_id}_bowtie_report_tmp.txt; then
   exit 1
 fi
+tail -n 15 ${file_id}_bowtie2_report_tmp.txt > ${file_id}_bowtie2_report.txt
 """
 }
 

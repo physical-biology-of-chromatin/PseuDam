@@ -35,11 +35,12 @@ process mapping_fastq {
 """
 bowtie2 --very-sensitive -p ${task.cpus} -x ${index_id} \
 -U ${reads} 2> \
-${file_id}_bowtie2_report.txt | \
+${file_id}_bowtie2_report_tmp.txt | \
 samtools view -Sb - > ${file_id}.bam
 
-if grep -q "Error" ${file_id}_bowtie2_report.txt; then
+if grep -q "Error" ${file_id}_bowtie2_report_tmp.txt; then
   exit 1
 fi
+tail -n 15 ${file_id}_bowtie2_report_tmp.txt > ${file_id}_bowtie2_report.txt
 """
 }
