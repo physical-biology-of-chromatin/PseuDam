@@ -41,7 +41,7 @@ samtools view -Sb - > ${pair_id}.bam
 if grep -q "Error" ${pair_id}_bowtie2_report_tmp.txt; then
   exit 1
 fi
-tail -n 15 ${file_id}_bowtie2_report_tmp.txt > ${file_id}_bowtie2_report.txt
+tail -n 15 ${pair_id}_bowtie2_report_tmp.txt > ${pair_id}_bowtie2_report.txt
 """
 }
 
