@@ -1,0 +1,15 @@
+Bootstrap: docker
+From: quay.io/biocontainers/subread:1.6.4--h84994c4_1
+
+%labels
+MAINTAINER Laurent Modolo
+
+%post
+mkdir -p /sps /pbs /scratch
+SUBREF_VERSION=1.6.4
+
+%environment
+export SUBREF_VERSION=1.6.4
+
+%runscript
+exec /bin/bash "$@"
