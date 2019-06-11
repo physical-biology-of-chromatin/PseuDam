@@ -1,0 +1,15 @@
+Bootstrap: docker
+From: docker://quay.io/biocontainers/fastp:0.19.7--hdbcaa40_0
+
+%labels
+MAINTAINER Laurent Modolo
+
+%post
+mkdir -p /sps /pbs /scratch
+FASTP_VERSION=0.19.7
+
+%environment
+export FASTP_VERSION=0.19.7
+
+%runscript
+exec /bin/bash "$@"
