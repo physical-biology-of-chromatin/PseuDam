@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>TP_experimental_biologists</title>
+  <style>
+      code{white-space: pre-wrap;}
+      span.smallcaps{font-variant: small-caps;}
+      span.underline{text-decoration: underline;}
+      div.column{display: inline-block; vertical-align: top; width: 50%;}
+  </style>
+  <style>
+a.sourceLine { display: inline-block; line-height: 1.25; }
+a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
+a.sourceLine:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode { white-space: pre; position: relative; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+code.sourceCode { white-space: pre-wrap; }
+a.sourceLine { text-indent: -1em; padding-left: 1em; }
+}
+pre.numberSource a.sourceLine
+  { position: relative; left: -4em; }
+pre.numberSource a.sourceLine::before
+  { content: attr(title);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; pointer-events: all; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {  }
+@media screen {
+a.sourceLine::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+  </style>
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<p>The Goal of this practical is to learn how to build your own pipeline with nextflow and using the tools already <em>wrapped</em>. For this we are going to build a small RNASeq analysis pipeline that should run the following steps:</p>
+<ul>
+<li>remove Illumina adaptors</li>
+<li>trim reads by quality</li>
+<li>build the index of a reference genome</li>
+<li>estimate the amount of RNA fragments mapping to the transcripts of this genome</li>
+</ul>
+<h1 id="initialize-your-own-project">Initialize your own project</h1>
+<p>You are going to build a pipeline for you or your team. So the first step is to create your own project.</p>
+<h2 id="forking">Forking</h2>
+<p>Instead of reinventing the wheel, you can use the <a href="https://gitlab.biologie.ens-lyon.fr/pipelines/nextflow">pipelines/nextflow</a> as a template. To easily do so, go to the <a href="https://gitlab.biologie.ens-lyon.fr/pipelines/nextflow">pipelines/nextflow</a> repository and click on the <a href="https://gitlab.biologie.ens-lyon.fr/pipelines/nextflow/forks/new"><strong>fork</strong></a> button.</p>
+<figure>
+<img src="img/fork.png" alt="fork button" /><figcaption>fork button</figcaption>
+</figure>
+<p>In git, the <a href="https://git-scm.com/book/en/v2/GitHub-Contributing-to-a-Project">action of forking</a> means that you are going to make your own private copy of a repository. You can then write modifications in your project, and if they are of interest for the source repository (here <a href="https://gitlab.biologie.ens-lyon.fr/pipelines/nextflow">pipelines/nextflow</a>) create a merge request. Merge requests are sent to the source repository to ask the maintainers to integrate modifications.</p>
+<figure>
+<img src="img/merge_request.png" alt="merge request button" /><figcaption>merge request button</figcaption>
+</figure>
+<h2 id="project-organisation">Project organisation</h2>
+<p>This project (and yours) follows the <a href="http://www.ens-lyon.fr/LBMC/intranet/services-communs/pole-bioinformatique/ressources/good_practice_LBMC">guide of good practices for the LBMC</a></p>
+<p>You are now on the main page of your fork of the <a href="https://gitlab.biologie.ens-lyon.fr/pipelines/nextflow">pipelines/nextflow</a>. You can explore this project, all the code in it is under the CeCILL licence (in the <a href="https://gitlab.biologie.ens-lyon.fr/pipelines/nextflow/blob/master/LICENSE">LICENCE</a> file).</p>
+<p>The <a href="https://gitlab.biologie.ens-lyon.fr/pipelines/nextflow/blob/master/README.md">README.md</a> file contains instructions to run your pipeline and test its installation.</p>
+<p>The <a href="https://gitlab.biologie.ens-lyon.fr/pipelines/nextflow/blob/master/CONTRIBUTING.md">CONTRIBUTING.md</a> file contains guidelines if you want to contribute to the <a href="https://gitlab.biologie.ens-lyon.fr/pipelines/nextflow">pipelines/nextflow</a> (making a merge request for example).</p>
+<p>The <a href="https://gitlab.biologie.ens-lyon.fr/pipelines/nextflow/tree/master/data">data</a> folder will be the place where you store the raw data for your analysis. The <a href="https://gitlab.biologie.ens-lyon.fr/pipelines/nextflow/tree/master/results">results</a> folder will be the place where you store the results of your analysis.</p>
+<blockquote>
+<p><strong>The content of <code>data</code> and <code>results</code> folders should never be saved on git.</strong></p>
+</blockquote>
+<p>The <a href="https://gitlab.biologie.ens-lyon.fr/pipelines/nextflow/tree/master/doc">doc</a> folder contains the documentation of this practical course.</p>
+<p>And most interestingly for you, the <a href="https://gitlab.biologie.ens-lyon.fr/pipelines/nextflow/tree/master/src">src</a> contains code to wrap tools. This folder contains two subdirectories. A <code>docker_modules</code>, a <code>nf_modules</code> and a <code>psmn_modules</code> folder.</p>
+<h3 id="docker_modules"><code>docker_modules</code></h3>
+<p>The <code>src/docker_modules</code> contains the code to wrap tools in <a href="https://www.docker.com/what-docker">Docker</a>. <a href="https://www.docker.com/what-docker">Docker</a> is a framework that allows you to execute software within <a href="https://www.docker.com/what-container">containers</a>. The <code>docker_modules</code> contains directory corresponding to tools and subdirectories corresponding to their version.</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode sh"><code class="sourceCode bash"><a class="sourceLine" id="cb1-1" title="1"><span class="fu">ls</span> -l src/docker_modules/</a>
+<a class="sourceLine" id="cb1-2" title="2"><span class="ex">rwxr-xr-x</span>  3 laurent _lpoperator   96 May 25 15:42 bedtools/</a>
+<a class="sourceLine" id="cb1-3" title="3"><span class="ex">drwxr-xr-x</span>  4 laurent _lpoperator  128 Jun 5 16:14 bowtie2/</a>
+<a class="sourceLine" id="cb1-4" title="4"><span class="ex">drwxr-xr-x</span>  3 laurent _lpoperator   96 May 25 15:42 fastqc/</a>
+<a class="sourceLine" id="cb1-5" title="5"><span class="ex">drwxr-xr-x</span>  4 laurent _lpoperator  128 Jun 5 16:14 htseq/</a></code></pre></div>
+<p>To each <code>tools/version</code> corresponds two files:</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode sh"><code class="sourceCode bash"><a class="sourceLine" id="cb2-1" title="1"><span class="fu">ls</span> -l src/docker_modules/bowtie2/2.3.4.1/</a>
+<a class="sourceLine" id="cb2-2" title="2"><span class="ex">-rw-r--r--</span> 1 laurent _lpoperator  283 Jun  5 15:07 Dockerfile</a>
+<a class="sourceLine" id="cb2-3" title="3"><span class="ex">-rwxr-xr-x</span>  1 laurent _lpoperator   79 Jun 5 16:18 docker_init.sh*</a></code></pre></div>
+<p>The <code>Dockerfile</code> is the <a href="https://www.docker.com/what-docker">Docker</a> recipe to create a <a href="https://www.docker.com/what-container">container</a> containing <code>Bowtie2</code> in its <code>2.3.4.1</code> version. And the <code>docker_init.sh</code> file is a small script to create the <a href="https://www.docker.com/what-container">container</a> from this recipe.</p>
+<p>By running this script you will be able to easily install tools in different versions on your personal computer and use it in your pipeline. Some of the advantages are:</p>
+<ul>
+<li>Whatever the computer, the installation and the results will be the same</li>
+<li>You can keep <a href="https://www.docker.com/what-container">container</a> for old version of tools and run it on new systems (science = reproducibility)</li>
+<li>You don’t have to bother with tedious installation procedures, somebody else already did the job and wrote a <code>Dockerfile</code>.</li>
+<li>You can easily keep <a href="https://www.docker.com/what-container">containers</a> for different version of the same tools.</li>
+</ul>
+<h3 id="psmn_modules"><code>psmn_modules</code></h3>
+<p>The <code>src/psmn_modules</code> folder is not really there. It’s a submodule of the project <a href="https://gitlab.biologie.ens-lyon.fr/PSMN/modules">PSMN/modules</a>. To populate it locally you can use the following command:</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode sh"><code class="sourceCode bash"><a class="sourceLine" id="cb3-1" title="1"><span class="fu">git</span> submodule init</a></code></pre></div>
+<p>Like the <code>src/docker_modules</code> the <a href="https://gitlab.biologie.ens-lyon.fr/PSMN/modules">PSMN/modules</a> project describe recipes to install tools and use them. The main difference is that you cannot use <a href="https://www.docker.com/what-docker">Docker</a> on the PSMN. Instead you have to use another framework <a href="http://www.ens-lyon.fr/PSMN/doku.php?id=documentation:tools:modules">Environment Module</a> which allows you to load modules for specific tools and version. The <a href="https://gitlab.biologie.ens-lyon.fr/PSMN/modules/blob/master/README.md">README.md</a> file of the <a href="https://gitlab.biologie.ens-lyon.fr/PSMN/modules">PSMN/modules</a> repository contains all the instruction to be able to load the modules maintained by the LBMC and present in the <a href="https://gitlab.biologie.ens-lyon.fr/PSMN/modules">PSMN/modules</a> repository.</p>
+<h3 id="nf_modules"><code>nf_modules</code></h3>
+<p>The <code>src/nf_modules</code> folder contains templates of <a href="https://www.nextflow.io/">nextflow</a> wrappers for the tools available in <a href="https://www.docker.com/what-docker">Docker</a> and <a href="http://www.ens-lyon.fr/PSMN/doku.php?id=documentation:tools:psmn">psmn</a>. The details of the <a href="https://www.nextflow.io/">nextflow</a> wrapper will be presented in the next section. Alongside the <code>.nf</code> and <code>.config</code> files, there is a <code>tests.sh</code> script to run test on the tool.</p>
+<h1 id="nextflow-pipeline">Nextflow pipeline</h1>
+<p>A pipeline is a succession of <strong>process</strong>. Each process has data input(s) and optional data output(s). Data flows are modeled as <strong>channels</strong>.</p>
+<h2 id="processes">Processes</h2>
+<p>Here is an example of <strong>process</strong>:</p>
+<pre class="groovy"><code>process sample_fasta {
+  input:
+file fasta from fasta_file
+
+  output:
+file &quot;sample.fasta&quot; into fasta_sample
+
+  script:
+&quot;&quot;&quot;
+head ${fasta} &gt; sample.fasta
+&quot;&quot;&quot;
+}</code></pre>
+<p>We have the process <code>sample_fasta</code> that takes a <code>fasta_file</code> <strong>channel</strong> as input and as output a <code>fasta_sample</code> <strong>channel</strong>. The process itself is defined in the <code>script:</code> block and within <code>"""</code>.</p>
+<pre class="groovy"><code>input:
+file fasta from fasta_file</code></pre>
+<p>When we zoom on the <code>input:</code> block we see that we define a variable <code>fasta</code> of type <code>file</code> from the <code>fasta_file</code> <strong>channel</strong>. This mean that groovy is going to write a file named as the content of the variable <code>fasta</code> in the root of the folder where <code>script:</code> is executed.</p>
+<pre class="groovy"><code>output:
+file &quot;sample.fasta&quot; into fasta_sample</code></pre>
+<p>At the end of the script, a file named <code>sample.fasta</code> is found in the root the folder where <code>script:</code> is executed and send into the <strong>channel</strong> <code>fasta_sample</code>.</p>
+<p>Using the WebIDE of Gitlab, create a file <code>src/fasta_sampler.nf</code> with this process and commit it to your repository.</p>
+<figure>
+<img src="img/webide.png" alt="webide" /><figcaption>webide</figcaption>
+</figure>
+<h2 id="channels">Channels</h2>
+<p>Why bother with channels? In the above example, the advantages of channels are not really clear. We could have just given the <code>fasta</code> file to the process. But what if we have many fasta files to process? What if we have sub processes to run on each of the sampled fasta files? Nextflow can easily deal with these problems with the help of channels.</p>
+<blockquote>
+<p><strong>Channels</strong> are streams of items that are emitted by a source and consumed by a process. A process with a channel as input will be run on every item send through the channel.</p>
+</blockquote>
+<pre class="groovy"><code>Channel
+  .fromPath( &quot;data/tiny_dataset/fasta/*.fasta&quot; )
+  .set { fasta_file }</code></pre>
+<p>Here we defined the channel <code>fasta_file</code> that is going to send every fasta file from the folder <code>data/tiny_dataset/fasta/</code> into the process that take it as input.</p>
+<p>Add the definition of the channel to the <code>src/fasta_sampler.nf</code> file and commit it to your repository.</p>
+<h2 id="run-your-pipeline-locally">Run your pipeline locally</h2>
+<p>After writing this first pipeline, you may want to test it. To do that, first clone your repository. To easily do that set the visibility level to <em>public</em> in the settings/General/Permissions page of your project.</p>
+<p>You can then run the following commands to download your project on your computer:</p>
+<p>If you are on a PSMN computer:</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode sh"><code class="sourceCode bash"><a class="sourceLine" id="cb8-1" title="1"><span class="ex">pip</span> install cutadapt=1.14</a>
+<a class="sourceLine" id="cb8-2" title="2"><span class="va">PATH=</span><span class="st">&quot;/scratch/lmodolo/:</span><span class="va">$PATH</span><span class="st">&quot;</span></a>
+<a class="sourceLine" id="cb8-3" title="3"><span class="fu">git</span> config --global http.sslVerify false</a></code></pre></div>
+<p>and then :</p>
+<blockquote>
+<p>Don’t forget to replace <em>https://gitlab.biologie.ens-lyon.fr/</em> by <em>gitlab_lbmc</em> if you are using your own computer</p>
+</blockquote>
+<div class="sourceCode" id="cb9"><pre class="sourceCode sh"><code class="sourceCode bash"><a class="sourceLine" id="cb9-1" title="1"><span class="fu">git</span> clone https://gitlab.biologie.ens-lyon.fr/<span class="op">&lt;</span>usr_name<span class="op">&gt;</span>/nextflow.git</a>
+<a class="sourceLine" id="cb9-2" title="2"><span class="bu">cd</span> nextflow</a>
+<a class="sourceLine" id="cb9-3" title="3"><span class="ex">src/install_nextflow.sh</span></a></code></pre></div>
+<p>We also need data to run our pipeline:</p>
+<pre><code>cd data
+git clone https://gitlab.biologie.ens-lyon.fr/LBMC/tiny_dataset.git
+cd ..</code></pre>
+<p>We can run our pipeline with the following command:</p>
+<div class="sourceCode" id="cb11"><pre class="sourceCode sh"><code class="sourceCode bash"><a class="sourceLine" id="cb11-1" title="1"><span class="ex">./nextflow</span> src/fasta_sampler.nf</a></code></pre></div>
+<h2 id="getting-your-results">Getting your results</h2>
+<p>Our pipeline seems to work but we don’t know where is the <code>sample.fasta</code>. To get results out of a process, we need to tell nextflow to write it somewhere (we may don’t need to get every intermediate file in our results).</p>
+<p>To do that we need to add the following line before the <code>input:</code> section:</p>
+<pre class="groovy"><code>publishDir &quot;results/sampling/&quot;, mode: &#39;copy&#39;</code></pre>
+<p>Every file described in the <code>output:</code> section will be copied from nextflow to the folder <code>results/sampling/</code>.</p>
+<p>Add this to your <code>src/fasta_sampler.nf</code> file with the WebIDE and commit to your repository. Pull your modifications locally with the command:</p>
+<div class="sourceCode" id="cb13"><pre class="sourceCode sh"><code class="sourceCode bash"><a class="sourceLine" id="cb13-1" title="1"><span class="fu">git</span> pull origin master</a></code></pre></div>
+<p>You can run your pipeline again and check the content of the folder <code>results/sampling</code>.</p>
+<h2 id="fasta-everywhere">Fasta everywhere</h2>
+<p>We ran our pipeline on one fasta file. How would nextflow handle 100 of them? To test that we need to duplicate the <code>tiny_v2.fasta</code> file:</p>
+<div class="sourceCode" id="cb14"><pre class="sourceCode sh"><code class="sourceCode bash"><a class="sourceLine" id="cb14-1" title="1"><span class="kw">for</span> <span class="ex">i</span> in <span class="dt">{1..100}</span></a>
+<a class="sourceLine" id="cb14-2" title="2"><span class="kw">do</span></a>
+<a class="sourceLine" id="cb14-3" title="3"><span class="fu">cp</span> data/tiny_dataset/fasta/tiny_v2.fasta data/tiny_dataset/fasta/tiny_v2_<span class="va">${i}</span>.fasta</a>
+<a class="sourceLine" id="cb14-4" title="4"><span class="kw">done</span></a></code></pre></div>
+<p>You can run your pipeline again and check the content of the folder <code>results/sampling</code>.</p>
+<p>Every <code>fasta_sampler</code> process write a <code>sample.fasta</code> file. We need to make the name of the output file dependent of the name of the input file.</p>
+<pre class="groovy"><code>output:
+file &quot;*_sample.fasta&quot; into fasta_sample
+
+  script:
+&quot;&quot;&quot;
+head ${fasta} &gt; ${fasta.baseName}_sample.fasta
+&quot;&quot;&quot;</code></pre>
+<p>Add this to your <code>src/fasta_sampler.nf</code> file with the WebIDE and commit it to your repository before pulling your modifications locally. You can run your pipeline again and check the content of the folder <code>results/sampling</code>.</p>
+<h1 id="build-your-own-rnaseq-pipeline">Build your own RNASeq pipeline</h1>
+<p>In this section you are going to build your own pipeline for RNASeq analysis from the code available in the <code>src/nf_modules</code> folder.</p>
+<h2 id="create-your-docker-containers">Create your Docker containers</h2>
+<p>For this practical, we are going to need the following tools:</p>
+<ul>
+<li>For Illumina adaptor removal: cutadapt</li>
+<li>For reads trimming by quality: UrQt</li>
+<li>For mapping and quantifying reads: BEDtools and Kallisto</li>
+</ul>
+<p>To initialize these tools, follow the <strong>Installing</strong> section of the <a href="https://gitlab.biologie.ens-lyon.fr/pipelines/nextflow/blob/master/README.md">README.md</a> file.</p>
+<p><strong>If you are using a CBP computer don’t forget to clean up your docker containers at the end of the practical with the following commands:</strong></p>
+<div class="sourceCode" id="cb16"><pre class="sourceCode sh"><code class="sourceCode bash"><a class="sourceLine" id="cb16-1" title="1"><span class="ex">docker</span> rm <span class="va">$(</span><span class="ex">docker</span> stop <span class="va">$(</span><span class="ex">docker</span> ps -aq<span class="va">))</span></a>
+<a class="sourceLine" id="cb16-2" title="2"><span class="ex">docker</span> rmi <span class="va">$(</span><span class="ex">docker</span> images -qf <span class="st">&quot;dangling=true&quot;</span><span class="va">)</span></a></code></pre></div>
+<h2 id="cutadapt">Cutadapt</h2>
+<p>The first step of the pipeline is to remove any Illumina adaptors left in your read files.</p>
+<p>Open the WebIDE and create a <code>src/RNASeq.nf</code> file. Browse for <a href="https://gitlab.biologie.ens-lyon.fr/pipelines/nextflow/blob/master/src/nf_modules/cutadapt/adaptor_removal_paired.nf">src/nf_modules/cutadapt/adaptor_removal_paired.nf</a>, this file contains examples for cutadapt. We are interested in the <em>Illumina adaptor removal</em>, <em>for paired-end data</em> section of the code. Copy this code in your pipeline and commit it.</p>
+<p>Compared to before, we have few new lines:</p>
+<pre class="groovy"><code>params.fastq = &quot;$baseDir/data/fastq/*_{1,2}.fastq&quot;</code></pre>
+<p>We declare a variable that contains the path of the fastq file to look for. The advantage of using <code>params.fastq</code> is that the option <code>--fastq</code> is now a parameter of your pipeline. Thus, you can call your pipeline with the <code>--fastq</code> option:</p>
+<div class="sourceCode" id="cb18"><pre class="sourceCode sh"><code class="sourceCode bash"><a class="sourceLine" id="cb18-1" title="1"><span class="ex">./nextflow</span> src/RNASeq.nf --fastq <span class="st">&quot;data/tiny_dataset/fastq/*_R{1,2}.fastq&quot;</span></a></code></pre></div>
+<pre class="groovy"><code>log.info &quot;fastq files: ${params.fastq}&quot;</code></pre>
+<p>This line simply displays the value of the variable</p>
+<pre class="groovy"><code>Channel
+  .fromFilePairs( params.fastq )</code></pre>
+<p>As we are working with paired-end RNASeq data, we tell nextflow to send pairs of fastq in the <code>fastq_file</code> channel.</p>
+<h3 id="cutadapt.config">cutadapt.config</h3>
+<p>For the <code>fastq_sampler.nf</code> pipeline we used the command <code>head</code> present in most base UNIX systems. Here we want to use <code>cutadapt</code> which is not. Therefore, we have three main options:</p>
+<ul>
+<li>install cutadapt locally so nextflow can use it</li>
+<li>launch the process in a Docker container that has cutadapt installed</li>
+<li>launch the process with psmn while loading the correct module to have cutadapt available</li>
+</ul>
+<p>We are not going to use the first option which requires no configuration for nextflow but tedious tools installations. Instead, we are going to use existing <em>wrappers</em> and tell nextflow about it. This is what the <a href="https://gitlab.biologie.ens-lyon.fr/pipelines/nextflow/blob/master/src/nf_modules/cutadapt/adaptor_removal_paired.config">src/nf_modules/cutadapt/adaptor_removal_paired.config</a> is used for.</p>
+<p>Copy the content of this config file to an <code>src/RNASeq.config</code> file. This file is structured in process blocks. Here we are only interested in configuring <code>adaptor_removal</code> process not <code>trimming</code> process. So you can remove the <code>trimming</code> block and commit it.</p>
+<p>You can test your pipeline with the following command:</p>
+<div class="sourceCode" id="cb21"><pre class="sourceCode sh"><code class="sourceCode bash"><a class="sourceLine" id="cb21-1" title="1"><span class="ex">./nextflow</span> src/RNASeq.nf -c src/RNASeq.config -profile docker --fastq <span class="st">&quot;data/tiny_dataset/fastq/*_R{1,2}.fastq&quot;</span></a></code></pre></div>
+<h2 id="urqt">UrQt</h2>
+<p>The second step of the pipeline is to trim reads by quality.</p>
+<p>Browse for <a href="https://gitlab.biologie.ens-lyon.fr/pipelines/nextflow/blob/master/src/nf_modules/urqt/trimming_paired.nf">src/nf_modules/urqt/trimming_paired.nf</a>, this file contains examples for UrQt. We are interested in the <em>for paired-end data</em> section of the code. Copy the process section code in your pipeline and commit it.</p>
+<p>This code won’t work if you try to run it: the <code>fastq_file</code> channel is already consumed by the <code>adaptor_removal</code> process. In nextflow once a channel is used by a process, it ceases to exist. Moreover, we don’t want to trim the input fastq, we want to trim the fastq that comes from the <code>adaptor_removal</code> process.</p>
+<p>Therefore, you need to change the line:</p>
+<pre class="groovy"><code>set pair_id, file(reads) from fastq_files</code></pre>
+<p>In the <code>trimming</code> process to:</p>
+<pre class="groovy"><code>set pair_id, file(reads) from fastq_files_cut</code></pre>
+<p>The two processes are now connected by the channel <code>fastq_files_cut</code>.</p>
+<p>Add the content of the <a href="https://gitlab.biologie.ens-lyon.fr/pipelines/nextflow/blob/master/src/nf_modules/urqt/trimming_paired.config">src/nf_modules/urqt/trimming_paired.config</a> file to your <code>src/RNASeq.config</code> file and commit it.</p>
+<p>You can test your pipeline.</p>
+<h2 id="bedtools">BEDtools</h2>
+<p>Kallisto need the sequences of the transcripts that need to be quantified. We are going to extract these sequences from the reference <code>data/tiny_dataset/fasta/tiny_v2.fasta</code> with the <code>bed</code> annotation <code>data/tiny_dataset/annot/tiny.bed</code>.</p>
+<p>You can copy to your <code>src/RNASeq.nf</code> file the content of <a href="https://gitlab.biologie.ens-lyon.fr/pipelines/nextflow/blob/master/src/nf_modules/bedtools/fasta_from_bed.nf">src/nf_modules/bedtools/fasta_from_bed.nf</a> and to your <code>src/RNASeq.config</code> file the content of <a href="https://gitlab.biologie.ens-lyon.fr/pipelines/nextflow/blob/master/src/nf_modules/bedtools/fasta_from_bed.config">src/nf_modules/bedtools/fasta_from_bed.config</a>.</p>
+<p>Commit your work and test your pipeline with the following command:</p>
+<div class="sourceCode" id="cb24"><pre class="sourceCode sh"><code class="sourceCode bash"><a class="sourceLine" id="cb24-1" title="1"><span class="ex">./nextflow</span> src/RNASeq.nf -c src/RNASeq.config -profile docker --fastq <span class="st">&quot;data/tiny_dataset/fastq/*_R{1,2}.fastq&quot;</span> --fasta <span class="st">&quot;data/tiny_dataset/fasta/tiny_v2.fasta&quot;</span> --bed <span class="st">&quot;data/tiny_dataset/annot/tiny.bed&quot;</span></a></code></pre></div>
+<h2 id="kallisto">Kallisto</h2>
+<p>Kallisto run in two steps: the indexation of the reference and the quantification on this index.</p>
+<p>You can copy to your <code>src/RNASeq.nf</code> file the content of the files <a href="https://gitlab.biologie.ens-lyon.fr/pipelines/nextflow/blob/master/src/nf_modules/kallisto/indexing.nf">src/nf_modules/kallisto/indexing.nf</a> and <a href="https://gitlab.biologie.ens-lyon.fr/pipelines/nextflow/blob/master/src/nf_modules/kallisto/mapping_paired.nf">src/nf_modules/kallisto/mapping_paired.nf</a>. You can add to your file <code>src/RNASeq.config</code> file the content of the files <a href="https://gitlab.biologie.ens-lyon.fr/pipelines/nextflow/blob/master/src/nf_modules/kallisto/indexing.config">src/nf_modules/kallisto/indexing.config</a> and <a href="https://gitlab.biologie.ens-lyon.fr/pipelines/nextflow/blob/master/src/nf_modules/kallisto/mapping_paired.config">src/nf_modules/kallisto/mapping_paired.config</a>.</p>
+<p>We are going to work with paired-end so only copy the relevant processes. The <code>index_fasta</code> process needs to take as input the output of your <code>fasta_from_bed</code> process. The <code>fastq</code> input of your <code>mapping_fastq</code> process needs to take as input the output of your <code>index_fasta</code> process and the <code>trimming</code> process.</p>
+<p>Commit your work and test your pipeline. You now have a RNASeq analysis pipeline that can run locally with Docker!</p>
+<h2 id="additional-nextflow-option">Additional nextflow option</h2>
+<p>With nextflow you can restart the computation of a pipeline and get a trace of the process with the following options:</p>
+<div class="sourceCode" id="cb25"><pre class="sourceCode sh"><code class="sourceCode bash"><a class="sourceLine" id="cb25-1" title="1"> <span class="ex">-resume</span> -with-dag results/RNASeq_dag.pdf -with-timeline results/RNASeq_timeline</a></code></pre></div>
+<h1 id="run-your-rnaseq-pipeline-on-the-psmn">Run your RNASeq pipeline on the PSMN</h1>
+<p>First you need to connect to the PSMN:</p>
+<div class="sourceCode" id="cb26"><pre class="sourceCode sh"><code class="sourceCode bash"><a class="sourceLine" id="cb26-1" title="1"><span class="ex">login@allo-psmn</span></a></code></pre></div>
+<p>Then once connected to <code>allo-psmn</code>, you can connect to <code>e5-2667v4comp1</code>:</p>
+<div class="sourceCode" id="cb27"><pre class="sourceCode sh"><code class="sourceCode bash"><a class="sourceLine" id="cb27-1" title="1"><span class="ex">login@e5-2667v4comp1</span></a></code></pre></div>
+<h2 id="set-your-environment">Set your environment</h2>
+<p>Make the LBMC modules available to you:</p>
+<div class="sourceCode" id="cb28"><pre class="sourceCode sh"><code class="sourceCode bash"><a class="sourceLine" id="cb28-1" title="1"><span class="fu">ln</span> -s /Xnfs/lbmcdb/common/modules/modulefiles ~/privatemodules</a>
+<a class="sourceLine" id="cb28-2" title="2"><span class="bu">echo</span> <span class="st">&quot;module use ~/privatemodules&quot;</span> <span class="op">&gt;&gt;</span> .bashrc</a></code></pre></div>
+<p>Create and go to your <code>scratch</code> folder:</p>
+<div class="sourceCode" id="cb29"><pre class="sourceCode sh"><code class="sourceCode bash"><a class="sourceLine" id="cb29-1" title="1"><span class="fu">mkdir</span> -p /scratch/<span class="op">&lt;</span>login<span class="op">&gt;</span></a>
+<a class="sourceLine" id="cb29-2" title="2"><span class="bu">cd</span> /scratch/<span class="op">&lt;</span>login<span class="op">&gt;</span></a>
+<a class="sourceLine" id="cb29-3" title="3"><span class="bu">echo</span> <span class="st">&quot;module use ~/privatemodules&quot;</span> <span class="op">&gt;&gt;</span> .bashrc</a></code></pre></div>
+<p>Then you need to clone your pipeline and get the data:</p>
+<div class="sourceCode" id="cb30"><pre class="sourceCode sh"><code class="sourceCode bash"><a class="sourceLine" id="cb30-1" title="1"><span class="fu">git</span> config --global http.sslVerify false</a>
+<a class="sourceLine" id="cb30-2" title="2"><span class="fu">git</span> clone https://gitlab.biologie.ens-lyon.fr/<span class="op">&lt;</span>usr_name<span class="op">&gt;</span>/nextflow.git</a>
+<a class="sourceLine" id="cb30-3" title="3"><span class="bu">cd</span> nextflow/data</a>
+<a class="sourceLine" id="cb30-4" title="4"><span class="fu">git</span> clone https://gitlab.biologie.ens-lyon.fr/LBMC/tiny_dataset.git</a>
+<a class="sourceLine" id="cb30-5" title="5"><span class="bu">cd</span> ..</a></code></pre></div>
+<h2 id="run-nextflow">Run nextflow</h2>
+<p>As we don’t want nextflow to be killed in case of disconnection, we start by launching <code>tmux</code>. In case of deconnection, you can restore your session with the command <code>tmux a</code>.</p>
+<div class="sourceCode" id="cb31"><pre class="sourceCode sh"><code class="sourceCode bash"><a class="sourceLine" id="cb31-1" title="1"><span class="ex">tmux</span></a>
+<a class="sourceLine" id="cb31-2" title="2"><span class="ex">module</span> load nextflow/0.28.2</a>
+<a class="sourceLine" id="cb31-3" title="3"><span class="ex">nextflow</span> src/RNASeq.nf -c src/RNASeq.config -profile psmn --fastq <span class="st">&quot;data/tiny_dataset/fastq/*_R{1,2}.fastq&quot;</span> --fasta <span class="st">&quot;data/tiny_dataset/fasta/tiny_v2.fasta&quot;</span> --bed <span class="st">&quot;data/tiny_dataset/annot/tiny.bed&quot;</span> -w /scratch/<span class="op">&lt;</span>login<span class="op">&gt;</span></a></code></pre></div>
+<p>To use the scratch for nextflow computations add the option :</p>
+<div class="sourceCode" id="cb32"><pre class="sourceCode sh"><code class="sourceCode bash"><a class="sourceLine" id="cb32-1" title="1"><span class="ex">-w</span> /scratch/<span class="op">&lt;</span>login<span class="op">&gt;</span></a></code></pre></div>
+<p>You just ran your pipeline on the PSMN!</p>
+</body>
+</html>
