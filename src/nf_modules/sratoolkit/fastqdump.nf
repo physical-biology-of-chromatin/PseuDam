@@ -33,6 +33,7 @@ process fastq_dump {
 
   script:
 """
+HOME=\$(pwd) # ensure that fastq dump tmp file are in the right place
 #for test only 10000  reads are downloading with the option -N 10000 -X 20000
 fastq-dump --split-files --defline-seq '@\$ac_\$si/\$ri' --defline-qual "+" -N 10000 -X 20000 ${file_id}
 if [ -f ${file_id}_1.fastq ]
