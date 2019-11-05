@@ -17,41 +17,7 @@ These instructions will get you a copy of the project up and running on your loc
 
 ## Available tools
 
-| tool | nf module | docker module | psmn module |
-|------|:---------:|:-------------:|:----------:|
-BEDtools | ok | ok | ok
-BFCtools |**no**  | ok | ok
-bioawk |**no**  | ok | ok
-Bowtie | ok | ok | **no**
-Bowtie2 | ok | ok | ok
-BWA | ok | ok | ok
-canu | ok | ok | ok
-cutadapt | ok | ok | ok
-deepTools | ok | ok | ok
-fastp | ok | ok | ok
-FastQC | ok | ok | ok
-file_handle | **no** | ok | ok
-GATK | **no** | ok | ok
-HISAT2 | ok | ok | ok
-HTSeq | ok | ok | ok
-Kallisto | ok | ok | ok
-MACS2 | ok | ok | ok
-MultiQC | ok | ok | ok
-MUSIC | ok | ok | ok
-picard | **no** | ok | ok
-pigz | **no** | ok | ok
-RSEM | ok | ok | ok
-Salmon | **no** | ok | ok
-sambamba | ok | ok | ok
-samblaster | ok | ok | ok
-SAMtools | ok | ok | ok
-SRAtoolkit | ok | ok | ok
-subread | **no** | ok | ok
-TopHat | **no** | ok | ok
-Trimmomatic | **no** | ok | ok
-UMItools  | **no** | ok | ok
-UrQt | ok | ok | ok
-
+[The list of available tools.](doc/available_tools.md)
 
 ## Contributing
 
