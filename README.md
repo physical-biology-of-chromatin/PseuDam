@@ -19,6 +19,10 @@ These instructions will get you a copy of the project up and running on your loc
 
 [The list of available tools.](doc/available_tools.md)
 
+## Projects using nextflow
+
+[A list of projects using nextflow at the LBMC.](doc/nf_projects.md)
+
 ## Contributing
 
 Please read [CONTRIBUTING.md](CONTRIBUTING.md) for details on our code of conduct, and the process for submitting pull requests to us.
