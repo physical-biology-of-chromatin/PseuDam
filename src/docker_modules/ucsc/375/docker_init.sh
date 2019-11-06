@@ -1,2 +1,2 @@
 #!/bin/sh
-docker build src/docker_modules/ucsc/375/ -t 'ucsc:375'
+docker build src/docker_modules/ucsc/375/ -t 'lbmc/ucsc:375'
