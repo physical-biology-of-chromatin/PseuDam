@@ -1,0 +1,2 @@
+#!/bin/sh
+docker build src/docker_modules/bwa/0.7.17 -t 'lbmc/bwa:0.7.17'

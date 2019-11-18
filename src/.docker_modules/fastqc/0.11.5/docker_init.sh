@@ -1,0 +1,2 @@
+#!/bin/sh
+docker build src/docker_modules/fastqc/0.11.5 -t 'lbmc/fastqc:0.11.5'

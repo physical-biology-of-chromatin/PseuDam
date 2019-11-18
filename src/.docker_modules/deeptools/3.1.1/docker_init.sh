@@ -1,0 +1,2 @@
+#!/bin/sh
+docker build src/docker_modules/deeptools/3.1.1 -t 'lbmc/deeptools:3.1.1'
