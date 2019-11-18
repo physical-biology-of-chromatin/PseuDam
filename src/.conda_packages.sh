@@ -1,4 +1,4 @@
-source src/conda_psmn.sh
+source src/.conda_psmn.sh
 
 if [ ! -d ${CONDA_ENVS}pigz_2.3.4 ]; then
   conda create --yes --name pigz_2.3.4 pigz=2.3.4
