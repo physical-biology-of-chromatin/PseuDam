@@ -144,3 +144,6 @@ fi
 if [ ! -d ${CONDA_ENVS}sambamba_0.6.7 ]; then
   conda create --yes --name sambamba_0.6.7 sambamba=0.6.7
 fi
+if [ ! -d ${CONDA_ENVS}star_2.7.3a ]; then
+  conda create --yes --name star_2.7.3a star=2.7.3a
+fi
