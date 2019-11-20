@@ -1,10 +1,10 @@
-FROM sambamba:0.6.7
+FROM lbmc/sambamba:0.6.7
 MAINTAINER Laurent Modolo
 
 ENV BWA_VERSION=0.7.17
 ENV SAMBLASTER_VERSION=0.1.24
 
-ENV PACKAGES curl=7.58.0* \
+ENV PACKAGES curl=7.58* \
     ca-certificates=20180409 \
     build-essential=12.4* \
     zlib1g-dev=1:1.2.11*
