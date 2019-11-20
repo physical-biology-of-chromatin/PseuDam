@@ -34,6 +34,7 @@ sambamba | ok | ok | ok | ok
 samblaster | ok | ok | ok | ok
 SAMtools | ok | ok | ok | ok
 SRAtoolkit | ok | ok | ok | ok
+STAR | ok | ok | ok | ok
 subread | **no** | ok | ok | ok
 TopHat | **no** | ok | ok | ok
 Trimmomatic | **no** | ok | ok | ok
