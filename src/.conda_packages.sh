@@ -150,3 +150,6 @@ fi
 if [ ! -d ${CONDA_ENVS}liftover_357 ]; then
   conda create --yes --name liftover_357 ucsc-liftover==357
 fi
+if [ ! -d ${CONDA_ENVS}axtchain_377 ]; then
+  conda create --yes --name axtchain_377 ucsc-axtchain==377
+fi
