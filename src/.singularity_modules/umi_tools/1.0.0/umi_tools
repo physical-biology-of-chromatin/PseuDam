@@ -1,2 +1,0 @@
-#/bin/bash
-singularity exec /sps/lbmc/common/singularity/umi_tools:1.0.0.img umi_tools $@
