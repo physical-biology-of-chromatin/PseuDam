@@ -1,4 +1,4 @@
-FROM lbmc/sambamba:0.6.7
+FROM lbmc/sambamba:0.6.9
 MAINTAINER Laurent Modolo
 
 ENV BWA_VERSION=0.7.17
