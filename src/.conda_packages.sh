@@ -153,3 +153,6 @@ fi
 if [ ! -d ${CONDA_ENVS}axtchain_377 ]; then
   conda create --yes --name axtchain_377 ucsc-axtchain==377
 fi
+if [ ! -d ${CONDA_ENVS}ribotish_0.2.4 ]; then
+  conda create --name ribotish_0.2.4 ribotish=0.2.4
+fi
