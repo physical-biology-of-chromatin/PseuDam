@@ -1,2 +1,0 @@
-#/bin/bash
-singularity exec /sps/lbmc/common/singularity/pigz:2.4.img pigz $@

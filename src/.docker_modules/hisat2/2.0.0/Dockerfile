@@ -1,4 +1,4 @@
-FROM samtools:1.7
+FROM lbmc/samtools:1.7
 MAINTAINER Nicolas Fontrodona
 
 ENV HISAT2_VERSION=2.0.0

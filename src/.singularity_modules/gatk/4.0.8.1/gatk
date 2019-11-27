@@ -1,2 +1,0 @@
-#/bin/bash
-singularity exec /sps/lbmc/common/singularity/gatk:4.0.8.1.img gatk $@

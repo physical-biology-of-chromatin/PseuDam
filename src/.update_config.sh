@@ -5,7 +5,7 @@ fd ".*config" -E "nf_modules" src/ -x perl -0777pe 's|container = "|container = 
 fd ".*config" -E "nf_modules" src/ -x perl -pe 's|container = "lbmc/file://bin/(.*).img"|container = "lbmc/\1"|g' -i {}
 
 # update singularity config
-fd ".*config" -E "nf_modules" src/ -x perl -0777pe 's|\n\s*singularity {\n\s*singularity.enabled = true|\n  singularity {\n    singularity.enabled = true\n    singularity.cacheDir = "./bin/"|mg' -i {}
+fd ".*config" -E "nf_modules" src/ -x perl -0776pe 's|\n\s*singularity {\n\s*singularity.enabled = true|\n  singularity {\n    singularity.enabled = true\n    singularity.cacheDir = "./bin/"|mg' -i {}
 
 # update in2p3 config
 fd ".*config" -E "nf_modules" src/ -x perl -0777pe 's|\n\s*ccin2p3 {\n\s*singularity.enabled = true|\n  ccin2p3 {\n    singularity.enabled = true\n    singularity.cacheDir = "/sps/lbmc/common/singularity/"|mg' -i {}

@@ -1,2 +1,0 @@
-#/bin/bash
-singularity exec /sps/lbmc/common/singularity/macs2:2.1.2.img macs2 $@

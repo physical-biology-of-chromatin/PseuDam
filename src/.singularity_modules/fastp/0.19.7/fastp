@@ -1,2 +1,0 @@
-#/bin/bash
-singularity exec /sps/lbmc/common/singularity/fastp:0.19.7.img fastp $@

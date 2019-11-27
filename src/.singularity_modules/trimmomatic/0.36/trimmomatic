@@ -1,2 +1,0 @@
-#/bin/bash
-singularity exec /sps/lbmc/common/singularity/trimmomatic:0.36.img trimmomatic $@

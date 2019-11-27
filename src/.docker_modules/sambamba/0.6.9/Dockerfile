@@ -11,7 +11,6 @@ RUN apt-get update && \
     apt-get install -y --no-install-recommends ${PACKAGES} && \
     apt-get clean
 
-RUN curl -k -L https://github.com/biod/sambamba/releases/download/v${SAMBAMBA_VERSION}/sambamba_v${SAMBAMBA_VERSION}_linux.tar.bz2 -o sambamba_v${SAMBAMBA_VERSION}_linux.tar.bz2 && \
-tar xvjf sambamba_v${SAMBAMBA_VERSION}_linux.tar.bz2 && \
-mv sambamba /usr/bin/ && \
-rm -R sambamba_v${SAMBAMBA_VERSION}_linux*
+RUN curl -k -L https://github.com/biod/sambamba/releases/download/v${SAMBAMBA_VERSION}/sambamba-${SAMBAMBA_VERSION}-linux-static.gz -o sambamba_v${SAMBAMBA_VERSION}_linux.gz && \
+gunzip sambamba_v${SAMBAMBA_VERSION}_linux.gz && \
+mv sambamba_v${SAMBAMBA_VERSION}_linux /usr/bin/sambamba

@@ -21,6 +21,7 @@ RUN curl -k -L http://hgdownload.soe.ucsc.edu/admin/exe/userApps.v${UCSC_VERSION
 tar xvf userApps.v${UCSC_VERSION}.src.tgz &&\
 cd userApps/ && \
 make &&\
+cd .. &&\
 mv userApps/bin/* /usr/bin/ &&\
 rm -R userApps.v${UCSC_VERSION}.src.tgz &&\
 rm -R userApps
