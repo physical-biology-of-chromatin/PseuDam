@@ -10,7 +10,7 @@ fd ".*config" -E "nf_modules" src/ -x perl -0777pe 's|\n\s*singularity {\n\s*sin
 # update in2p3 config
 fd ".*config" -E "nf_modules" src/ -x perl -0777pe 's|\n\s*ccin2p3 {\n\s*singularity.enabled = true|\n  ccin2p3 {\n    singularity.enabled = true\n    singularity.cacheDir = "/sps/lbmc/common/singularity/"|mg' -i {}
 fd ".*config" src/ -x perl -pe 's|container = "lbmc//sps/lbmc/common/singularity/(.*).img"|container = "lbmc/\1"|g' -i {}
-fd ".*config" src/ -x perl -0777pe 's|singularity.cacheDir = "/sps/lbmc/common/singularity/"|singularity.cacheDir = "\$baseDir/.src/singularity_in2p3/"|mg' -i {}
+fd ".*config" -E "nf_modules" src/ -x perl -0777pe 's|singularity.cacheDir = "/sps/lbmc/common/singularity/"|singularity.cacheDir = "\$baseDir/.src/singularity_in2p3/"|mg' -i {}
 
 # we remove the ccin2p3_conda section
 fd ".*config" -E "nf_modules" src/ -x perl -0777pe "s|\s*ccin2p3_conda {.*ccin2p3 {\n|\n  ccin2p3 {\n|msg" -i {}
