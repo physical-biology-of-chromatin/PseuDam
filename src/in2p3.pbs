@@ -25,7 +25,7 @@ PIPELINE=${SCRATCH}/nextflow/src/training_dataset.nf
 CONFIG=${SCRATCH}/nextflow/src/training_dataset.config
 
 ${NF} ${PIPELINE} -c ${CONFIG} -profile ccin2p3 \
---fasta "${SCRATCH}/nextflow/data/genome.fa" \
---fastq_single "${SCRATCH}/nextflow/data/*_R1.fastq.gz" \
+--fasta "${SCRATCH}/nextflow/data/tiny_dataset/fasta/tiny_v2.fasta" \
+--fastq_single "${SCRATCH}/nextflow/data/tiny_dataset/fastq/tiny2_S.fastq.gz" \
 --chromosome "X" --start 5305683 --stop 5333928 -resume
 -w "${SCRATCH}"
