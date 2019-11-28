@@ -20,10 +20,12 @@ NF=/pbs/throng/lbmc/cl7/nextflow/${NF_VERSION}/nextflow
 # change to your username
 SCRATCH=/sps/lbmc/lmodolo/
 # change to your project / pipeline !
-PIPELINE=${SCRATCH}/nextflow/src/nf_modules/kallisto/indexing.nf
+PIPELINE=${SCRATCH}/nextflow/src/training_dataset.nf
 # change to your project / pipeline !
-CONFIG=${SCRATCH}/nextflow/src/nf_modules/kallisto/indexing.config
+CONFIG=${SCRATCH}/nextflow/src/training_dataset.config
 
 ${NF} ${PIPELINE} -c ${CONFIG} -profile ccin2p3 \
---fasta "${SCRATCH}/nextflow/data/tiny_dataset/fasta/tiny_v2.fasta" \
+--fasta "${SCRATCH}/nextflow/data/genome.fa" \
+--fastq_single "${SCRATCH}/nextflow/data/*_R1.fastq.gz" \
+--chromosome "X" --start 5305683 --stop 5333928 -resume
 -w "${SCRATCH}"
