@@ -15,7 +15,7 @@
 #$ -l sps=1   ## acces /sps directory
 #####################################
 
-NF_VERSION=19.04
+NF_VERSION=19.10
 NF=/pbs/throng/lbmc/cl7/nextflow/${NF_VERSION}/nextflow
 # change to your username
 SCRATCH=/sps/lbmc/lmodolo/
