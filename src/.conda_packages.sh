@@ -78,6 +78,9 @@ fi
 if [ ! -d ${CONDA_ENVS}gatk_3.8 ]; then
   conda create --yes --name gatk_3.8 gatk=3.8
 fi
+if [ ! -d ${CONDA_ENVS}gatk_4.0.8.1 ]; then
+  conda create --yes --name gatk_4.0.8.1 gatk4=4.0.8.1-0
+fi
 if [ ! -d ${CONDA_ENVS}cutadapt_1.14 ]; then
   conda create --yes --name cutadapt_1.14 cutadapt=1.14
 fi
