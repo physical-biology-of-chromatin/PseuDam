@@ -75,8 +75,8 @@ fi
 if [ ! -d ${CONDA_ENVS}fastp_0.19.7 ]; then
   conda create --yes --name fastp_0.19.7 fastp=0.19.7
 fi
-if [ ! -d ${CONDA_ENVS}gatk_3.8 ]; then
-  conda create --yes --name gatk_3.8 gatk=3.8
+if [ ! -d ${CONDA_ENVS}gatk_3.8.0 ]; then
+  conda create --yes --name gatk_3.8.0 gatk=3.8
 fi
 if [ ! -d ${CONDA_ENVS}gatk_4.0.8.1 ]; then
   conda create --yes --name gatk_4.0.8.1 gatk4=4.0.8.1-0
