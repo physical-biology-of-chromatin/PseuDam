@@ -30,7 +30,7 @@ To easily do so, go to the [pipelines/nextflow](https://gitlab.biologie.ens-lyon
 
 ![fork button](img/fork.png)
 
-In git, the [action of forking](https://git-scm.com/book/en/v2/GitHub-Contributing-to-a-Project) means that you are going to make your own private copy of a repository. You can then write modifications in your project, and if they are of interest for the source repository (here [pipelines/nextflow](https://gitlab.biologie.ens-lyon.fr/pipelines/nextflow)) create a merge request. Merge requests are sent to the source repository to ask the maintainers to integrate modifications.
+In git, the [action of forking](https://git-scm.com/book/en/v2/GitHub-Contributing-to-a-Project) means that you are going to make your own private copy of a repository. You can then write modifications in your project, and if they are of interest for the source repository create a merge request (here [pipelines/nextflow](https://gitlab.biologie.ens-lyon.fr/pipelines/nextflow)). Merge requests are sent to the source repository to ask the maintainers to integrate modifications.
 
 ![merge request button](img/merge_request.png)
 
@@ -51,47 +51,7 @@ The [results](https://gitlab.biologie.ens-lyon.fr/pipelines/nextflow/tree/master
 
 The [doc](https://gitlab.biologie.ens-lyon.fr/pipelines/nextflow/tree/master/doc) folder contains the documentation of this practical course.
 
-And most interestingly for you, the [src](https://gitlab.biologie.ens-lyon.fr/pipelines/nextflow/tree/master/src) contains code to wrap tools. This folder contains two subdirectories. A `docker_modules`, a `nf_modules` and a `psmn_modules` folder. 
-
-### `docker_modules`
-
-The `src/docker_modules` contains the code to wrap tools in [Docker](https://www.docker.com/what-docker). [Docker](https://www.docker.com/what-docker) is a framework that allows you to execute software within [containers](https://www.docker.com/what-container). The `docker_modules` contains directory corresponding to tools and subdirectories corresponding to their version.
-
-```sh
-ls -l src/docker_modules/
-rwxr-xr-x  3 laurent _lpoperator   96 May 25 15:42 bedtools/
-drwxr-xr-x  4 laurent _lpoperator  128 Jun 5 16:14 bowtie2/
-drwxr-xr-x  3 laurent _lpoperator   96 May 25 15:42 fastqc/
-drwxr-xr-x  4 laurent _lpoperator  128 Jun 5 16:14 htseq/
-```
-
-To each `tools/version` corresponds two files:
-
-```sh
-ls -l src/docker_modules/bowtie2/2.3.4.1/
--rw-r--r-- 1 laurent _lpoperator  283 Jun  5 15:07 Dockerfile
--rwxr-xr-x  1 laurent _lpoperator   79 Jun 5 16:18 docker_init.sh*
-```
-
-The `Dockerfile` is the [Docker](https://www.docker.com/what-docker) recipe to create a [container](https://www.docker.com/what-container) containing `Bowtie2` in its `2.3.4.1` version. And the `docker_init.sh` file is a small script to create the [container](https://www.docker.com/what-container) from this recipe.
-
-By running this script you will be able to easily install tools in different versions on your personal computer and use it in your pipeline. Some of the advantages are:
-
-- Whatever the computer, the installation and the results will be the same
-- You can keep [container](https://www.docker.com/what-container) for old version of tools and run it on new systems (science = reproducibility)
-- You don’t have to bother with tedious installation procedures, somebody else already did the job and wrote a `Dockerfile`.
-- You can easily keep [containers](https://www.docker.com/what-container) for different version of the same tools.
-
-### `psmn_modules`
-
-The `src/psmn_modules` folder is not really there. It’s a submodule of the project [PSMN/modules](https://gitlab.biologie.ens-lyon.fr/PSMN/modules). To populate it locally you can use the following command:
-
-```sh
-git submodule init
-```
-
-Like the `src/docker_modules` the [PSMN/modules](https://gitlab.biologie.ens-lyon.fr/PSMN/modules) project describe recipes to install tools and use them. The main difference is that you cannot use [Docker](https://www.docker.com/what-docker) on the PSMN. Instead you have to use another framework [Environment Module](http://www.ens-lyon.fr/PSMN/doku.php?id=documentation:tools:modules) which allows you to load modules for specific tools and version.
-The [README.md](https://gitlab.biologie.ens-lyon.fr/PSMN/modules/blob/master/README.md) file of the [PSMN/modules](https://gitlab.biologie.ens-lyon.fr/PSMN/modules) repository contains all the instruction to be able to load the modules maintained by the LBMC and present in the [PSMN/modules](https://gitlab.biologie.ens-lyon.fr/PSMN/modules) repository.
+And most interestingly for you, the [src](https://gitlab.biologie.ens-lyon.fr/pipelines/nextflow/tree/master/src) contains code to wrap tools. This folder contains one visible subdirectories `nf_modules` some pipeline examples and other hidden files.
 
 ### `nf_modules`
 
@@ -169,15 +129,12 @@ If you are on a PSMN computer:
 ```sh
 pip install cutadapt=1.14
 PATH="/scratch/lmodolo/:$PATH"
-git config --global http.sslVerify false
 ```
 
 and then :
 
-> Don't forget to replace *https://gitlab.biologie.ens-lyon.fr/* by *gitlab_lbmc* if you are using your own computer
-
 ```sh
-git clone https://gitlab.biologie.ens-lyon.fr/<usr_name>/nextflow.git
+git clone giltab_lbmc:<usr_name>/nextflow.git
 cd nextflow
 src/install_nextflow.sh
 ```
@@ -186,7 +143,7 @@ We also need data to run our pipeline:
 
 ```
 cd data
-git clone https://gitlab.biologie.ens-lyon.fr/LBMC/tiny_dataset.git
+git clone giltab_lbmc:LBMC/tiny_dataset.git
 cd ..
 ```
 
@@ -248,23 +205,6 @@ You can run your pipeline again and check the content of the folder `results/sam
 # Build your own RNASeq pipeline
 
 In this section you are going to build your own pipeline for RNASeq analysis from the code available in the `src/nf_modules` folder.
-
-## Create your Docker containers
-
-For this practical, we are going to need the following tools:
-
-- For Illumina adaptor removal: cutadapt
-- For reads trimming by quality: UrQt
-- For mapping and quantifying reads: BEDtools and Kallisto
-
-To initialize these tools, follow the **Installing** section of the [README.md](https://gitlab.biologie.ens-lyon.fr/pipelines/nextflow/blob/master/README.md) file.
-
-**If you are using a CBP computer don’t forget to clean up your docker containers at the end of the practical with the following commands:**
-
-```sh
-docker rm $(docker stop $(docker ps -aq))
-docker rmi $(docker images -qf "dangling=true")
-```
 
 ## Cutadapt
 
@@ -413,12 +353,13 @@ git config --global http.sslVerify false
 git clone https://gitlab.biologie.ens-lyon.fr/<usr_name>/nextflow.git
 cd nextflow/data
 git clone https://gitlab.biologie.ens-lyon.fr/LBMC/tiny_dataset.git
+git config --global http.sslVerify true
 cd ..
 ```
 
 ## Run nextflow
 
-As we don’t want nextflow to be killed in case of disconnection, we start by launching `tmux`. In case of deconnection, you can restore your session with the command `tmux a`.
+As we don’t want nextflow to be killed in case of disconnection, we start by launching `tmux`. In case of deconnection, you can restore your session with the command `tmux a` and close one with `ctr + b + d`
 
 ```sh
 tmux
