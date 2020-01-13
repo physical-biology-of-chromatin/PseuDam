@@ -37,5 +37,6 @@ If you want to work on your laptop, or plan to work remotely on your desktop via
 - git
 - java (>=1.8) (for the nextflow formation)
 - docker (for the nextflow formation)
+Otherwise, you will need to request an account to use the computer in the room (http://www.cbp.ens-lyon.fr/doku.php?id=contact:compte)
 
 Best,
