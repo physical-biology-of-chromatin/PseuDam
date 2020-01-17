@@ -13,6 +13,6 @@ file "sample.fasta" into fasta_sample
 
   script:
 """
-head ${fasta} > sample.fasta
+head ${fasta} > ${fasta.baseName}_sample.fasta
 """
 }
