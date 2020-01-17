@@ -16,9 +16,9 @@ process adaptor_removal {
   set pair_id, "*_cut_R{1,2}.fastq.gz" into fastq_files_cut
 
   script:
-  """
-  cutadapt -a AGATCGGAAGAG -g CTCTTCCGATCT -A AGATCGGAAGAG -G CTCTTCCGATCT \
-  -o ${pair_id}_cut_R1.fastq.gz -p ${pair_id}_cut_R2.fastq.gz \
-  ${reads[0]} ${reads[1]} > ${pair_id}_report.txt
+    """
+    cutadapt -a AGATCGGAAGAG -g CTCTTCCGATCT -A AGATCGGAAGAG -G CTCTTCCGATCT \
+    -o ${pair_id}_cut_R1.fastq.gz -p ${pair_id}_cut_R2.fastq.gz \
+    ${reads[0]} ${reads[1]} > ${pair_id}_report.txt
   """
 }
