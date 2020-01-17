@@ -134,7 +134,7 @@ PATH="/scratch/lmodolo/:$PATH"
 and then :
 
 ```sh
-git clone giltab_lbmc:<usr_name>/nextflow.git
+git clone gitlab_lbmc:<usr_name>/nextflow.git
 cd nextflow
 src/install_nextflow.sh
 ```
@@ -143,7 +143,7 @@ We also need data to run our pipeline:
 
 ```
 cd data
-git clone giltab_lbmc:LBMC/tiny_dataset.git
+git clone gitlab_lbmc:LBMC/tiny_dataset.git
 cd ..
 ```
 
