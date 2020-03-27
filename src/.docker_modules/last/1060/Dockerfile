@@ -19,5 +19,6 @@ unzip last-${LAST_VERSION}.zip && \
 cd last-${LAST_VERSION} && \
 make && \
 cp src/last* /usr/bin/ && \
+cp scripts/* /usr/bin/ && \
 cd .. && \
 rm -Rf last-${LAST_VERSION}
