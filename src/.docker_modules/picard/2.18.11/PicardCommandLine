@@ -12,4 +12,4 @@ PicardCommandLine)
         ;;
 esac
 
-exec java ${JAVA_OPTIONS-} -jar /usr/share/java/picard.jar "$@"
+exec java -Xmx12g ${JAVA_OPTIONS-} -jar /usr/share/java/picard.jar "$@"

@@ -45,6 +45,9 @@ fi
 if [ ! -d ${CONDA_ENVS}bowtie2_2.3.4.1 ]; then
   conda create --yes --name bowtie2_2.3.4.1 bowtie2=2.3.4.1 samtools=1.7 #&& \
 fi
+if [ ! -d ${CONDA_ENVS}bwa_0.7.17 ]; then
+  conda create --yes --name bwa_0.7.17 -c bioconda bwa=0.7.17
+fi
 if [ ! -d ${CONDA_ENVS}sra-tools_2.8.2 ]; then
   conda create --yes --name sra-tools_2.8.2 sra-tools=2.8.2
 fi
