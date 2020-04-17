@@ -30,13 +30,13 @@ Please read [CONTRIBUTING.md](CONTRIBUTING.md) for details on our code of conduc
 
 ## Versioning
 
-We use [SemVer](http://semver.org/) for versioning. For the versions available, see the [tags on this repository](https://gitlab.biologie.ens-lyon.fr/pipelines/nextflow/tags).
+We use [SemVer](http://semver.org/) for versioning. For the versions available, see the [tags on this repository](https://gitbio.ens-lyon.fr/pipelines/nextflow/tags).
 
 ## Authors
 
 * **Laurent Modolo** - *Initial work*
 
-See also the list of [contributors](https://gitlab.biologie.ens-lyon.fr/pipelines/nextflow/graphs/master) who participated in this project.
+See also the list of [contributors](https://gitbio.ens-lyon.fr/pipelines/nextflow/graphs/master) who participated in this project.
 
 ## License
 
