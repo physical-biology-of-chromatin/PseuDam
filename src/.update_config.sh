@@ -23,3 +23,6 @@ fd ".*config" src/ -x perl -0777pe 's|E5-2670deb128A,E5-2670deb128B,E5-2670deb12
 fd ".*config" src/ -x perl -0777pe 's|monointeldeb128,monointeldeb48,h48-E5-2670deb128,h6-E5-2667v4deb128|monointeldeb128|mg' -i {}
 fd ".*config" src/ -x perl -0777pe 's|openmp16|openmp32|mg' -i {}
 fd ".*config" src/ -x perl -0777pe 's|cpus = 16|cpus = 32|mg' -i {}
+fd ".*config" src/ -x perl -0777pe "s|'|\"|mg" -i {}
+
+
