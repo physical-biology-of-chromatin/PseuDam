@@ -25,12 +25,12 @@ You are going to build a pipeline for you or your team. So the first step is to 
 
 ## Forking
 
-Instead of reinventing the wheel, you can use the [pipelines/nextflow](https://gitlab.biologie.ens-lyon.fr/pipelines/nextflow) as a template.
-To easily do so, go to the [pipelines/nextflow](https://gitlab.biologie.ens-lyon.fr/pipelines/nextflow) repository and click on the [**fork**](https://gitlab.biologie.ens-lyon.fr/pipelines/nextflow/forks/new) button (you need to log-in).
+Instead of reinventing the wheel, you can use the [LBMC/nextflow](https://gitbio.ens-lyon.fr/LBMC/nextflow) as a template.
+To easily do so, go to the [LBMC/nextflow](https://gitbio.ens-lyon.fr/LBMC/nextflow) repository and click on the [**fork**](https://gitbio.ens-lyon.fr/LBMC/nextflow/forks/new) button (you need to log-in).
 
 ![fork button](img/fork.png)
 
-In git, the [action of forking](https://git-scm.com/book/en/v2/GitHub-Contributing-to-a-Project) means that you are going to make your own private copy of a repository. You can then write modifications in your project, and if they are of interest for the source repository create a merge request (here [pipelines/nextflow](https://gitlab.biologie.ens-lyon.fr/pipelines/nextflow)). Merge requests are sent to the source repository to ask the maintainers to integrate modifications.
+In git, the [action of forking](https://git-scm.com/book/en/v2/GitHub-Contributing-to-a-Project) means that you are going to make your own private copy of a repository. You can then write modifications in your project, and if they are of interest for the source repository create a merge request (here [LBMC/nextflow](https://gitbio.ens-lyon.fr/LBMC/nextflow)). Merge requests are sent to the source repository to ask the maintainers to integrate modifications.
 
 ![merge request button](img/merge_request.png)
 
@@ -38,20 +38,20 @@ In git, the [action of forking](https://git-scm.com/book/en/v2/GitHub-Contributi
 
 This project (and yours) follows the [guide of good practices for the LBMC](http://www.ens-lyon.fr/LBMC/intranet/services-communs/pole-bioinformatique/ressources/good_practice_LBMC)
 
-You are now on the main page of your fork of the [pipelines/nextflow](https://gitlab.biologie.ens-lyon.fr/pipelines/nextflow). You can explore this project, all the code in it is under the CeCILL licence (in the [LICENCE](https://gitlab.biologie.ens-lyon.fr/pipelines/nextflow/blob/master/LICENSE) file).
+You are now on the main page of your fork of the [LBMC/nextflow](https://gitbio.ens-lyon.fr/LBMC/nextflow). You can explore this project, all the code in it is under the CeCILL licence (in the [LICENCE](https://gitbio.ens-lyon.fr/LBMC/nextflow/blob/master/LICENSE) file).
 
-The [README.md](https://gitlab.biologie.ens-lyon.fr/pipelines/nextflow/blob/master/README.md) file contains instructions to run your pipeline and test its installation.
+The [README.md](https://gitbio.ens-lyon.fr/LBMC/nextflow/blob/master/README.md) file contains instructions to run your pipeline and test its installation.
 
-The [CONTRIBUTING.md](https://gitlab.biologie.ens-lyon.fr/pipelines/nextflow/blob/master/CONTRIBUTING.md) file contains guidelines if you want to contribute to the [pipelines/nextflow](https://gitlab.biologie.ens-lyon.fr/pipelines/nextflow) (making a merge request for example).
+The [CONTRIBUTING.md](https://gitbio.ens-lyon.fr/LBMC/nextflow/blob/master/CONTRIBUTING.md) file contains guidelines if you want to contribute to the [LBMC/nextflow](https://gitbio.ens-lyon.fr/LBMC/nextflow) (making a merge request for example).
 
-The [data](https://gitlab.biologie.ens-lyon.fr/pipelines/nextflow/tree/master/data) folder will be the place where you store the raw data for your analysis.
-The [results](https://gitlab.biologie.ens-lyon.fr/pipelines/nextflow/tree/master/results) folder will be the place where you store the results of your analysis.
+The [data](https://gitbio.ens-lyon.fr/LBMC/nextflow/tree/master/data) folder will be the place where you store the raw data for your analysis.
+The [results](https://gitbio.ens-lyon.fr/LBMC/nextflow/tree/master/results) folder will be the place where you store the results of your analysis.
 
 > **The content of `data` and `results` folders should never be saved on git.**
 
-The [doc](https://gitlab.biologie.ens-lyon.fr/pipelines/nextflow/tree/master/doc) folder contains the documentation of this practical course.
+The [doc](https://gitbio.ens-lyon.fr/LBMC/nextflow/tree/master/doc) folder contains the documentation of this practical course.
 
-And most interestingly for you, the [src](https://gitlab.biologie.ens-lyon.fr/pipelines/nextflow/tree/master/src) contains code to wrap tools. This folder contains one visible subdirectories `nf_modules` some pipeline examples and other hidden files.
+And most interestingly for you, the [src](https://gitbio.ens-lyon.fr/LBMC/nextflow/tree/master/src) contains code to wrap tools. This folder contains one visible subdirectories `nf_modules` some pipeline examples and other hidden files.
 
 ### `nf_modules`
 
@@ -134,7 +134,7 @@ PATH="/scratch/lmodolo/:$PATH"
 and then :
 
 ```sh
-git clone gitlab_lbmc:<usr_name>/nextflow.git
+git clone git@gitbio.ens-lyon.fr:<usr_name>/nextflow.git
 cd nextflow
 src/install_nextflow.sh
 ```
@@ -143,7 +143,7 @@ We also need data to run our pipeline:
 
 ```
 cd data
-git clone gitlab_lbmc:LBMC/tiny_dataset.git
+git clone git@gitbio.ens-lyon.fr:LBMC/tiny_dataset.git
 cd ..
 ```
 
@@ -210,7 +210,7 @@ In this section you are going to build your own pipeline for RNASeq analysis fro
 
 The first step of the pipeline is to remove any Illumina adaptors left in your read files.
 
-Open the WebIDE and create a `src/RNASeq.nf` file. Browse for [src/nf_modules/cutadapt/adaptor_removal_paired.nf](https://gitlab.biologie.ens-lyon.fr/pipelines/nextflow/blob/master/src/nf_modules/cutadapt/adaptor_removal_paired.nf), this file contains examples for cutadapt. We are interested in the *Illumina adaptor removal*, *for paired-end data* section of the code. Copy this code in your pipeline and commit it.
+Open the WebIDE and create a `src/RNASeq.nf` file. Browse for [src/nf_modules/cutadapt/adaptor_removal_paired.nf](https://gitbio.ens-lyon.fr/LBMC/nextflow/blob/master/src/nf_modules/cutadapt/adaptor_removal_paired.nf), this file contains examples for cutadapt. We are interested in the *Illumina adaptor removal*, *for paired-end data* section of the code. Copy this code in your pipeline and commit it.
 
 Compared to before, we have few new lines:
 
@@ -247,7 +247,7 @@ For the `fastq_sampler.nf` pipeline we used the command `head` present in most b
 - launch the process in a Docker container that has cutadapt installed
 - launch the process with psmn while loading the correct module to have cutadapt available
 
-We are not going to use the first option which requires no configuration for nextflow but tedious tools installations. Instead, we are going to use existing *wrappers* and tell nextflow about it. This is what the [src/nf_modules/cutadapt/adaptor_removal_paired.config](https://gitlab.biologie.ens-lyon.fr/pipelines/nextflow/blob/master/src/nf_modules/cutadapt/adaptor_removal_paired.config) is used for.
+We are not going to use the first option which requires no configuration for nextflow but tedious tools installations. Instead, we are going to use existing *wrappers* and tell nextflow about it. This is what the [src/nf_modules/cutadapt/adaptor_removal_paired.config](https://gitbio.ens-lyon.fr/LBMC/nextflow/blob/master/src/nf_modules/cutadapt/adaptor_removal_paired.config) is used for.
 
 Copy the content of this config file to an `src/RNASeq.config` file. This file is structured in process blocks. Here we are only interested in configuring `adaptor_removal` process not `trimming` process. So you can remove the `trimming` block and commit it.
 
@@ -262,7 +262,7 @@ You can test your pipeline with the following command:
 
 The second step of the pipeline is to trim reads by quality.
 
-Browse for [src/nf_modules/urqt/trimming_paired.nf](https://gitlab.biologie.ens-lyon.fr/pipelines/nextflow/blob/master/src/nf_modules/urqt/trimming_paired.nf), this file contains examples for UrQt. We are interested in the *for paired-end data* section of the code. Copy the process section code in your pipeline and commit it.
+Browse for [src/nf_modules/urqt/trimming_paired.nf](https://gitbio.ens-lyon.fr/LBMC/nextflow/blob/master/src/nf_modules/urqt/trimming_paired.nf), this file contains examples for UrQt. We are interested in the *for paired-end data* section of the code. Copy the process section code in your pipeline and commit it.
 
 This code won’t work if you try to run it: the `fastq_file` channel is already consumed by the `adaptor_removal` process. In nextflow once a channel is used by a process, it ceases to exist. Moreover, we don’t want to trim the input fastq, we want to trim the fastq that comes from the `adaptor_removal` process.
 
@@ -280,7 +280,7 @@ set pair_id, file(reads) from fastq_files_cut
 
 The two processes are now connected by the channel `fastq_files_cut`.
 
-Add the content of the [src/nf_modules/urqt/trimming_paired.config](https://gitlab.biologie.ens-lyon.fr/pipelines/nextflow/blob/master/src/nf_modules/urqt/trimming_paired.config) file to your `src/RNASeq.config` file and commit it.
+Add the content of the [src/nf_modules/urqt/trimming_paired.config](https://gitbio.ens-lyon.fr/LBMC/nextflow/blob/master/src/nf_modules/urqt/trimming_paired.config) file to your `src/RNASeq.config` file and commit it.
 
 You can test your pipeline.
 
@@ -288,7 +288,7 @@ You can test your pipeline.
 
 Kallisto need the sequences of the transcripts that need to be quantified. We are going to extract these sequences from the reference `data/tiny_dataset/fasta/tiny_v2.fasta` with the `bed` annotation `data/tiny_dataset/annot/tiny.bed`.
 
-You can copy to your `src/RNASeq.nf` file the content of [src/nf_modules/bedtools/fasta_from_bed.nf](https://gitlab.biologie.ens-lyon.fr/pipelines/nextflow/blob/master/src/nf_modules/bedtools/fasta_from_bed.nf) and to your `src/RNASeq.config` file the content of [src/nf_modules/bedtools/fasta_from_bed.config](https://gitlab.biologie.ens-lyon.fr/pipelines/nextflow/blob/master/src/nf_modules/bedtools/fasta_from_bed.config).
+You can copy to your `src/RNASeq.nf` file the content of [src/nf_modules/bedtools/fasta_from_bed.nf](https://gitbio.ens-lyon.fr/LBMC/nextflow/blob/master/src/nf_modules/bedtools/fasta_from_bed.nf) and to your `src/RNASeq.config` file the content of [src/nf_modules/bedtools/fasta_from_bed.config](https://gitbio.ens-lyon.fr/LBMC/nextflow/blob/master/src/nf_modules/bedtools/fasta_from_bed.config).
 
 Commit your work and test your pipeline with the following command:
 
@@ -300,7 +300,7 @@ Commit your work and test your pipeline with the following command:
 
 Kallisto run in two steps: the indexation of the reference and the quantification on this index.
 
-You can copy to your `src/RNASeq.nf` file the content of the files [src/nf_modules/kallisto/indexing.nf](https://gitlab.biologie.ens-lyon.fr/pipelines/nextflow/blob/master/src/nf_modules/kallisto/indexing.nf) and [src/nf_modules/kallisto/mapping_paired.nf](https://gitlab.biologie.ens-lyon.fr/pipelines/nextflow/blob/master/src/nf_modules/kallisto/mapping_paired.nf). You can add to your file `src/RNASeq.config` file the content of the files [src/nf_modules/kallisto/indexing.config](https://gitlab.biologie.ens-lyon.fr/pipelines/nextflow/blob/master/src/nf_modules/kallisto/indexing.config) and [src/nf_modules/kallisto/mapping_paired.config](https://gitlab.biologie.ens-lyon.fr/pipelines/nextflow/blob/master/src/nf_modules/kallisto/mapping_paired.config).
+You can copy to your `src/RNASeq.nf` file the content of the files [src/nf_modules/kallisto/indexing.nf](https://gitbio.ens-lyon.fr/LBMC/nextflow/blob/master/src/nf_modules/kallisto/indexing.nf) and [src/nf_modules/kallisto/mapping_paired.nf](https://gitbio.ens-lyon.fr/LBMC/nextflow/blob/master/src/nf_modules/kallisto/mapping_paired.nf). You can add to your file `src/RNASeq.config` file the content of the files [src/nf_modules/kallisto/indexing.config](https://gitbio.ens-lyon.fr/LBMC/nextflow/blob/master/src/nf_modules/kallisto/indexing.config) and [src/nf_modules/kallisto/mapping_paired.config](https://gitbio.ens-lyon.fr/LBMC/nextflow/blob/master/src/nf_modules/kallisto/mapping_paired.config).
 
 We are going to work with paired-end so only copy the relevant processes. The `index_fasta` process needs to take as input the output of your `fasta_from_bed` process. The `fastq` input of your `mapping_fastq` process needs to take as input the output of your `index_fasta` process and the `trimming` process.
 
@@ -350,9 +350,9 @@ Then you need to clone your pipeline and get the data:
 
 ```sh
 git config --global http.sslVerify false
-git clone https://gitlab.biologie.ens-lyon.fr/<usr_name>/nextflow.git
+git clone https://gitbio.ens-lyon.fr/<usr_name>/nextflow.git
 cd nextflow/data
-git clone https://gitlab.biologie.ens-lyon.fr/LBMC/tiny_dataset.git
+git clone https://gitbio.ens-lyon.fr/LBMC/tiny_dataset.git
 git config --global http.sslVerify true
 cd ..
 ```
@@ -363,8 +363,8 @@ As we don’t want nextflow to be killed in case of disconnection, we start by l
 
 ```sh
 tmux
-module load nextflow/0.28.2
-nextflow src/RNASeq.nf -c src/RNASeq.config -profile psmn --fastq "data/tiny_dataset/fastq/*_R{1,2}.fastq" --fasta "data/tiny_dataset/fasta/tiny_v2.fasta" --bed "data/tiny_dataset/annot/tiny.bed" -w /scratch/<login>
+src/install_nextflow.sh
+./nextflow src/RNASeq.nf -c src/RNASeq.config -profile psmn --fastq "data/tiny_dataset/fastq/*_R{1,2}.fastq" --fasta "data/tiny_dataset/fasta/tiny_v2.fasta" --bed "data/tiny_dataset/annot/tiny.bed" -w /scratch/Bio/<login>
 ```
 
 To use the scratch for nextflow computations add the option :
