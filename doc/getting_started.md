@@ -46,7 +46,7 @@ find src/docker_modules/ -name "docker_init.sh" | awk '{system($0)}'
 To run tests we first need to get a training set
 ```sh
 cd data
-git clone -c http.sslVerify=false https://gitlab.biologie.ens-lyon.fr/LBMC/tiny_dataset.git
+git clone https://gitbio.ens-lyon.fr/LBMC/Hub/tiny_dataset.git
 cp tiny_dataset/fastq/tiny_R1.fastq tiny_dataset/fastq/tiny2_R1.fastq
 cp tiny_dataset/fastq/tiny_R2.fastq tiny_dataset/fastq/tiny2_R2.fastq
 cp tiny_dataset/fastq/tiny_S.fastq tiny_dataset/fastq/tiny2_S.fastq
