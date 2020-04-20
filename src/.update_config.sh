@@ -25,4 +25,6 @@ fd ".*config" src/ -x perl -0777pe 's|openmp16|openmp32|mg' -i {}
 fd ".*config" src/ -x perl -0777pe 's|cpus = 16|cpus = 32|mg' -i {}
 fd ".*config" src/ -x perl -0777pe "s|'|\"|mg" -i {}
 
-
+# we update the psmn config to singularity
+fd ".*config" src/ -x perl -0777pe 's|psmn{|psmn{\n    singularity.enabled = true\n    singularity.cacheDir = "$baseDir/.singularity_psmn/"\n    singularity.runOptions = "--bind /Xnfs,/scratch"|mg' -i {}
+fd ".*config" src/ -x perl -0777pe 's|beforeScript.*conda.*(\n\s*clusterOptions = "-cwd -V".*)(container .*executor = "sge")|\2\1\2|gs' -i {}
