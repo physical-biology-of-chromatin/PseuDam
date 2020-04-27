@@ -29,4 +29,4 @@ fd ".*config" src/ -x perl -0777pe "s|'|\"|mg" -i {}
 fd ".*config" src/ -x perl -0777pe 's|psmn{|psmn{\n    singularity.enabled = true\n    singularity.cacheDir = "$baseDir/.singularity_psmn/"\n    singularity.runOptions = "--bind /Xnfs,/scratch"|mg' -i {}
 fd ".*config" src/ -x perl -0777pe 's|beforeScript.*conda.*(\n\s*clusterOptions = "-cwd -V".*)(container .*executor = "sge")|\2\1\2|gs' -i {}
 fd ".*config" src/nf_modules/ -x perl -0777pe 's|\s*scratch = true(\n.*clusterOptions = "-cwd -V")|\1|gs' -i {}
-
+fd ".*config" src/nf_modules/ -x perl -0777pe 's|\s*stageInMode = "copy"\n\s*stageOutMode = "rsync"(\n.*clusterOptions = "-cwd -V")|\1|gs' -i {}
