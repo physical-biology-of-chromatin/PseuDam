@@ -8,7 +8,8 @@ ENV PACKAGES curl=7.58.0* \
     g++ \
     zlib1g-dev=1:1.2.11* \
     ca-certificates=20180409 \
-    build-essential=12.4*
+    build-essential=12.4* \
+    python
 
 RUN apt-get update && \
     apt-get install -y --no-install-recommends ${PACKAGES} && \
