@@ -5,7 +5,7 @@ You can fork this repository to build your own pipeline.
 To get the last commits from this repository into your fork use the following commands:
 
 ```sh
-git remote add upstream gitlab_lbmc:pipelines/nextflow.git
+git remote add upstream git@gitbio.ens-lyon.fr::pipelines/nextflow.git
 git pull upstream master
 ```
 **If you created your `.config` file before version `0.4.0` you need to run the script `src/.update_config.sh` to use the latest docker, singularity and conda configuration (don't forget to check your config files afterward for typos).**
