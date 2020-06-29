@@ -143,7 +143,7 @@ We also need data to run our pipeline:
 
 ```
 cd data
-git clone git@gitbio.ens-lyon.fr:LBMC/tiny_dataset.git
+git clone git@gitbio.ens-lyon.fr:LBMC/hub/tiny_dataset.git
 cd ..
 ```
 
@@ -352,7 +352,7 @@ Then you need to clone your pipeline and get the data:
 git config --global http.sslVerify false
 git clone https://gitbio.ens-lyon.fr/<usr_name>/nextflow.git
 cd nextflow/data
-git clone https://gitbio.ens-lyon.fr/LBMC/tiny_dataset.git
+git clone https://gitbio.ens-lyon.fr/LBMC/hub/tiny_dataset.git
 git config --global http.sslVerify true
 cd ..
 ```
