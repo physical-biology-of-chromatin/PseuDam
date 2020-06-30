@@ -124,7 +124,7 @@ After writing this first pipeline, you may want to test it. To do that, first cl
 
 You can then run the following commands to download your project on your computer:
 
-If you are on a PSMN computer:
+If you are on a PSMN PC:
 
 ```sh
 pip install cutadapt=1.14
