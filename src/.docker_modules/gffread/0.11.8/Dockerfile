@@ -4,7 +4,8 @@ MAINTAINER Laurent Modolo
 ENV GFFREAD_VERSION=0.11.8
 ENV PACKAGES make \
              g++ \
-             bash
+             bash \
+             perl
 
 RUN apk update && \
     apk add ${PACKAGES} && \
