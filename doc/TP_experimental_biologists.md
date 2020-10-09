@@ -19,6 +19,8 @@ For this we are going to build a small RNASeq analysis pipeline that should run 
 - build the index of a reference genome
 - estimate the amount of RNA fragments mapping to the transcripts of this genome
 
+**To do this practical you will need to have [Docker](https://www.docker.com/) installed and running on your computer**
+
 # Initialize your own project
 
 You are going to build a pipeline for you or your team. So the first step is to create your own project.
@@ -55,7 +57,7 @@ And most interestingly for you, the [src](https://gitbio.ens-lyon.fr/LBMC/nextfl
 
 ### `nf_modules`
 
-The `src/nf_modules` folder contains templates of [nextflow](https://www.nextflow.io/) wrappers for the tools available in [Docker](https://www.docker.com/what-docker) and [psmn](http://www.ens-lyon.fr/PSMN/doku.php?id=documentation:tools:psmn). The details of the [nextflow](https://www.nextflow.io/) wrapper will be presented in the next section. Alongside the `.nf` and `.config` files, there is a `tests.sh` script to run test on the tool.
+The `src/nf_modules` folder contains templates of [nextflow](https://www.nextflow.io/) wrappers for the tools available in [Docker](https://www.docker.com/what-docker). The details of the [nextflow](https://www.nextflow.io/) wrapper will be presented in the next section. Alongside the `.nf` and `.config` files, there is a `tests.sh` script to run test on the tool.
 
 # Nextflow pipeline
 
@@ -124,13 +126,6 @@ After writing this first pipeline, you may want to test it. To do that, first cl
 
 You can then run the following commands to download your project on your computer:
 
-If you are on a PSMN PC:
-
-```sh
-pip install cutadapt=1.14
-PATH="/scratch/lmodolo/:$PATH"
-```
-
 and then :
 
 ```sh
@@ -153,6 +148,8 @@ We can run our pipeline with the following command:
 ./nextflow src/fasta_sampler.nf
 ```
 
+
+
 ## Getting your results
 
 Our pipeline seems to work but we don’t know where is the `sample.fasta`. To get results out of a process, we need to tell nextflow to write it somewhere (we may don’t need to get every intermediate file in our results).
@@ -173,6 +170,8 @@ git pull origin master
 ```
 
 You can run your pipeline again and check the content of the folder `results/sampling`.
+
+
 
 ## Fasta everywhere
 
@@ -244,8 +243,8 @@ As we are working with paired-end RNASeq data, we tell nextflow to send pairs of
 For the `fastq_sampler.nf` pipeline we used the command `head` present in most base UNIX systems. Here we want to use `cutadapt` which is not. Therefore, we have three main options:
 
 - install cutadapt locally so nextflow can use it
-- launch the process in a Docker container that has cutadapt installed
-- launch the process with psmn while loading the correct module to have cutadapt available
+- launch the process in a [Docker](https://www.docker.com/) container that has cutadapt installed
+- launch the process in a [Singularity](https://singularity.lbl.gov/) container (what we do on the PSMN and CCIN2P3)
 
 We are not going to use the first option which requires no configuration for nextflow but tedious tools installations. Instead, we are going to use existing *wrappers* and tell nextflow about it. This is what the [src/nf_modules/cutadapt/adaptor_removal_paired.config](https://gitbio.ens-lyon.fr/LBMC/nextflow/blob/master/src/nf_modules/cutadapt/adaptor_removal_paired.config) is used for.
 
@@ -331,29 +330,19 @@ login@e5-2667v4comp1
 
 ## Set your environment
 
-Make the LBMC modules available to you:
-
-```sh
-ln -s /Xnfs/lbmcdb/common/modules/modulefiles ~/privatemodules
-echo "module use ~/privatemodules" >> .bashrc
-```
-
 Create and go to your `scratch` folder:
 
 ```sh
-mkdir -p /scratch/<login>
-cd /scratch/<login>
-echo "module use ~/privatemodules" >> .bashrc
+mkdir -p /scratch/Bio/<login>
+cd /scratch/Bio/<login>
 ```
 
 Then you need to clone your pipeline and get the data:
 
 ```sh
-git config --global http.sslVerify false
 git clone https://gitbio.ens-lyon.fr/<usr_name>/nextflow.git
 cd nextflow/data
 git clone https://gitbio.ens-lyon.fr/LBMC/hub/tiny_dataset.git
-git config --global http.sslVerify true
 cd ..
 ```
 
