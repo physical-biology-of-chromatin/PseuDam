@@ -8,6 +8,7 @@ Channel
 process trimming {
   tag "${reads}"
   publishDir "results/fastq/trimming/", mode: 'copy'
+  label "urqt"
 
   input:
   set pair_id, file(reads) from fastq_files

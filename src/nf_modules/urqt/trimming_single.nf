@@ -11,6 +11,7 @@ Channel
 process trimming {
   tag "$file_id"
   echo true
+  label "urqt"
 
   input:
   set file_id, file(reads) from fastq_files

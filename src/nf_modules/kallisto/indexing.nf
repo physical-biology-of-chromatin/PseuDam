@@ -10,6 +10,7 @@ Channel
 process index_fasta {
   tag "$fasta.baseName"
   publishDir "results/mapping/index/", mode: 'copy'
+  label "kallisto"
 
   input:
     file fasta from fasta_file

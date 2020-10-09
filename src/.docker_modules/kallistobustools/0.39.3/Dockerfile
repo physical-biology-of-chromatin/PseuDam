@@ -4,7 +4,7 @@ MAINTAINER Laurent Modolo
 ENV B_VERSION=0.39.3
 ENV K_VERSION=0.46.1
 
-RUN apk add  --update --no-cache bash musl-dev linux-headers g++ cmake make build-base hdf5 hdf5-dev zlib-dev autoconf && \
+RUN apk add  --update --no-cache bash musl-dev linux-headers g++ cmake make build-base hdf5 hdf5-dev zlib-dev autoconf bash && \
 wget https://github.com/BUStools/bustools/archive/v${B_VERSION}.tar.gz && \
 tar xvf v${B_VERSION}.tar.gz && \
 cd bustools-${B_VERSION} && \

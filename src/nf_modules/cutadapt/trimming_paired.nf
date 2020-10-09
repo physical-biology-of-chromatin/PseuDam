@@ -8,6 +8,7 @@ Channel
 process trimming {
   tag "$pair_id"
   publishDir "results/fastq/trimming/", mode: 'copy'
+  label "cutadapt"
 
   input:
   set pair_id, file(reads) from fastq_files

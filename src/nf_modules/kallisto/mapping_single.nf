@@ -21,6 +21,7 @@ Channel
 process mapping_fastq {
   tag "$file_id"
   publishDir "results/mapping/quantification/", mode: 'copy'
+  label "kallisto"
 
   input:
   set file_id, file(reads) from fastq_files

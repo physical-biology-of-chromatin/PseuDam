@@ -8,6 +8,7 @@ Channel
 process adaptor_removal {
   tag "$pair_id"
   publishDir "results/fastq/adaptor_removal/", mode: 'copy'
+  label "cutadapt"
 
   input:
   set pair_id, file(reads) from fastq_files

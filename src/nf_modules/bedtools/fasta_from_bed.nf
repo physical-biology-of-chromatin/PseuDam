@@ -24,6 +24,7 @@ Channel
 process fasta_from_bed {
   tag "${bed.baseName}"
   publishDir "results/fasta/", mode: 'copy'
+  label "bedtools"
 
   input:
   file fasta from fasta_files

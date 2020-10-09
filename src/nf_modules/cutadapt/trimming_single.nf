@@ -8,6 +8,7 @@ Channel
 
 process trimming {
   tag "$file_id"
+  label "cutadapt"
 
   input:
   set file_id, file(reads) from fastq_files

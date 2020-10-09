@@ -20,6 +20,7 @@ Channel
 process mapping_fastq {
   tag "$pair_id"
   publishDir "results/mapping/bams/", mode: 'copy'
+  label "bowtie"
 
   input:
   set pair_id, file(reads) from fastq_files
