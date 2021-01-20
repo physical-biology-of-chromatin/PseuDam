@@ -6,7 +6,7 @@ adapter_5_prim = "CTCTTCCGATCT"
 trim_quality = "20"
 
 
-process adaptor_removal_paired {
+process adaptor_removal_pairedend {
   container = "${container_url}"
   label "big_mem_mono_cpus"
   tag "$pair_id"
