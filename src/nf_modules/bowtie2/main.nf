@@ -1,5 +1,5 @@
-bowtie_version = "2.3.4.1"
-container_url = "lbmc/bowtie2:${bowtie_version}"
+version = "2.3.4.1"
+container_url = "lbmc/bowtie2:${version}"
 
 process index_fasta {
   container = "${container_url}"
