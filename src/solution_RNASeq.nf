@@ -1,3 +1,7 @@
+/*
+./nextflow src/solution_RNASeq.nf -c src/solution_RNASeq.config --fastq "data/tiny_dataset/fastq/tiny2_R{1,2}.fastq.gz" --fasta "data/tiny_dataset/fasta/tiny_v2_10.fasta" --bed "data/tiny_dataset/annot/tiny.bed" -profile docker
+*/
+
 log.info "fastq files : ${params.fastq}"
 log.info "fasta file : ${params.fasta}"
 log.info "bed file : ${params.bed}"
