@@ -23,7 +23,9 @@ ENV R_DEPS g++ \
   libexecinfo-dev \
   file \
   ttf-linux-libertine \
-  git
+  git \
+  openssl \
+  bash
 
 RUN echo "http://ftp.acc.umu.se/mirror/alpinelinux.org/v3.11/main" > /etc/apk/repositories \
 && echo "http://ftp.acc.umu.se/mirror/alpinelinux.org/v3.11/community" >> /etc/apk/repositories \
