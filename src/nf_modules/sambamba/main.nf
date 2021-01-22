@@ -3,7 +3,7 @@ container_url = "lbmc/sambamba:${version}"
 
 process index_bam {
   container = "${container_url}"
-  label "big_mem__cpus"
+  label "big_mem_multi_cpus"
   tag "$file_id"
 
   input:
