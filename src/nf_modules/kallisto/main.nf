@@ -29,8 +29,8 @@ process mapping_fastq_pairedend {
   publishDir "results/mapping/counts/", mode: 'copy'
 
   input:
+  path index
   tuple val(pair_id), path(reads)
-  path index.collect()
 
   output:
   path "${pair_id}", emit: counts
@@ -53,8 +53,8 @@ process mapping_fastq_singleend {
   publishDir "results/mapping/counts/", mode: 'copy'
 
   input:
+  path index
   tuple val(file_id), path(reads)
-  path index.collect()
 
   output:
   path "${pair_id}", emit: counts

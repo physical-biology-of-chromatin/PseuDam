@@ -35,8 +35,8 @@ process mapping_fastq_pairedend {
   publishDir "results/mapping/bams/", mode: 'copy'
 
   input:
+  path index
   tuple val(pair_id), path(reads)
-  path index.collect()
 
   output:
   tuple val(pair_id), path("*.bam"), emit: bam
@@ -74,8 +74,8 @@ process mapping_fastq_singleend {
   publishDir "results/mapping/bams/", mode: 'copy'
 
   input:
+  path index
   tuple val(file_id), path(reads)
-  path index.collect()
 
   output:
   set file_id, "*.bam", emit: bam
