@@ -27,7 +27,7 @@ process filter_bam_mapped {
     tuple val(file_id), path(bam)
 
   output:
-    tuple val(file_id), path("*_filtered.bam"), emit: bam
+    tuple val(file_id), path("*_mapped.bam"), emit: bam
   script:
 """
 samtools view -@ ${task.cpus} -F 4 -hb ${bam} -L ${bed} > ${file_id}_mapped.bam
@@ -43,7 +43,7 @@ process filter_bam_unmapped {
     tuple val(file_id), path(bam)
 
   output:
-    tuple val(file_id), path("*_filtered.bam"), emit: bam
+    tuple val(file_id), path("*_unmapped.bam"), emit: bam
   script:
 """
 samtools view -@ ${task.cpus} -f 4 -hb ${bam} > ${file_id}_unmapped.bam
