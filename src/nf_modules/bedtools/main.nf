@@ -24,7 +24,7 @@ bedtools getfasta -name \
 process bam_to_fastq_singleend {
   container = "${container_url}"
   label "big_mem_mono_cpus"
-  tag "${bed.baseName}"
+  tag "${bam.baseName}"
   publishDir "results/fasta/", mode: 'copy'
 
   input:
@@ -43,7 +43,7 @@ bedtools bamtofastq
 process bam_to_fastq_pairedend {
   container = "${container_url}"
   label "big_mem_mono_cpus"
-  tag "${bed.baseName}"
+  tag "${bam.baseName}"
   publishDir "results/fasta/", mode: 'copy'
 
   input:
