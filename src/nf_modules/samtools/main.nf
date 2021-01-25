@@ -30,7 +30,7 @@ process filter_bam_mapped {
     tuple val(file_id), path("*_mapped.bam"), emit: bam
   script:
 """
-samtools view -@ ${task.cpus} -F 4 -hb ${bam} -L ${bed} > ${file_id}_mapped.bam
+samtools view -@ ${task.cpus} -F 4 -hb ${bam} > ${file_id}_mapped.bam
 """
 }
 
