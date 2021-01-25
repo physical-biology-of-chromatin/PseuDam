@@ -40,7 +40,7 @@ bedtools bamtofastq
 """
 }
 
-process bam_to_fastq_paired_end {
+process bam_to_fastq_pairedend {
   container = "${container_url}"
   label "big_mem_mono_cpus"
   tag "${bed.baseName}"
