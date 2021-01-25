@@ -18,6 +18,41 @@ samtools view -@ ${task.cpus} -hb ${bam} -L ${bed} > ${file_id}_filtered.bam
 """
 }
 
+process filter_bam_mapped {
+  container = "${container_url}"
+  label "big_mem_multi_cpus"
+  tag "$file_id"
+
+  input:
+    tuple val(file_id), path(bam)
+    path bed
+
+  output:
+    tuple val(file_id), path("*_filtered.bam"), emit: bam
+  script:
+"""
+samtools view -@ ${task.cpus} -F 4 -hb ${bam} -L ${bed} > ${file_id}_mapped.bam
+"""
+}
+
+process filter_bam_unmapped {
+  container = "${container_url}"
+  label "big_mem_multi_cpus"
+  tag "$file_id"
+
+  input:
+    tuple val(file_id), path(bam)
+    path bed
+
+  output:
+    tuple val(file_id), path("*_filtered.bam"), emit: bam
+  script:
+"""
+samtools view -@ ${task.cpus} -f 4 -hb ${bam} > ${file_id}_unmapped.bam
+"""
+}
+
+
 process index_bam {
   container = "${container_url}"
   label "big_mem_mono_cpus"
