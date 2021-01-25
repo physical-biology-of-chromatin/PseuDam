@@ -50,7 +50,7 @@ process bam_to_fastq_pairedend {
   path bam
 
   output:
-  path "*.fastq", emit: fasta
+  path "*.fastq", emit: fastq
 
   script:
 """
