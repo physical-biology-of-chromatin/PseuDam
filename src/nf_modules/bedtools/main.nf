@@ -24,14 +24,14 @@ bedtools getfasta -name \
 process bam_to_fastq_singleend {
   container = "${container_url}"
   label "big_mem_mono_cpus"
-  tag "${bam.baseName}"
+  tag "${bam_id}"
   publishDir "results/mapping/fastq/", mode: 'copy'
 
   input:
-  path bam
+  tuple val(bam_id), path(bam)
 
   output:
-  tuple val(bam.baseName), path("*.fastq"), emit: fastq
+  tuple val(bam_id), path("*.fastq"), emit: fastq
 
   script:
 """
@@ -43,11 +43,11 @@ bedtools bamtofastq \
 process bam_to_fastq_pairedend {
   container = "${container_url}"
   label "big_mem_mono_cpus"
-  tag "${bam.baseName}"
+  tag "${bam_id}"
   publishDir "results/mapping/fastq/", mode: 'copy'
 
   input:
-  path bam
+  tuple val(bam_id), path(bam)
 
   output:
   tuple val(bam.baseName), path("*.fastq"), emit: fastq
