@@ -28,11 +28,10 @@ process bam_to_fastq_singleend {
   publishDir "results/fasta/", mode: 'copy'
 
   input:
-  path fasta
-  path bed
+  path bam
 
   output:
-  path "*_extracted.fasta", emit: fasta
+  path "*.fastq", emit: fastq
 
   script:
 """
@@ -48,11 +47,10 @@ process bam_to_fastq_paired_end {
   publishDir "results/fasta/", mode: 'copy'
 
   input:
-  path fasta
-  path bed
+  path bam
 
   output:
-  path "*_extracted.fasta", emit: fasta
+  path "*.fastq", emit: fasta
 
   script:
 """

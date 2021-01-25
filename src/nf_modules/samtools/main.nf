@@ -25,7 +25,6 @@ process filter_bam_mapped {
 
   input:
     tuple val(file_id), path(bam)
-    path bed
 
   output:
     tuple val(file_id), path("*_filtered.bam"), emit: bam
@@ -42,7 +41,6 @@ process filter_bam_unmapped {
 
   input:
     tuple val(file_id), path(bam)
-    path bed
 
   output:
     tuple val(file_id), path("*_filtered.bam"), emit: bam
