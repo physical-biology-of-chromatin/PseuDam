@@ -31,7 +31,7 @@ process bam_to_fastq_singleend {
   path bam
 
   output:
-  path "*.fastq", emit: fastq
+  tuple val(bam.baseName), path("*.fastq"), emit: fastq
 
   script:
 """
@@ -50,7 +50,7 @@ process bam_to_fastq_pairedend {
   path bam
 
   output:
-  path "*.fastq", emit: fastq
+  tuple val(bam.baseName), path("*.fastq"), emit: fastq
 
   script:
 """
