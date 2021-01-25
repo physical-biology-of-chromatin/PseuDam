@@ -1,7 +1,7 @@
 version = "2.8.2"
 container_url = "lbmc/sratoolkit:${version}"
 
-process index_fasta {
+process fastq_dump {
   container = "${container_url}"
   label "big_mem_mono_cpus"
   tag "$sra"
