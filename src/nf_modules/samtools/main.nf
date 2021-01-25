@@ -1,4 +1,4 @@
-version = "1.17"
+version = "1.7"
 container_url = "lbmc/samtools:${version}"
 
 process filter_bam {
