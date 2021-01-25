@@ -25,7 +25,7 @@ process bam_to_fastq_singleend {
   container = "${container_url}"
   label "big_mem_mono_cpus"
   tag "${bam.baseName}"
-  publishDir "results/fasta/", mode: 'copy'
+  publishDir "results/mapping/fastq/", mode: 'copy'
 
   input:
   path bam
@@ -35,7 +35,7 @@ process bam_to_fastq_singleend {
 
   script:
 """
-bedtools bamtofastq
+bedtools bamtofastq \
 -i ${bam} -fq ${bam.baseName}.fastq
 """
 }
@@ -44,7 +44,7 @@ process bam_to_fastq_pairedend {
   container = "${container_url}"
   label "big_mem_mono_cpus"
   tag "${bam.baseName}"
-  publishDir "results/fasta/", mode: 'copy'
+  publishDir "results/mapping/fastq/", mode: 'copy'
 
   input:
   path bam
@@ -54,7 +54,7 @@ process bam_to_fastq_pairedend {
 
   script:
 """
-bedtools bamtofastq
+bedtools bamtofastq \
 -i ${bam} -fq ${bam.baseName}_R1.fastq -fq2 ${bam.baseName}_R2.fastq
 """
 }
