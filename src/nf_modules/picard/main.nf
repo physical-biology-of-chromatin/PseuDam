@@ -19,9 +19,9 @@ process mark_duplicate {
 PicardCommandLine MarkDuplicates \
   VALIDATION_STRINGENCY=LENIENT \
   REMOVE_DUPLICATES=true \
-  INPUT=${bams[0]} \
-  OUTPUT=${bams[0].baseName}_dedup.bam \
-  METRICS_FILE=${bams[0].baseName}_picard_dedup_report.txt &> \
-  picard_${bams[0].baseName}.log
+  INPUT=${bam} \
+  OUTPUT=${bam.baseName}_dedup.bam \
+  METRICS_FILE=${bam.baseName}_picard_dedup_report.txt &> \
+  picard_${bam.baseName}.log
 """
 }
