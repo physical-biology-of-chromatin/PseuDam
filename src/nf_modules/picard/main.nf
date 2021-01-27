@@ -6,7 +6,6 @@ process mark_duplicate {
   label "big_mem_mono_cpus"
   tag "$file_id"
   publishDir "results/mapping/ddup/", mode: 'copy'
-  memory '30 GB'
 
   input:
     tuple val(file_id), path(bam)
