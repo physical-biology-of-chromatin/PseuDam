@@ -90,7 +90,6 @@ process split_bam {
   container = "${container_url}"
   label "big_mem_multi_cpus"
   tag "$file_id"
-  cpus = 2
 
   input:
     tuple val(file_id), path(bam)
@@ -100,8 +99,10 @@ process split_bam {
     tuple val(file_id), path("*_reverse.bam*"), emit: bam_reverse
   script:
 """
-samtools view -hb -F 0x10 ${bam} > ${file_id}_forward.bam &
-samtools view -hb -f 0x10 ${bam} > ${file_id}_reverse.bam
+samtools view --@ ${Math.round(task.cpus/2)} \
+  -hb -F 0x10 ${bam} > ${file_id}_forward.bam &
+samtools view --@ ${Math.round(task.cpus/2)} \
+  -hb -f 0x10 ${bam} > ${file_id}_reverse.bam
 """
 }
 
@@ -124,9 +125,9 @@ samtools merge ${first_bam} ${second_bam} ${first_bam_id}_${second_file_id}.bam
 """
 }
 
-process bam_stats {
+process stats_bam {
   container = "${container_url}"
-  label "big_mem_mono_cpus"
+  label "big_mem_multi_cpus"
   tag "$file_id"
   cpus = 2
 
@@ -137,6 +138,6 @@ process bam_stats {
     tuple val(file_id), path("*.tsv"), emit: tsv
   script:
 """
-samtools flagstat -O tsv ${bam} > ${file_id}.tsv
+samtools flagstat -@ ${task.cpus} -O tsv ${bam} > ${file_id}.tsv
 """
 }
