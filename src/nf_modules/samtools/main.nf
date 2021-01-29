@@ -123,3 +123,20 @@ process merge_bam {
 samtools merge ${first_bam} ${second_bam} ${first_bam_id}_${second_file_id}.bam
 """
 }
+
+process bam_stats {
+  container = "${container_url}"
+  label "big_mem_multi_cpus"
+  tag "$file_id"
+  cpus = 2
+
+  input:
+    tuple val(file_id), path(bam)
+
+  output:
+    tuple val(file_id), path("*.tsv"), emit: tsv
+  script:
+"""
+samtools flagstat -O tsv ${bam} > ${file_id}.tsv
+"""
+}
