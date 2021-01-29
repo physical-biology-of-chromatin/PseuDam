@@ -126,7 +126,7 @@ samtools merge ${first_bam} ${second_bam} ${first_bam_id}_${second_file_id}.bam
 
 process bam_stats {
   container = "${container_url}"
-  label "big_mem_multi_cpus"
+  label "big_mem_mono_cpus"
   tag "$file_id"
   cpus = 2
 
