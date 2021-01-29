@@ -14,7 +14,8 @@ process filter_bam {
     tuple val(file_id), path("*_filtered.bam"), emit: bam
   script:
 """
-samtools view -@ ${task.cpus} -hb ${bam} -L ${bed} > ${file_id}_filtered.bam
+samtools view -@ ${task.cpus} -hb ${bam} -L ${bed} > \
+  ${bam.simpleName}_filtered.bam
 """
 }
 
@@ -30,7 +31,8 @@ process filter_bam_mapped {
     tuple val(file_id), path("*_mapped.bam"), emit: bam
   script:
 """
-samtools view -@ ${task.cpus} -F 4 -hb ${bam} > ${file_id}_mapped.bam
+samtools view -@ ${task.cpus} -F 4 -hb ${bam} > \
+  ${bam.simpleName}_mapped.bam
 """
 }
 
@@ -46,7 +48,7 @@ process filter_bam_unmapped {
     tuple val(file_id), path("*_unmapped.bam"), emit: bam
   script:
 """
-samtools view -@ ${task.cpus} -f 4 -hb ${bam} > ${file_id}_unmapped.bam
+samtools view -@ ${task.cpus} -f 4 -hb ${bam} > ${bam.simpleName}_unmapped.bam
 """
 }
 
@@ -81,7 +83,7 @@ process sort_bam {
 
   script:
 """
-samtools sort -@ ${task.cpus} -O BAM -o ${file_id}_sorted.bam ${bam}
+samtools sort -@ ${task.cpus} -O BAM -o ${bam.simpleName}_sorted.bam ${bam}
 """
 }
 
@@ -100,9 +102,9 @@ process split_bam {
   script:
 """
 samtools view --@ ${Math.round(task.cpus/2)} \
-  -hb -F 0x10 ${bam} > ${file_id}_forward.bam &
+  -hb -F 0x10 ${bam} > ${bam.simpleName}_forward.bam &
 samtools view --@ ${Math.round(task.cpus/2)} \
-  -hb -f 0x10 ${bam} > ${file_id}_reverse.bam
+  -hb -f 0x10 ${bam} > ${bam.simpleName}_reverse.bam
 """
 }
 
@@ -121,7 +123,8 @@ process merge_bam {
     tuple val(file_id), path("*.bam*"), emit: bam
   script:
 """
-samtools merge ${first_bam} ${second_bam} ${first_bam_id}_${second_file_id}.bam
+samtools merge ${first_bam} ${second_bam} \
+  ${first_bam.simpleName}_${second_file.simpleName}.bam
 """
 }
 
@@ -138,6 +141,6 @@ process stats_bam {
     tuple val(file_id), path("*.tsv"), emit: tsv
   script:
 """
-samtools flagstat -@ ${task.cpus} -O tsv ${bam} > ${file_id}.tsv
+samtools flagstat -@ ${task.cpus} -O tsv ${bam} > ${bam.simpleName}_stats.tsv
 """
 }
