@@ -12,7 +12,7 @@ process fasta_from_bed {
   path bed
 
   output:
-  path "*_extracted.fasta", emit: fasta
+  tuple val(bed.baseName), path("*_extracted.fasta"), emit: fasta
 
   script:
 """
@@ -50,7 +50,7 @@ process bam_to_fastq_pairedend {
   tuple val(bam_id), path(bam)
 
   output:
-  tuple val(bam.baseName), path("*.fastq"), emit: fastq
+  tuple val(bam_id), path("*.fastq"), emit: fastq
 
   script:
 """

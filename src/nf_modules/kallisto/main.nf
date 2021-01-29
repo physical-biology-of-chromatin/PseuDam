@@ -57,7 +57,7 @@ process mapping_fastq_singleend {
   tuple val(file_id), path(reads)
 
   output:
-  path "${pair_id}", emit: counts
+  tuple val(file_id), path("${pair_id}"), emit: counts
   path "*_report.txt", emit: report
 
   script:
@@ -66,6 +66,6 @@ mkdir ${file_id}
 kallisto quant -i ${index} -t ${task.cpus} --single \
 --bias --bootstrap-samples 100 -o ${file_id} \
 -l ${params.mean} -s ${params.sd} \
-${reads} &> ${file_id}_kallisto_mapping_report.txt
+${reads} &> ${reads.simpleName}_kallisto_mapping_report.txt
 """
 }

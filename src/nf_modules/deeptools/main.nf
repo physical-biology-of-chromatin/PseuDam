@@ -33,7 +33,8 @@ process bam_to_bigwig {
 
   script:
 """
-bamCoverage -p ${task.cpus} --ignoreDuplicates -b ${bam} -o ${file_id}.bw
+bamCoverage -p ${task.cpus} --ignoreDuplicates -b ${bam} \
+  -o ${bam.simpleName}.bw
 """
 }
 
@@ -57,7 +58,7 @@ computeMatrix scale-regions -S ${bw} \
   -R ${bed} \
   --beforeRegionStartLength 100 \
   --afterRegionStartLength 100 \
-  -o ${bed_file_id}.mat.gz
+  -o ${bed.simpleName}.mat.gz
 """
 }
 
@@ -81,7 +82,7 @@ https://deeptools.readthedocs.io/en/develop/content/tools/plotProfile.html
 """
 plotProfile -m ${matrix} \
   --plotFileFormat=pdf \
-  -out ${file_id}.pdf \
+  -out ${matrix.simpleName}.pdf \
   --plotType=fill \
   --perGroup \
   --plotTitle "${params.title}"

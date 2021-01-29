@@ -31,7 +31,7 @@ process sort_bam {
 
   script:
 """
-sambamba sort -t ${task.cpus} -o ${file_id}_sorted.bam ${bam}
+sambamba sort -t ${task.cpus} -o ${bam.baseName}_sorted.bam ${bam}
 """
 }
 
@@ -49,7 +49,9 @@ process split_bam {
     tuple val(file_id), path("*_reverse.bam*"), emit: bam_reverse
   script:
 """
-sambamba view -t ${task.cpus} -h -F "strand == '+'" ${bam} > ${file_id}_forward.bam
-sambamba view -t ${task.cpus} -h -F "strand == '-'" ${bam} > ${file_id}_reverse.bam
+sambamba view -t ${task.cpus} -h -F "strand == '+'" ${bam} > \
+  ${bam.baseName}_forward.bam
+sambamba view -t ${task.cpus} -h -F "strand == '-'" ${bam} > \
+  ${bam.baseName}_reverse.bam
 """
 }

@@ -22,11 +22,11 @@ macs2 callpeak \
   --call-summits "True"\
   --control ${file_control} \
   --keep-dup "auto" \
-  --name ${file_id} \
+  --name ${bam_ip.simpleName} \
   --gsize ${params.genome_size} 2> \
-  ${file_ip}_macs2_report.txt
+  ${bam_ip.simpleName}_macs2_report.txt
 
-if grep -q "ERROR" ${file_ip}_macs2_report.txt; then
+if grep -q "ERROR" ${bam_ip.simpleName}_macs2_report.txt; then
   echo "MACS2 error"
   exit 1
 fi

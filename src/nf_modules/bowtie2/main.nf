@@ -78,8 +78,8 @@ process mapping_fastq_singleend {
   tuple val(file_id), path(reads)
 
   output:
-  set file_id, "*.bam", emit: bam
-  file "*_report.txt", emit: report
+  tuple val(file_id), path("*.bam"), emit: bam
+  path "*_report.txt", emit: report
 
   script:
   index_id = index[0]
@@ -93,13 +93,13 @@ bowtie2 --very-sensitive \
   -p ${task.cpus} \
   -x ${index_id} \
   -U ${reads} 2> \
-  ${file_id}_bowtie2_mapping_report_tmp.txt | \
-  samtools view -Sb - > ${file_id}.bam
+  ${reads.baseName}_bowtie2_mapping_report_tmp.txt | \
+  samtools view -Sb - > ${reads.baseName}.bam
 
-if grep -q "Error" ${file_id}_bowtie2_mapping_report_tmp.txt; then
+if grep -q "Error" ${reads.baseName}_bowtie2_mapping_report_tmp.txt; then
   exit 1
 fi
-tail -n 19 ${file_id}_bowtie2_mapping_report_tmp.txt > \
-  ${file_id}_bowtie2_mapping_report.txt
+tail -n 19 ${reads.baseName}_bowtie2_mapping_report_tmp.txt > \
+  ${reads.baseName}_bowtie2_mapping_report.txt
 """
 }
