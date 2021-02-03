@@ -63,7 +63,7 @@ process index_bam {
 
   output:
     tuple val(file_id), path(bam), emit: bam
-    tuple val(file_id), path("*.bam*"), emit: bam_idx
+    tuple val(file_id), path("*.bam.bai"), emit: bam_idx
 
   script:
 """
