@@ -16,7 +16,7 @@ process fastqc_fastq_pairedend {
   script:
 """
 fastqc --quiet --threads ${task.cpus} --format fastq --outdir ./ \
-${reads[0]} ${reads[1]}
+  ${reads[0]} ${reads[1]}
 """
 }
 
@@ -34,7 +34,7 @@ process fastqc_fastq_singleend {
 
   script:
 """
-fastqc --quiet --threads ${task.cpus} --format fastq --outdir ./ ${reads}
+  fastqc --quiet --threads ${task.cpus} --format fastq --outdir ./ ${reads}
 """
 }
 
