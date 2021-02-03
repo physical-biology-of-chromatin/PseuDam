@@ -5,7 +5,6 @@ process fastqc_fastq_pairedend {
   container = "${container_url}"
   label "big_mem_mono_cpus"
   tag "$pair_id"
-  publishDir "results/fastq/fastqc/", mode: 'copy'
 
   input:
   tuple val(pair_id), path(reads)
@@ -24,7 +23,6 @@ process fastqc_fastq_singleend {
   container = "${container_url}"
   label "big_mem_mono_cpus"
   tag "$file_id"
-  publishDir "results/fastq/fastqc/", mode: 'copy'
 
   input:
   tuple val(file_id), path(reads)

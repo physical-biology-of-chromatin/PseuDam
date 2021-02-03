@@ -5,7 +5,6 @@ process peak_calling {
   container = "${container_url}"
   label "big_mem_multi_cpus"
   tag "${file_id}"
-  publishDir "results/peak_calling/${file_id}", mode: 'copy'
 
   input:
     tuple val(file_id), path(bam_ip), path(bam_control)

@@ -5,7 +5,6 @@ process mark_duplicate {
   container = "${container_url}"
   label "big_mem_mono_cpus"
   tag "$file_id"
-  publishDir "results/mapping/ddup/", mode: 'copy'
 
   input:
     tuple val(file_id), path(bam)

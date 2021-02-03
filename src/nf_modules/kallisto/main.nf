@@ -5,7 +5,6 @@ process index_fasta {
   container = "${container_url}"
   label "big_mem_multi_cpus"
   tag "$fasta.baseName"
-  publishDir "results/mapping/index/", mode: 'copy'
 
   input:
     path fasta
@@ -26,7 +25,6 @@ process mapping_fastq_pairedend {
   container = "${container_url}"
   label "big_mem_multi_cpus"
   tag "$pair_id"
-  publishDir "results/mapping/counts/", mode: 'copy'
 
   input:
   path index
@@ -50,7 +48,6 @@ process mapping_fastq_singleend {
   container = "${container_url}"
   label "big_mem_multi_cpus"
   tag "$file_id"
-  publishDir "results/mapping/counts/", mode: 'copy'
 
   input:
   path index

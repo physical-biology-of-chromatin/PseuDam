@@ -10,7 +10,6 @@ process adaptor_removal_pairedend {
   container = "${container_url}"
   label "big_mem_mono_cpus"
   tag "$pair_id"
-  publishDir "results/fastq/adaptor_removal/", mode: 'copy'
 
   input:
   tuple val(pair_id), path(reads)
@@ -31,7 +30,6 @@ process adaptor_removal_singleend {
   container = "${container_url}"
   label "big_mem_mono_cpus"
   tag "$file_id"
-  publishDir "results/fastq/adaptor_removal/", mode: 'copy'
 
   input:
   tuple val(file_id), path(reads)
@@ -52,7 +50,6 @@ process trimming_pairedend {
   container = "${container_url}"
   label "big_mem_mono_cpus"
   tag "$pair_id"
-  publishDir "results/fastq/trimming/", mode: 'copy'
 
   input:
   tuple val(pair_id), path(reads)

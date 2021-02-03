@@ -5,7 +5,6 @@ process fasta_from_bed {
   container = "${container_url}"
   label "big_mem_mono_cpus"
   tag "${bed.baseName}"
-  publishDir "results/fasta/", mode: 'copy'
 
   input:
   path fasta
@@ -25,7 +24,6 @@ process bam_to_fastq_singleend {
   container = "${container_url}"
   label "big_mem_mono_cpus"
   tag "${bam_id}"
-  publishDir "results/mapping/fastq/", mode: 'copy'
 
   input:
   tuple val(bam_id), path(bam)
@@ -44,7 +42,6 @@ process bam_to_fastq_pairedend {
   container = "${container_url}"
   label "big_mem_mono_cpus"
   tag "${bam_id}"
-  publishDir "results/mapping/fastq/", mode: 'copy'
 
   input:
   tuple val(bam_id), path(bam)

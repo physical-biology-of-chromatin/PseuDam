@@ -23,7 +23,6 @@ process bam_to_bigwig {
   label "big_mem_multi_cpus"
   tag "$file_id"
 
-  publishDir "results/mapping/bigwig/", mode: 'copy'
 
   input:
     tuple val(file_id), path(bam), path(idx)
@@ -42,7 +41,6 @@ process compute_matrix {
   container = "${container_url}"
   label "big_mem_multi_cpus"
   tag "${bed_file_id}"
-  publishDir "results/metagene/region_matrix/", mode: 'copy'
 
   input:
     tuple val(file_id), path(bw)
@@ -66,7 +64,6 @@ process plot_profile {
   container = "${container_url}"
   label "big_mem_mono_cpus"
   tag "$file_id"
-  publishDir "results/metagene/region_matrix/", mode: 'copy'
 
   input:
     tuple val(file_id), path(matrix)

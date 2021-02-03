@@ -7,7 +7,6 @@ process trimming_pairedend {
   container = "${container_url}"
   label "big_mem_multi_cpus"
   tag "${reads}"
-  publishDir "results/fastq/trimming/", mode: 'copy'
 
   input:
   tuple val(pair_id), path(reads)
@@ -29,7 +28,6 @@ process trimming_singleend {
   container = "${container_url}"
   label "big_mem_multi_cpus"
   tag "$file_id"
-  publishDir "results/fastq/trimming/", mode: 'copy'
 
   input:
   tuple val(file_id), path(reads)
