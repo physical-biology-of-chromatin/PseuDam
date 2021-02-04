@@ -1,7 +1,7 @@
 nextflow.enable.dsl=2
 
 /*
-./nextflow src/solution_RNASeq_DSL2.nf --fastq "data/tiny_dataset/fastq/tiny2_R{1,2}.fastq.gz" --fasta "data/tiny_dataset/fasta/tiny_v2_10.fasta" --bed "data/tiny_dataset/annot/tiny.bed" -profile docker
+./nextflow src/solution_RNASeq.nf --fastq "data/tiny_dataset/fastq/tiny2_R{1,2}.fastq.gz" --fasta "data/tiny_dataset/fasta/tiny_v2_10.fasta" --bed "data/tiny_dataset/annot/tiny.bed" -profile docker
 */
 
 log.info "fastq files : ${params.fastq}"
