@@ -55,3 +55,22 @@ bedtools bamtofastq \
 -i ${bam} -fq ${bam.baseName}_R1.fastq -fq2 ${bam.baseName}_R2.fastq
 """
 }
+
+process bam_to_bedgraph {
+  container = "${container_url}"
+  label "big_mem_mono_cpus"
+  tag "${bam_id}"
+
+  input:
+  tuple val(bam_id), path(bam)
+
+  output:
+  tuple val(bam_id), path("*.bg"), emit: bedgraph
+
+  script:
+"""
+bedtools genomecov \
+  -ibam ${bam} \
+  -bg > ${bam.simpleName}.bg
+"""
+}
