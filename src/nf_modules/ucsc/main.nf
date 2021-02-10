@@ -18,7 +18,8 @@ process bedgraph_to_bigwig {
 # transform bed file of start-stop chromosome size to stop chromosome size
 awk -v OFS="\\t" '{print \$1, \$3}' ${bed} > chromsize.txt
 
-bedGraphToBigWig ${bg} \
+sort -T ./ -k1,1 -k2,2n ${bg} > \
+  bedGraphToBigWig - \
     chromsize.txt \
     ${bg.simpleName}_norm.bw
 """
