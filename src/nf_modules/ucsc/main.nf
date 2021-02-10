@@ -11,10 +11,11 @@ process bedgraph_to_bigwig {
   tuple val(file_id) path(bed)
 
   output:
-  tuple val(file_id), path("*.bw"), emit: fasta
+  tuple val(file_id), path("*.bw"), emit: bw
 
   script:
 """
+LC_COLLATE=C
 # transform bed file of start-stop chromosome size to stop chromosome size
 awk -v OFS="\\t" '{print \$1, \$3}' ${bed} > chromsize.txt
 
