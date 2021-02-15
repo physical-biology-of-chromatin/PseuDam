@@ -17,6 +17,25 @@ samtools faidx ${fasta}
 """
 }
 
+filter_bam_quality_threshold = 30
+
+process filter_bam_quality {
+  container = "${container_url}"
+  label "big_mem_multi_cpus"
+  tag "$file_id"
+
+  input:
+    tuple val(file_id), path(bam)
+
+  output:
+    tuple val(file_id), path("*_filtered.bam"), emit: bam
+  script:
+"""
+samtools view -@ ${task.cpus} -hb ${bam} -q ${filter_bam_quality_threshold} > \
+  ${bam.simpleName}_filtered.bam
+"""
+}
+
 
 process filter_bam {
   container = "${container_url}"

@@ -31,14 +31,31 @@ process index_fasta {
   tag "$file_id"
 
   input:
-    tuple val(file_id), file(fasta)
+    tuple val(file_id), path(fasta)
   output:
-    tuple val(file_id), file("*.dict"), emit: index 
+    tuple val(file_id), path("*.dict"), emit: index 
 
   script:
 """
 PicardCommandLine CreateSequenceDictionary \
 REFERENCE=${fasta} \
 OUTPUT=${fasta.simpleName}.dict
+"""
+}
+
+process index_bam {
+  container = "${container_url}"
+  label "big_mem_mono_cpus"
+  tag "$file_id"
+
+  input:
+    tuple val(file_id), path(bam)
+  output:
+    tuple val(file_id), path("*"), emit: index
+
+  script:
+"""
+PicardCommandLine BuildBamIndex \
+INPUT=${bam}
 """
 }
