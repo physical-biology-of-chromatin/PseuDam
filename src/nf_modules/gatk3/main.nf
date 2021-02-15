@@ -88,9 +88,9 @@ gatk3 -T VariantFiltration \
 """
 }
 
-high_confidence_indel_filter = "QD < 2.0 || FS > 200.0 || ReadPosRankSum < -20.0 || SOR > 10.0"
+high_confidence_indel_filter = "QD < 3.0 || FS > 200.0 || ReadPosRankSum < -20.0 || SOR > 10.0"
 
-process high_confidence_indel {
+process high_confidence_indels {
   container = "${container_url}"
   label "big_mem_mono_cpus"
   tag "$file_id"
