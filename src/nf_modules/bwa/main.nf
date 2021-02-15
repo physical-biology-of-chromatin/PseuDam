@@ -10,8 +10,8 @@ process index_fasta {
     tuple val(file_id), path(fasta)
 
   output:
-    tuple val(fasta.simpleName), path("${fasta.simpleName}.*"), emit: index
-    file "*_bwa_report.txt", emit: report
+    tuple val(file_id), path("${fasta.simpleName}.*"), emit: index
+    tuple val(file_id), path("*_bwa_report.txt"), emit: report
 
   script:
 """
