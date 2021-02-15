@@ -9,3 +9,6 @@ RUN apk add --update --no-cache bash musl-dev linux-headers g++ cmake make build
  && cd g2gtools-${G2GTOOLS_VERSION} \
  && pip install numpy \
  && make install 
+
+
+CMD ["bash"]
