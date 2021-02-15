@@ -1,6 +1,23 @@
 version = "1.11"
 container_url = "lbmc/samtools:${version}"
 
+process index_fasta {
+  container = "${container_url}"
+  label "big_mem_mono_cpus"
+  tag "$file_id"
+
+  input:
+    tuple val(file_id), path(fasta)
+  output:
+    tuple val(file_id), path("*.fai"), emit: index
+
+  script:
+"""
+samtools faidx ${fasta}
+"""
+}
+
+
 process filter_bam {
   container = "${container_url}"
   label "big_mem_multi_cpus"

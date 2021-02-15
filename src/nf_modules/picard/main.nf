@@ -24,3 +24,21 @@ PicardCommandLine MarkDuplicates \
   picard_${bam.baseName}.log
 """
 }
+
+process index_fasta {
+  container = "${container_url}"
+  label "big_mem_mono_cpus"
+  tag "$file_id"
+
+  input:
+    tuple val(file_id), file(fasta)
+  output:
+    tuple val(file_id), file("*.dict"), emit: index 
+
+  script:
+"""
+PicardCommandLine CreateSequenceDictionary \
+REFERENCE=${fasta} \
+OUTPUT=${fasta.simpleName}.dict
+"""
+}
