@@ -10,7 +10,7 @@ process variant_calling {
     tuple val(file_id), path(bam), path(bai)
     tuple val(ref_id), path(fasta), path(fai), path(dict)
   output:
-    tuple val(file_id), "*.vcf", emit: vcf
+    tuple val(file_id), path("*.vcf"), emit: vcf
 
   script:
 """
