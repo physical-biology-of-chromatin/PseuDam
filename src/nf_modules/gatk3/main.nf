@@ -24,11 +24,11 @@ gatk3 -T HaplotypeCaller \
 
 process filter_snp {
   container = "${container_url}"
-  label "big_mem_mono_cpus"
+  label "big_mem_multi_cpus"
   tag "$file_id"
 
   input:
-    tuple val(file_id), path(variants)
+    tuple val(file_id), path(vcf)
     tuple val(ref_id), path(fasta), path(fai), path(dict)
   output:
     tuple val(file_id), path("*_snp.vcf"), emit: vcf
@@ -37,7 +37,7 @@ process filter_snp {
 gatk3 -T SelectVariants \
   -nct ${task.cpus} \
   -R ${fasta} \
-  -V ${variants} \
+  -V ${vcf} \
   -selectType SNP \
   -o ${file_id}_snp.vcf
 """
@@ -45,11 +45,11 @@ gatk3 -T SelectVariants \
 
 process filter_indels {
   container = "${container_url}"
-  label "big_mem_mono_cpus"
+  label "big_mem_multi_cpus"
   tag "$file_id"
 
   input:
-    tuple val(file_id), path(variants)
+    tuple val(file_id), path(vcf)
     tuple val(ref_id), path(fasta), path(fai), path(dict)
   output:
     tuple val(file_id), path("*_indel.vcf"), emit: vcf
@@ -58,7 +58,7 @@ process filter_indels {
 gatk3 -T SelectVariants \
   -nct ${task.cpus} \
   -R ${fasta} \
-  -V ${variants} \
+  -V ${vcf} \
   -selectType INDEL \
   -o ${file_id}_indel.vcf
 """
@@ -68,11 +68,11 @@ high_confidence_snp_filter = "(QD < 2.0) || (FS > 60.0) || (MQ < 40.0) || (MQRan
 
 process high_confidence_snp {
   container = "${container_url}"
-  label "big_mem_mono_cpus"
+  label "big_mem_multi_cpus"
   tag "$file_id"
 
   input:
-    tuple val(file_id), path(variants)
+    tuple val(file_id), path(vcf)
     tuple val(ref_id), path(fasta), path(fai), path(dict)
   output:
     tuple val(file_id), path("*_snp.vcf"), emit: vcf
@@ -81,7 +81,7 @@ process high_confidence_snp {
 gatk3 -T VariantFiltration \
   -nct ${task.cpus} \
   -R ${fasta} \
-  -V ${variants} \
+  -V ${vcf} \
   --filterExpression "${high_confidence_snp_filter}" \
   --filterName "basic_snp_filter" \
   -o ${file_id}_filtered_snp.vcf
@@ -92,11 +92,11 @@ high_confidence_indel_filter = "QD < 3.0 || FS > 200.0 || ReadPosRankSum < -20.0
 
 process high_confidence_indels {
   container = "${container_url}"
-  label "big_mem_mono_cpus"
+  label "big_mem_multi_cpus"
   tag "$file_id"
 
   input:
-    tuple val(file_id), path(variants)
+    tuple val(file_id), path(vcf)
     tuple val(ref_id), path(fasta), path(fai), path(dict)
   output:
     tuple val(file_id), path("*_indel.vcf"), emit: vcf
@@ -105,9 +105,161 @@ process high_confidence_indels {
 gatk3 -T VariantFiltration \
   -nct ${task.cpus} \
   -R ${fasta} \
-  -V ${variants} \
+  -V ${vcf} \
   --filterExpression "${high_confidence_indel_filter}" \
   --filterName "basic_indel_filter" \
   -o ${file_id}_filtered_indel.vcf
 """
 }
+
+process recalibrate_snp_table {
+  container = "${container_url}"
+  label "big_mem_multi_cpus"
+  tag "$file_id"
+
+  input:
+    tuple val(file_id), path(snp_file), path(indel_file), path(bam), path(bam_idx)
+    tuple val(ref_id), path(fasta), path(fai), path(dict)
+  output:
+    tuple val(file_id), path("recal_data_table"), emit: recal_table
+  script:
+"""
+gatk3 -T BaseRecalibrator \
+  -nct ${task.cpus} \
+  -R ${fasta} \
+  -I ${bam} \
+  -knownSites ${snp_file} \
+  -knownSites ${indel_file} \
+  -o recal_data_table
+"""
+}
+
+process recalibrate_snp {
+  container = "${container_url}"
+  label "big_mem_multi_cpus"
+  tag "$file_id"
+
+  input:
+    tuple val(file_id), path(snp_file), path(indel_file), path(bam), path(bam_idx)
+    tuple val(table_id), path(recal_data_table)
+    tuple val(ref_id), path(fasta), path(fai), path(dict)
+  output:
+    tuple val(file_id), path("*.bam"), emit: bam
+  script:
+"""
+gatk3 -T PrintReads \
+  --use_jdk_deflater \
+  --use_jdk_inflater \
+  -nct ${task.cpus} \
+  -R ${fasta} \
+  -I ${bam} \
+  -BQSR recal_data_table \
+  -o ${file_id}_recal.bam
+"""
+}
+
+process haplotype_caller {
+  container = "${container_url}"
+  label "big_mem_multi_cpus"
+  tag "$file_id"
+
+  input:
+    tuple val(file_id), path(bam)
+    tuple val(ref_id), path(fasta), path(fai), path(dict)
+  output:
+    tuple val(file_id), path("*.gvcf"), emit: gvcf
+  script:
+"""
+gatk3 -T HaplotypeCaller \
+  -nct ${task.cpus} \
+  -R ${fasta} \
+  -I ${bam} \
+  -ERC GVCF \
+  -variant_index_type LINEAR -variant_index_parameter 128000 \
+  -o ${file_id}.gvcf
+"""
+}
+
+process gvcf_genotyping {
+  container = "${container_url}"
+  label "big_mem_multi_cpus"
+  tag "$file_id"
+
+  input:
+    tuple val(file_id), path(gvcf)
+    tuple val(ref_id), path(fasta), path(fai), path(dict)
+  output:
+    tuple val(file_id), path("*.vcf"), emit: vcf
+  script:
+"""
+gatk3 -T GenotypeGVCFs \
+  -nct ${task.cpus} \
+  -R ${fasta} \
+  -V ${gvcf} \
+  -o ${file_id}_joint.vcf
+"""
+}
+
+process select_variants_snp {
+  container = "${container_url}"
+  label "big_mem_multi_cpus"
+  tag "$file_id"
+
+  input:
+    tuple val(file_id), path(vcf)
+    tuple val(ref_id), path(fasta), path(fai), path(dict)
+  output:
+    tuple val(file_id), path("*_joint_snp.vcf"), emit: vcf
+  script:
+"""
+gatk3 -T SelectVariants \
+  -nct ${task.cpus} \
+  -R ${fasta} \
+  -V ${vcf} \
+  -selectType SNP \
+  -o ${file_id}_joint_snp.vcf
+"""
+}
+
+process select_variants_indels {
+  container = "${container_url}"
+  label "big_mem_multi_cpus"
+  tag "$file_id"
+
+  input:
+    tuple val(file_id), path(vcf)
+    tuple val(ref_id), path(fasta), path(fai), path(dict)
+  output:
+    tuple val(file_id), path("*_joint_indel.vcf"), emit: vcf
+  script:
+"""
+gatk3 -T SelectVariants \
+  -nct ${task.cpus} \
+  -R ${fasta} \
+  -V ${vcf} \
+  -selectType INDEL \
+  -o ${file_id}_joint_indel.vcf
+"""
+}
+
+process personalized_genome {
+  container = "${container_url}"
+  label "big_mem_mono_cpus"
+  tag "$file_id"
+
+  input:
+    tuple val(file_id), path(vcf)
+    tuple val(ref_id), path(fasta), path(fai), path(dict)
+  output:
+    tuple val(file_id), path("*_genome.fasta"), emit: fasta
+
+  script:
+  library = pick_library(file_id, library_list)
+"""
+gatk3 -T FastaAlternateReferenceMaker\
+  -R ${reference} \
+  -V ${vcf} \
+  -o ${library}_genome.fasta
+"""
+}
+
