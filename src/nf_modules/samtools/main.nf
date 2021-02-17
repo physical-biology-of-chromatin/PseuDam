@@ -175,11 +175,11 @@ process merge_multi_bam {
     tuple val(file_id), path(bams)
 
   output:
-    tuple val(file_id), path("*.bam*"), emit: bam
+    tuple val(file_id), path("*_merged.bam*"), emit: bam
   script:
 """
 samtools merge ${bams} \
-  ${file_id}.bam
+  ${bams[0].simpleName}_merged.bam
 """
 }
 
