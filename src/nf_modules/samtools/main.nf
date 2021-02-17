@@ -165,6 +165,24 @@ samtools merge ${first_bam} ${second_bam} \
 """
 }
 
+process merge_multi_bam {
+  container = "${container_url}"
+  label "big_mem_multi_cpus"
+  tag "$file_id"
+  cpus = 2
+
+  input:
+    tuple val(file_id), path(bams)
+
+  output:
+    tuple val(file_id), path("*.bam*"), emit: bam
+  script:
+"""
+samtools merge ${bams} \
+  ${file_id}.bam
+"""
+}
+
 process stats_bam {
   container = "${container_url}"
   label "big_mem_multi_cpus"
