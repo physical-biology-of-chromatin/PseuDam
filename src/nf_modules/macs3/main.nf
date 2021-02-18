@@ -1,7 +1,7 @@
 version = "3.0.0a6"
 container_url = "lbmc/macs3:${version}"
 
-macs3_genome_size=3e9
+params.macs_gsize=3e9
 
 process peak_calling {
   container = "${container_url}"
@@ -24,7 +24,7 @@ macs3 callpeak \
   --control ${bam_control} \
   --keep-dup all \
   --name ${bam_ip.simpleName} \
-  --gsize ${macs3_genome_size} 2> \
+  --gsize ${params.macs_gsize} 2> \
   ${bam_ip.simpleName}_macs3_report.txt
 
 if grep -q "ERROR" ${bam_ip.simpleName}_macs3_report.txt; then
@@ -59,7 +59,7 @@ macs3 callpeak \
   --control ${bg_control.simpleName}.bed \
   --keep-dup all \
   --name ${bg_ip.simpleName} \
-  --gsize ${macs3_genome_size} 2> \
+  --gsize ${params.macs_gsize} 2> \
   ${bg_ip.simpleName}_macs3_report.txt
 
 if grep -q "ERROR" ${bg_ip.simpleName}_macs3_report.txt; then
