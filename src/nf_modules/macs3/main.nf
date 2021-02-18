@@ -1,6 +1,8 @@
 version = "3.0.0a6"
 container_url = "lbmc/macs3:${version}"
 
+macs3_genome_size=3e9
+
 process peak_calling {
   container = "${container_url}"
   label "big_mem_multi_cpus"
