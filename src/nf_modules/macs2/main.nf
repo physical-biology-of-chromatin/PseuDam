@@ -2,6 +2,7 @@ version = "2.1.2"
 container_url = "lbmc/macs2:${version}"
 
 params.macs_gsize=3e9
+params.macs_mfold="5 50"
 
 process peak_calling {
   container = "${container_url}"
@@ -24,6 +25,7 @@ macs2 callpeak \
   --control ${bam_control} \
   --keep-dup all \
   --name ${bam_ip.simpleName} \
+  --mfold ${params.macs_mfold} \
   --gsize ${params.macs_gsize} 2> \
   ${bam_ip.simpleName}_macs2_report.txt
 
@@ -59,6 +61,7 @@ macs2 callpeak \
   --control ${bg_control.simpleName}.bed \
   --keep-dup all \
   --name ${bg_ip.simpleName} \
+  --mfold ${params.macs_mfold} \
   --gsize ${params.macs_gsize} 2> \
   ${bg_ip.simpleName}_macs2_report.txt
 
