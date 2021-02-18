@@ -5,7 +5,7 @@ macs3_genome_size=3e9
 
 process peak_calling {
   container = "${container_url}"
-  label "big_mem_multi_cpus"
+  label "big_mem_mono_cpus"
   tag "${file_id}"
 
   input:
@@ -36,7 +36,7 @@ fi
 
 process peak_calling_bg {
   container = "${container_url}"
-  label "big_mem_multi_cpus"
+  label "big_mem_mono_cpus"
   tag "${file_id}"
 
   input:
