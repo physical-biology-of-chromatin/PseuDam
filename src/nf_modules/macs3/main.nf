@@ -18,7 +18,7 @@ process peak_calling {
   script:
 /* remove --nomodel option for real dataset */
 """
-macs2 callpeak \
+macs3 callpeak \
   --treatment ${bam_ip} \
   --call-summits "True"\
   --control ${bam_control} \
@@ -53,7 +53,7 @@ awk '{print \$1"\t"\$2"\t"\$3"\t.\t+\t"\$4}' ${bg_ip} > \
   ${bg_ip.simpleName}.bed
 awk '{print \$1"\t"\$2"\t"\$3"\t.\t+\t"\$4}' ${bg_control} > \
   ${bg_control.simpleName}.bed
-macs2 callpeak \
+macs3 callpeak \
   --treatment ${bg_ip.simpleName}.bed \
   --call-summits "True"\
   --control ${bg_control.simpleName}.bed \
