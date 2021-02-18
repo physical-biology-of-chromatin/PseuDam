@@ -10,5 +10,6 @@ RUN apt-get update -qq \
         liblzma-dev \
         libcurl4-gnutls-dev \
         libssl-dev \
-        libncurses5-dev
+        libncurses5-dev \
+        procps
 RUN pip install macs3==${MACS3_VERSION}
