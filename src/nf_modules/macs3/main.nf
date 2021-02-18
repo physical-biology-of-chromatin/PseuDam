@@ -20,7 +20,7 @@ process peak_calling {
 """
 macs3 callpeak \
   --treatment ${bam_ip} \
-  --call-summits True \
+  --call-summits \
   --control ${bam_control} \
   --keep-dup all \
   --name ${bam_ip.simpleName} \
@@ -55,7 +55,7 @@ awk '{print \$1"\t"\$2"\t"\$3"\t.\t+\t"\$4}' ${bg_control} > \
   ${bg_control.simpleName}.bed
 macs3 callpeak \
   --treatment ${bg_ip.simpleName}.bed \
-  --call-summits True \
+  --call-summits \
   --control ${bg_control.simpleName}.bed \
   --keep-dup all \
   --name ${bg_ip.simpleName} \
