@@ -20,9 +20,9 @@ process peak_calling {
 """
 macs3 callpeak \
   --treatment ${bam_ip} \
-  --call-summits "True"\
+  --call-summits True \
   --control ${bam_control} \
-  --keep-dup "auto" \
+  --keep-dup all \
   --name ${bam_ip.simpleName} \
   --gsize ${macs3_genome_size} 2> \
   ${bam_ip.simpleName}_macs3_report.txt
@@ -55,9 +55,9 @@ awk '{print \$1"\t"\$2"\t"\$3"\t.\t+\t"\$4}' ${bg_control} > \
   ${bg_control.simpleName}.bed
 macs3 callpeak \
   --treatment ${bg_ip.simpleName}.bed \
-  --call-summits "True"\
+  --call-summits True \
   --control ${bg_control.simpleName}.bed \
-  --keep-dup "auto" \
+  --keep-dup all \
   --name ${bg_ip.simpleName} \
   --gsize ${macs3_genome_size} 2> \
   ${bg_ip.simpleName}_macs3_report.txt
