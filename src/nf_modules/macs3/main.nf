@@ -17,9 +17,9 @@ process peak_calling {
 /* remove --nomodel option for real dataset */
 """
 macs2 callpeak \
-  --treatment ${file_ip} \
+  --treatment ${bam_ip} \
   --call-summits "True"\
-  --control ${file_control} \
+  --control ${bam_control} \
   --keep-dup "auto" \
   --name ${bam_ip.simpleName} \
   --gsize ${macs3_genome_size} 2> \
@@ -47,20 +47,20 @@ process peak_calling_bg {
   script:
 /* remove --nomodel option for real dataset */
 """
-awk '{print \$1"\t"\$2"\t"\$3"\t.\t+\t"\$4}' ${file_ip} > \
-  ${file_ip.simpleName}.bed
-awk '{print \$1"\t"\$2"\t"\$3"\t.\t+\t"\$4}' ${file_control} > \
-  ${file_control.simpleName}.bed
+awk '{print \$1"\t"\$2"\t"\$3"\t.\t+\t"\$4}' ${bg_ip} > \
+  ${bg_ip.simpleName}.bed
+awk '{print \$1"\t"\$2"\t"\$3"\t.\t+\t"\$4}' ${bg_control} > \
+  ${bg_control.simpleName}.bed
 macs2 callpeak \
-  --treatment ${file_ip.simpleName}.bed \
+  --treatment ${bg_ip.simpleName}.bed \
   --call-summits "True"\
-  --control ${file_control.simpleName}.bed \
+  --control ${bg_control.simpleName}.bed \
   --keep-dup "auto" \
-  --name ${bam_ip.simpleName} \
+  --name ${bg_ip.simpleName} \
   --gsize ${macs3_genome_size} 2> \
-  ${bam_ip.simpleName}_macs3_report.txt
+  ${bg_ip.simpleName}_macs3_report.txt
 
-if grep -q "ERROR" ${bam_ip.simpleName}_macs3_report.txt; then
+if grep -q "ERROR" ${bg_ip.simpleName}_macs3_report.txt; then
   echo "MACS3 error"
   exit 1
 fi
