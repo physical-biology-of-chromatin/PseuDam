@@ -25,6 +25,7 @@ fastp --thread ${task.cpus} \
 --out1 ${pair_id}_R1_trim.fastq.gz \
 --out2 ${pair_id}_R2_trim.fastq.gz \
 --html ${pair_id}.html \
+--json ${pair_id}.json \
 --report_title ${pair_id}
 """
 }
@@ -50,6 +51,7 @@ fastp --thread ${task.cpus} \
 --in1 ${reads} \
 --out1 ${pair_id}_trim.fastq.gz \
 --html ${pair_id}.html \
+--json ${pair_id}.json \
 --report_title ${pair_id}
 """
 }
