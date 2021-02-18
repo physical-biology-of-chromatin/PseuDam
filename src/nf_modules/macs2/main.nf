@@ -19,7 +19,7 @@ process peak_calling {
   script:
 /* remove --nomodel option for real dataset */
 """
-macs3 callpeak \
+macs2 callpeak \
   --treatment ${bam_ip} \
   --call-summits \
   --control ${bam_control} \
@@ -27,9 +27,9 @@ macs3 callpeak \
   --mfold params.macs_mfold[0] params.macs_mfold[1]
   --name ${bam_ip.simpleName} \
   --gsize ${params.macs_gsize} 2> \
-  ${bam_ip.simpleName}_macs3_report.txt
+  ${bam_ip.simpleName}_macs2_report.txt
 
-if grep -q "ERROR" ${bam_ip.simpleName}_macs3_report.txt; then
+if grep -q "ERROR" ${bam_ip.simpleName}_macs2_report.txt; then
   echo "MACS3 error"
   exit 1
 fi
@@ -55,7 +55,7 @@ awk '{print \$1"\t"\$2"\t"\$3"\t.\t+\t"\$4}' ${bg_ip} > \
   ${bg_ip.simpleName}.bed
 awk '{print \$1"\t"\$2"\t"\$3"\t.\t+\t"\$4}' ${bg_control} > \
   ${bg_control.simpleName}.bed
-macs3 callpeak \
+macs2 callpeak \
   --treatment ${bg_ip.simpleName}.bed \
   --call-summits \
   --control ${bg_control.simpleName}.bed \
@@ -63,9 +63,9 @@ macs3 callpeak \
   --mfold params.macs_mfold[0] params.macs_mfold[1]
   --name ${bg_ip.simpleName} \
   --gsize ${params.macs_gsize} 2> \
-  ${bg_ip.simpleName}_macs3_report.txt
+  ${bg_ip.simpleName}_macs2_report.txt
 
-if grep -q "ERROR" ${bg_ip.simpleName}_macs3_report.txt; then
+if grep -q "ERROR" ${bg_ip.simpleName}_macs2_report.txt; then
   echo "MACS3 error"
   exit 1
 fi
