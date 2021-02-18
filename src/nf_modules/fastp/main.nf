@@ -12,7 +12,7 @@ process fastp_pairedend {
 
   output:
     tuple val(pair_id), path("*.fastq.gz"), emit: fastq
-    tuple val(pair_id), path("*.{zip,html}"), emit: report
+    tuple val(pair_id), path("*.{zip,html,json}"), emit: report
 
   script:
 """
@@ -40,7 +40,7 @@ process fastp_singleend {
 
   output:
     tuple val(pair_id), path("*.fastq.gz"), emit: fastq
-    tuple val(pair_id), path("*.{zip,html}"), emit: report
+    tuple val(pair_id), path("*.{zip,html,json}"), emit: report
 
   script:
 """
