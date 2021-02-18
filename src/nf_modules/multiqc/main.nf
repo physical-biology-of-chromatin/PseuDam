@@ -1,4 +1,4 @@
-version = "1.7"
+version = "1.9"
 container_url = "lbmc/multiqc:${version}"
 
 process multiqc {
