@@ -47,9 +47,9 @@ process peak_calling_bg {
   script:
 /* remove --nomodel option for real dataset */
 """
-awk '{print $1"\t"$2"\t"$3"\t.\t+\t"$4}' ${file_ip} > \
+awk '{print \$1"\t"\$2"\t"\$3"\t.\t+\t"\$4}' ${file_ip} > \
   ${file_ip.simpleName}.bed
-awk '{print $1"\t"$2"\t"$3"\t.\t+\t"$4}' ${file_control} > \
+awk '{print \$1"\t"\$2"\t"\$3"\t.\t+\t"\$4}' ${file_control} > \
   ${file_control.simpleName}.bed
 macs2 callpeak \
   --treatment ${file_ip.simpleName}.bed \
