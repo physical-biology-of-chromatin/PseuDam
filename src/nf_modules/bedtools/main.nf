@@ -20,6 +20,23 @@ bedtools getfasta -name \
 """
 }
 
+process merge_bed {
+  container = "${container_url}"
+  label "big_mem_mono_cpus"
+  tag "${bed.baseName}"
+
+  input:
+  path bed
+
+  output:
+  tuple val(bed[0].simpleName), path("*_merged.fasta"), emit: bed
+
+  script:
+"""
+bedtools merge -i ${bed} > ${bed[0].simpleName}_merged.bed
+"""
+}
+
 process bam_to_fastq_singleend {
   container = "${container_url}"
   label "big_mem_mono_cpus"
