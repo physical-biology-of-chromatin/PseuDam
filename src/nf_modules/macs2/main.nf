@@ -13,7 +13,7 @@ process peak_calling {
     tuple val(file_id), path(bam_ip), path(bam_control)
 
   output:
-    path "*.narrowpeak", emit: peak
+    path "*.narrowPeak", emit: peak
     path "*.bed", emit: summits
     path "*_report.txt", emit: report
 
@@ -46,7 +46,7 @@ process peak_calling_bg {
     tuple val(file_id), path(bg_ip), path(bg_control)
 
   output:
-    path "*.narrowpeak", emit: peak
+    path "*.narrowPeak", emit: peak
     path "*.bed", emit: summits
     path "*_report.txt", emit: report
 
