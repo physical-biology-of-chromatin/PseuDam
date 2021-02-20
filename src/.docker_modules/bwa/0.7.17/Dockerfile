@@ -1,4 +1,4 @@
-FROM lbmc/sambamba:0.6.9
+FROM lbmc/samtools:1.11
 MAINTAINER Laurent Modolo
 
 ENV BWA_VERSION=0.7.17
