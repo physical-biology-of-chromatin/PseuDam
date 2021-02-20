@@ -28,3 +28,4 @@ make && \
 cp samblaster /usr/bin && \
 cd .. && \
 rm -R samblaster-v.${SAMBLASTER_VERSION}/
+RUN chmod +x /usr/bin/*
