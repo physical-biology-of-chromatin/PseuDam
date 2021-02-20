@@ -39,7 +39,7 @@ process mapping_fastq {
 bwa mem -t ${task.cpus} \
 ${index_id} ${reads[0]} ${reads[1]} 2> \
   ${file_id}_bwa_report.txt | \
-  samtools view -@ ${task.cpus} -Sb - > ${pair_id}.bam
+  samtools view -@ ${task.cpus} -Sb - > ${file_id}.bam
 """
 }
 
