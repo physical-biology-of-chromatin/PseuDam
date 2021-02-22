@@ -13,9 +13,9 @@ process peak_calling {
     tuple val(file_id), path(bam_ip), path(bam_control)
 
   output:
-    path "*.narrowPeak", emit: peak
-    path "*.bed", emit: summits
-    path "*_report.txt", emit: report
+    tuple val(file_id), path("*.narrowPeak"), emit: peak
+    tuple val(file_id), path("*.bed"), emit: summits
+    tuple val(file_id), path("*_report.txt"), emit: report
 
   script:
 /* remove --nomodel option for real dataset */
