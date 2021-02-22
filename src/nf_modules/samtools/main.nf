@@ -181,7 +181,6 @@ process merge_multi_bam {
 samtools merge -@ ${task.cpus} \
   ${bams[0].simpleName}_merged.bam \
   ${bams}
-  
 """
 }
 
