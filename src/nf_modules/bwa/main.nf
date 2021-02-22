@@ -32,7 +32,7 @@ process mapping_fastq {
 
   output:
   tuple val(file_id), path("*.bam"), emit: bam
-  tuple val(file_id), path("${pair_id}_bwa_report.txt"), emit: report
+  tuple val(file_id), path("${file_id}_bwa_report.txt"), emit: report
 
   script:
 """
