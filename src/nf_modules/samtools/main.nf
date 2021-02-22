@@ -178,8 +178,10 @@ process merge_multi_bam {
     tuple val(file_id), path("*_merged.bam*"), emit: bam
   script:
 """
-samtools merge ${bams} > \
-  ${bams[0].simpleName}_merged.bam
+samtools merge -@ ${task.cpus} \
+  ${bams[0].simpleName}_merged.bam \
+  ${bams}
+  
 """
 }
 
