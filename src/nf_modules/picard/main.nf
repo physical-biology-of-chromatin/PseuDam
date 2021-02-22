@@ -39,7 +39,7 @@ process index_fasta {
 """
 PicardCommandLine CreateSequenceDictionary \
 REFERENCE=${fasta} \
-OUTPUT=${fasta.baseName}.dict
+OUTPUT=${fasta}.dict
 """
 }
 
