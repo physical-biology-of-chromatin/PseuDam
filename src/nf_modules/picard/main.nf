@@ -33,13 +33,13 @@ process index_fasta {
   input:
     tuple val(file_id), path(fasta)
   output:
-    tuple val(file_id), path("*.dict"), emit: index 
+    tuple val(file_id), path("*.dict"), emit: index
 
   script:
 """
 PicardCommandLine CreateSequenceDictionary \
 REFERENCE=${fasta} \
-OUTPUT=${fasta}.dict
+OUTPUT=${fasta.baseName}.dict
 """
 }
 
