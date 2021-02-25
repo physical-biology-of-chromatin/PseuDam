@@ -38,7 +38,7 @@ process mapping_fastq {
   script:
 """
 bwa mem -t ${task.cpus} \
--R ${params.bwa_mem_R} \
+-R '${params.bwa_mem_R}' \
 ${index_id} ${reads[0]} ${reads[1]} 2> \
   ${file_id}_bwa_report.txt | \
   samtools view -@ ${task.cpus} -Sb - > ${file_id}.bam
