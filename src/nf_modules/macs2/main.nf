@@ -15,7 +15,7 @@ process peak_calling {
   output:
     tuple val(file_id), path("*.narrowPeak"), emit: peak
     tuple val(file_id), path("*.bed"), emit: summits
-    tuple val(file_id), path("*_report.txt"), emit: report
+    tuple val(file_id), path("*_peaks.xls"), path("*_report.txt"), emit: report
 
   script:
 /* remove --nomodel option for real dataset */
