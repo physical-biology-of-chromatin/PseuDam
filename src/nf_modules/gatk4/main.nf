@@ -13,8 +13,9 @@ process variant_calling {
     tuple val(file_id), path("*.vcf"), emit: vcf
 
   script:
+  xmx_memory = task.memory - ~/\s*GB/
 """
-gatk --java-options "-Xmx${task.memory}" -T HaplotypeCaller \
+gatk --java-options "-Xmx${xmx_memory}" -T HaplotypeCaller \
   -nct ${task.cpus} \
   -R ${fasta} \
   -I ${bam} \
@@ -33,8 +34,9 @@ process filter_snp {
   output:
     tuple val(file_id), path("*_snp.vcf"), emit: vcf
   script:
+  xmx_memory = task.memory - ~/\s*GB/
 """
-gatk --java-options "-Xmx${task.memory}" -T SelectVariants \
+gatk --java-options "-Xmx${xmx_memory}" -T SelectVariants \
   -nct ${task.cpus} \
   -R ${fasta} \
   -V ${vcf} \
@@ -54,8 +56,9 @@ process filter_indels {
   output:
     tuple val(file_id), path("*_indel.vcf"), emit: vcf
   script:
+  xmx_memory = task.memory - ~/\s*GB/
 """
-gatk --java-options "-Xmx${task.memory}" -T SelectVariants \
+gatk --java-options "-Xmx${xmx_memory}"-T SelectVariants \
   -nct ${task.cpus} \
   -R ${fasta} \
   -V ${vcf} \
@@ -77,8 +80,9 @@ process high_confidence_snp {
   output:
     tuple val(file_id), path("*_snp.vcf"), emit: vcf
   script:
+  xmx_memory = task.memory - ~/\s*GB/
 """
-gatk --java-options "-Xmx${task.memory}" -T VariantFiltration \
+gatk --java-options "-Xmx${xmx_memory}"-T VariantFiltration \
   -nct ${task.cpus} \
   -R ${fasta} \
   -V ${vcf} \
@@ -101,8 +105,9 @@ process high_confidence_indels {
   output:
     tuple val(file_id), path("*_indel.vcf"), emit: vcf
   script:
+  xmx_memory = task.memory - ~/\s*GB/
 """
-gatk --java-options "-Xmx${task.memory}" -T VariantFiltration \
+gatk --java-options "-Xmx${xmx_memory}" -T VariantFiltration \
   -nct ${task.cpus} \
   -R ${fasta} \
   -V ${vcf} \
@@ -123,8 +128,9 @@ process recalibrate_snp_table {
   output:
     tuple val(file_id), path("recal_data_table"), emit: recal_table
   script:
+  xmx_memory = task.memory - ~/\s*GB/
 """
-gatk --java-options "-Xmx${task.memory}" -T BaseRecalibrator \
+gatk --java-options "-Xmx${xmx_memory}" -T BaseRecalibrator \
   -nct ${task.cpus} \
   -R ${fasta} \
   -I ${bam} \
@@ -146,8 +152,9 @@ process recalibrate_snp {
   output:
     tuple val(file_id), path("*.bam"), emit: bam
   script:
+  xmx_memory = task.memory - ~/\s*GB/
 """
-gatk --java-options "-Xmx${task.memory}" -T PrintReads \
+gatk --java-options "-Xmx${xmx_memory}" -T PrintReads \
   --use_jdk_deflater \
   --use_jdk_inflater \
   -nct ${task.cpus} \
@@ -169,8 +176,9 @@ process haplotype_caller {
   output:
     tuple val(file_id), path("*.gvcf"), emit: gvcf
   script:
+  xmx_memory = task.memory - ~/\s*GB/
 """
-gatk --java-options "-Xmx${task.memory}" -T HaplotypeCaller \
+gatk --java-options "-Xmx${xmx_memory}" -T HaplotypeCaller \
   -nct ${task.cpus} \
   -R ${fasta} \
   -I ${bam} \
@@ -191,8 +199,9 @@ process gvcf_genotyping {
   output:
     tuple val(file_id), path("*.vcf"), emit: vcf
   script:
+  xmx_memory = task.memory - ~/\s*GB/
 """
-gatk --java-options "-Xmx${task.memory}" -T GenotypeGVCFs \
+gatk --java-options "-Xmx${xmx_memory}" -T GenotypeGVCFs \
   -nct ${task.cpus} \
   -R ${fasta} \
   -V ${gvcf} \
