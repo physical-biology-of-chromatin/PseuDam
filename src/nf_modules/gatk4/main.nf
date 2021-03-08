@@ -261,7 +261,7 @@ process personalized_genome {
 gatk --java-options "-Xmx${xmx_memory}" -T FastaAlternateReferenceMaker\
   -R ${reference} \
   -V ${vcf} \
-  -o ${file_id.library}_genome.fasta
+  -o ${file_id[0]}_genome.fasta
 """
 }
 
