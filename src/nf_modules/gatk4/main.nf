@@ -211,8 +211,9 @@ process select_variants_snp {
   output:
     tuple val(file_id), path("*_joint_snp.vcf"), emit: vcf
   script:
+  xmx_memory = task.memory - ~/\s*GB/
 """
-gatk --java-options "-Xmx${task.memory}" -T SelectVariants \
+gatk --java-options "-Xmx${xmx_memory}G" -T SelectVariants \
   -nct ${task.cpus} \
   -R ${fasta} \
   -V ${vcf} \
@@ -232,8 +233,9 @@ process select_variants_indels {
   output:
     tuple val(file_id), path("*_joint_indel.vcf"), emit: vcf
   script:
+  xmx_memory = task.memory - ~/\s*GB/
 """
-gatk --java-options "-Xmx${task.memory}" -T SelectVariants \
+gatk --java-options "-Xmx${xmx_memory}" -T SelectVariants \
   -nct ${task.cpus} \
   -R ${fasta} \
   -V ${vcf} \
@@ -254,12 +256,12 @@ process personalized_genome {
     tuple val(file_id), path("*_genome.fasta"), emit: fasta
 
   script:
-  library = pick_library(file_id, library_list)
+  xmx_memory = task.memory - ~/\s*GB/
 """
-gatk --java-options "-Xmx${task.memory}" -T FastaAlternateReferenceMaker\
+gatk --java-options "-Xmx${xmx_memory}" -T FastaAlternateReferenceMaker\
   -R ${reference} \
   -V ${vcf} \
-  -o ${library}_genome.fasta
+  -o ${file_id.library}_genome.fasta
 """
 }
 
