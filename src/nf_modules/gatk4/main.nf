@@ -15,11 +15,11 @@ process variant_calling {
   script:
   xmx_memory = "${task.memory}" - ~/\s*GB/
 """
-gatk --java-options "-Xmx${xmx_memory}G" HaplotypeCallerSpark \
+gatk --java-Options "-Xmx${xmx_memory}G" HaplotypeCallerSpark \
   --spark-master local[${task.cpus}] \
   -R ${fasta} \
   -I ${bam} \
-  -o ${file_id}.vcf
+  -O ${file_id}.vcf
 """
 }
 
@@ -36,11 +36,11 @@ process filter_snp {
   script:
   xmx_memory = "${task.memory}" - ~/\s*GB/
 """
-gatk --java-options "-Xmx${xmx_memory}G" SelectVariants \
+gatk --java-Options "-Xmx${xmx_memory}G" SelectVariants \
   -R ${fasta} \
   -V ${vcf} \
   -selectType SNP \
-  -o ${file_id}_snp.vcf
+  -O ${file_id}_snp.vcf
 """
 }
 
@@ -57,11 +57,11 @@ process filter_indels {
   script:
   xmx_memory = "${task.memory}" - ~/\s*GB/
 """
-gatk --java-options "-Xmx${xmx_memory}G"-T SelectVariants \
+gatk --java-Options "-Xmx${xmx_memory}G"-T SelectVariants \
   -R ${fasta} \
   -V ${vcf} \
   -selectType INDEL \
-  -o ${file_id}_indel.vcf
+  -O ${file_id}_indel.vcf
 """
 }
 
@@ -80,12 +80,12 @@ process high_confidence_snp {
   script:
   xmx_memory = "${task.memory}" - ~/\s*GB/
 """
-gatk --java-options "-Xmx${xmx_memory}G"-T VariantFiltration \
+gatk --java-Options "-Xmx${xmx_memory}G"-T VariantFiltration \
   -R ${fasta} \
   -V ${vcf} \
   --filterExpression "${high_confidence_snp_filter}" \
   --filterName "basic_snp_filter" \
-  -o ${file_id}_filtered_snp.vcf
+  -O ${file_id}_filtered_snp.vcf
 """
 }
 
@@ -104,12 +104,12 @@ process high_confidence_indels {
   script:
   xmx_memory = "${task.memory}" - ~/\s*GB/
 """
-gatk --java-options "-Xmx${xmx_memory}G" VariantFiltration \
+gatk --java-Options "-Xmx${xmx_memory}G" VariantFiltration \
   -R ${fasta} \
   -V ${vcf} \
   --filterExpression "${high_confidence_indel_filter}" \
   --filterName "basic_indel_filter" \
-  -o ${file_id}_filtered_indel.vcf
+  -O ${file_id}_filtered_indel.vcf
 """
 }
 
@@ -126,13 +126,13 @@ process recalibrate_snp_table {
   script:
   xmx_memory = "${task.memory}" - ~/\s*GB/
 """
-gatk --java-options "-Xmx${xmx_memory}G" BaseRecalibratorSpark \
+gatk --java-Options "-Xmx${xmx_memory}G" BaseRecalibratorSpark \
   --spark-master local[${task.cpus}] \
   -R ${fasta} \
   -I ${bam} \
   -knownSites ${snp_file} \
   -knownSites ${indel_file} \
-  -o recal_data_table
+  -O recal_data_table
 """
 }
 
@@ -150,13 +150,13 @@ process recalibrate_snp {
   script:
   xmx_memory = "${task.memory}" - ~/\s*GB/
 """
-gatk --java-options "-Xmx${xmx_memory}G" PrintReads \
+gatk --java-Options "-Xmx${xmx_memory}G" PrintReads \
   --use_jdk_deflater \
   --use_jdk_inflater \
   -R ${fasta} \
   -I ${bam} \
   -BQSR recal_data_table \
-  -o ${file_id}_recal.bam
+  -O ${file_id}_recal.bam
 """
 }
 
@@ -173,13 +173,13 @@ process haplotype_caller {
   script:
   xmx_memory = "${task.memory}" - ~/\s*GB/
 """
-gatk --java-options "-Xmx${xmx_memory}G" HaplotypeCallerSpark \
+gatk --java-Options "-Xmx${xmx_memory}G" HaplotypeCallerSpark \
   --spark-master local[${task.cpus}] \
   -R ${fasta} \
   -I ${bam} \
   -ERC GVCF \
   -variant_index_type LINEAR -variant_index_parameter 128000 \
-  -o ${file_id}.gvcf
+  -O ${file_id}.gvcf
 """
 }
 
@@ -196,10 +196,10 @@ process gvcf_genotyping {
   script:
   xmx_memory = "${task.memory}" - ~/\s*GB/
 """
-gatk --java-options "-Xmx${xmx_memory}G" GenotypeGVCFs \
+gatk --java-Options "-Xmx${xmx_memory}G" GenotypeGVCFs \
   -R ${fasta} \
   -V ${gvcf} \
-  -o ${file_id}_joint.vcf
+  -O ${file_id}_joint.vcf
 """
 }
 
@@ -216,12 +216,12 @@ process select_variants_snp {
   script:
   xmx_memory = "${task.memory}" - ~/\s*GB/
 """
-gatk --java-options "-Xmx${xmx_memory}GG" SelectVariants \
+gatk --java-Options "-Xmx${xmx_memory}GG" SelectVariants \
   --spark-master local[${task.cpus}] \
   -R ${fasta} \
   -V ${vcf} \
   -selectType SNP \
-  -o ${file_id}_joint_snp.vcf
+  -O ${file_id}_joint_snp.vcf
 """
 }
 
@@ -238,12 +238,12 @@ process select_variants_indels {
   script:
   xmx_memory = "${task.memory}" - ~/\s*GB/
 """
-gatk --java-options "-Xmx${xmx_memory}G" SelectVariants \
+gatk --java-Options "-Xmx${xmx_memory}G" SelectVariants \
   --spark-master local[${task.cpus}] \
   -R ${fasta} \
   -V ${vcf} \
   -selectType INDEL \
-  -o ${file_id}_joint_indel.vcf
+  -O ${file_id}_joint_indel.vcf
 """
 }
 
@@ -261,10 +261,10 @@ process personalized_genome {
   script:
   xmx_memory = "${task.memory}" - ~/\s*GB/
 """
-gatk --java-options "-Xmx${xmx_memory}G" FastaAlternateReferenceMaker\
+gatk --java-Options "-Xmx${xmx_memory}G" FastaAlternateReferenceMaker\
   -R ${reference} \
   -V ${vcf} \
-  -o ${file_id[0]}_genome.fasta
+  -O ${file_id[0]}_genome.fasta
 """
 }
 
