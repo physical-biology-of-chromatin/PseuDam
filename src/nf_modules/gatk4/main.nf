@@ -15,7 +15,7 @@ process variant_calling {
   script:
   xmx_memory = "${task.memory}" - ~/\s*GB/
 """
-gatk --java-options "-Xmx${xmx_memory}G" HaplotypeCaller \
+gatk --java-options "-Xmx${xmx_memory}G" HaplotypeCallerSpark \
   --spark-master local[${task.cpus}] \
   -R ${fasta} \
   -I ${bam} \
@@ -37,7 +37,6 @@ process filter_snp {
   xmx_memory = "${task.memory}" - ~/\s*GB/
 """
 gatk --java-options "-Xmx${xmx_memory}G" SelectVariants \
-  --spark-master local[${task.cpus}] \
   -R ${fasta} \
   -V ${vcf} \
   -selectType SNP \
@@ -47,7 +46,7 @@ gatk --java-options "-Xmx${xmx_memory}G" SelectVariants \
 
 process filter_indels {
   container = "${container_url}"
-  label "big_mem_multi_cpus"
+  label "big_mem_mono_cpus"
   tag "$file_id"
 
   input:
@@ -59,7 +58,6 @@ process filter_indels {
   xmx_memory = "${task.memory}" - ~/\s*GB/
 """
 gatk --java-options "-Xmx${xmx_memory}G"-T SelectVariants \
-  --spark-master local[${task.cpus}] \
   -R ${fasta} \
   -V ${vcf} \
   -selectType INDEL \
@@ -71,7 +69,7 @@ high_confidence_snp_filter = "(QD < 2.0) || (FS > 60.0) || (MQ < 40.0) || (MQRan
 
 process high_confidence_snp {
   container = "${container_url}"
-  label "big_mem_multi_cpus"
+  label "big_mem_mono_cpus"
   tag "$file_id"
 
   input:
@@ -83,7 +81,6 @@ process high_confidence_snp {
   xmx_memory = "${task.memory}" - ~/\s*GB/
 """
 gatk --java-options "-Xmx${xmx_memory}G"-T VariantFiltration \
-  --spark-master local[${task.cpus}] \
   -R ${fasta} \
   -V ${vcf} \
   --filterExpression "${high_confidence_snp_filter}" \
@@ -96,7 +93,7 @@ high_confidence_indel_filter = "QD < 3.0 || FS > 200.0 || ReadPosRankSum < -20.0
 
 process high_confidence_indels {
   container = "${container_url}"
-  label "big_mem_multi_cpus"
+  label "big_mem_mono_cpus"
   tag "$file_id"
 
   input:
@@ -108,7 +105,6 @@ process high_confidence_indels {
   xmx_memory = "${task.memory}" - ~/\s*GB/
 """
 gatk --java-options "-Xmx${xmx_memory}G" VariantFiltration \
-  --spark-master local[${task.cpus}] \
   -R ${fasta} \
   -V ${vcf} \
   --filterExpression "${high_confidence_indel_filter}" \
@@ -130,7 +126,7 @@ process recalibrate_snp_table {
   script:
   xmx_memory = "${task.memory}" - ~/\s*GB/
 """
-gatk --java-options "-Xmx${xmx_memory}G" BaseRecalibrator \
+gatk --java-options "-Xmx${xmx_memory}G" BaseRecalibratorSpark \
   --spark-master local[${task.cpus}] \
   -R ${fasta} \
   -I ${bam} \
@@ -142,7 +138,7 @@ gatk --java-options "-Xmx${xmx_memory}G" BaseRecalibrator \
 
 process recalibrate_snp {
   container = "${container_url}"
-  label "big_mem_multi_cpus"
+  label "big_mem_mono_cpus"
   tag "$file_id"
 
   input:
@@ -157,7 +153,6 @@ process recalibrate_snp {
 gatk --java-options "-Xmx${xmx_memory}G" PrintReads \
   --use_jdk_deflater \
   --use_jdk_inflater \
-  --spark-master local[${task.cpus}] \
   -R ${fasta} \
   -I ${bam} \
   -BQSR recal_data_table \
@@ -178,7 +173,7 @@ process haplotype_caller {
   script:
   xmx_memory = "${task.memory}" - ~/\s*GB/
 """
-gatk --java-options "-Xmx${xmx_memory}G" HaplotypeCaller \
+gatk --java-options "-Xmx${xmx_memory}G" HaplotypeCallerSpark \
   --spark-master local[${task.cpus}] \
   -R ${fasta} \
   -I ${bam} \
@@ -190,7 +185,7 @@ gatk --java-options "-Xmx${xmx_memory}G" HaplotypeCaller \
 
 process gvcf_genotyping {
   container = "${container_url}"
-  label "big_mem_multi_cpus"
+  label "big_mem_mono_cpus"
   tag "$file_id"
 
   input:
@@ -202,7 +197,6 @@ process gvcf_genotyping {
   xmx_memory = "${task.memory}" - ~/\s*GB/
 """
 gatk --java-options "-Xmx${xmx_memory}G" GenotypeGVCFs \
-  --spark-master local[${task.cpus}] \
   -R ${fasta} \
   -V ${gvcf} \
   -o ${file_id}_joint.vcf
@@ -211,7 +205,7 @@ gatk --java-options "-Xmx${xmx_memory}G" GenotypeGVCFs \
 
 process select_variants_snp {
   container = "${container_url}"
-  label "big_mem_multi_cpus"
+  label "big_mem_mono_cpus"
   tag "$file_id"
 
   input:
@@ -233,7 +227,7 @@ gatk --java-options "-Xmx${xmx_memory}GG" SelectVariants \
 
 process select_variants_indels {
   container = "${container_url}"
-  label "big_mem_multi_cpus"
+  label "big_mem_mono_cpus"
   tag "$file_id"
 
   input:
