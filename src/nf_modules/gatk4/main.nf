@@ -3,7 +3,7 @@ container_url = "broadinstitute/gatk:${version}"
 
 process variant_calling {
   container = "${container_url}"
-  label "big_mem_multi_cpus"
+  label "big_mem_mono_cpus"
   tag "$file_id"
 
   input:
@@ -15,8 +15,7 @@ process variant_calling {
   script:
   xmx_memory = "${task.memory}" - ~/\s*GB/
 """
-gatk --java-options "-Xmx${xmx_memory}G" HaplotypeCallerSpark \
-  --spark-master local[${task.cpus}] \
+gatk --java-options "-Xmx${xmx_memory}G" HaplotypeCaller \
   -R ${fasta} \
   -I ${bam} \
   -O ${file_id}.vcf
@@ -25,7 +24,7 @@ gatk --java-options "-Xmx${xmx_memory}G" HaplotypeCallerSpark \
 
 process filter_snp {
   container = "${container_url}"
-  label "big_mem_multi_cpus"
+  label "big_mem_mono_cpus"
   tag "$file_id"
 
   input:
@@ -115,7 +114,7 @@ gatk --java-options "-Xmx${xmx_memory}G" VariantFiltration \
 
 process recalibrate_snp_table {
   container = "${container_url}"
-  label "big_mem_multi_cpus"
+  label "big_mem_mono_cpus"
   tag "$file_id"
 
   input:
@@ -126,8 +125,7 @@ process recalibrate_snp_table {
   script:
   xmx_memory = "${task.memory}" - ~/\s*GB/
 """
-gatk --java-options "-Xmx${xmx_memory}G" BaseRecalibratorSpark \
-  --spark-master local[${task.cpus}] \
+gatk --java-options "-Xmx${xmx_memory}G" BaseRecalibrator \
   -R ${fasta} \
   -I ${bam} \
   -knownSites ${snp_file} \
@@ -162,7 +160,7 @@ gatk --java-options "-Xmx${xmx_memory}G" PrintReads \
 
 process haplotype_caller {
   container = "${container_url}"
-  label "big_mem_multi_cpus"
+  label "big_mem_mono_cpus"
   tag "$file_id"
 
   input:
@@ -173,8 +171,7 @@ process haplotype_caller {
   script:
   xmx_memory = "${task.memory}" - ~/\s*GB/
 """
-gatk --java-options "-Xmx${xmx_memory}G" HaplotypeCallerSpark \
-  --spark-master local[${task.cpus}] \
+gatk --java-options "-Xmx${xmx_memory}G" HaplotypeCaller \
   -R ${fasta} \
   -I ${bam} \
   -ERC GVCF \
@@ -217,7 +214,6 @@ process select_variants_snp {
   xmx_memory = "${task.memory}" - ~/\s*GB/
 """
 gatk --java-options "-Xmx${xmx_memory}GG" SelectVariants \
-  --spark-master local[${task.cpus}] \
   -R ${fasta} \
   -V ${vcf} \
   -selectType SNP \
@@ -239,7 +235,6 @@ process select_variants_indels {
   xmx_memory = "${task.memory}" - ~/\s*GB/
 """
 gatk --java-options "-Xmx${xmx_memory}G" SelectVariants \
-  --spark-master local[${task.cpus}] \
   -R ${fasta} \
   -V ${vcf} \
   -selectType INDEL \
