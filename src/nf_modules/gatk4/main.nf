@@ -16,7 +16,7 @@ process variant_calling {
   xmx_memory = "${task.memory}" - ~/\s*GB/
 """
 gatk --java-options "-Xmx${xmx_memory}G" HaplotypeCaller \
-  -nct ${task.cpus} \
+  --spark-master local[${task.cpus}] \
   -R ${fasta} \
   -I ${bam} \
   -o ${file_id}.vcf
@@ -37,7 +37,7 @@ process filter_snp {
   xmx_memory = "${task.memory}" - ~/\s*GB/
 """
 gatk --java-options "-Xmx${xmx_memory}G" SelectVariants \
-  -nct ${task.cpus} \
+  --spark-master local[${task.cpus}] \
   -R ${fasta} \
   -V ${vcf} \
   -selectType SNP \
@@ -59,7 +59,7 @@ process filter_indels {
   xmx_memory = "${task.memory}" - ~/\s*GB/
 """
 gatk --java-options "-Xmx${xmx_memory}G"-T SelectVariants \
-  -nct ${task.cpus} \
+  --spark-master local[${task.cpus}] \
   -R ${fasta} \
   -V ${vcf} \
   -selectType INDEL \
@@ -83,7 +83,7 @@ process high_confidence_snp {
   xmx_memory = "${task.memory}" - ~/\s*GB/
 """
 gatk --java-options "-Xmx${xmx_memory}G"-T VariantFiltration \
-  -nct ${task.cpus} \
+  --spark-master local[${task.cpus}] \
   -R ${fasta} \
   -V ${vcf} \
   --filterExpression "${high_confidence_snp_filter}" \
@@ -108,7 +108,7 @@ process high_confidence_indels {
   xmx_memory = "${task.memory}" - ~/\s*GB/
 """
 gatk --java-options "-Xmx${xmx_memory}G" VariantFiltration \
-  -nct ${task.cpus} \
+  --spark-master local[${task.cpus}] \
   -R ${fasta} \
   -V ${vcf} \
   --filterExpression "${high_confidence_indel_filter}" \
@@ -131,7 +131,7 @@ process recalibrate_snp_table {
   xmx_memory = "${task.memory}" - ~/\s*GB/
 """
 gatk --java-options "-Xmx${xmx_memory}G" BaseRecalibrator \
-  -nct ${task.cpus} \
+  --spark-master local[${task.cpus}] \
   -R ${fasta} \
   -I ${bam} \
   -knownSites ${snp_file} \
@@ -157,7 +157,7 @@ process recalibrate_snp {
 gatk --java-options "-Xmx${xmx_memory}G" PrintReads \
   --use_jdk_deflater \
   --use_jdk_inflater \
-  -nct ${task.cpus} \
+  --spark-master local[${task.cpus}] \
   -R ${fasta} \
   -I ${bam} \
   -BQSR recal_data_table \
@@ -179,7 +179,7 @@ process haplotype_caller {
   xmx_memory = "${task.memory}" - ~/\s*GB/
 """
 gatk --java-options "-Xmx${xmx_memory}G" HaplotypeCaller \
-  -nct ${task.cpus} \
+  --spark-master local[${task.cpus}] \
   -R ${fasta} \
   -I ${bam} \
   -ERC GVCF \
@@ -202,7 +202,7 @@ process gvcf_genotyping {
   xmx_memory = "${task.memory}" - ~/\s*GB/
 """
 gatk --java-options "-Xmx${xmx_memory}G" GenotypeGVCFs \
-  -nct ${task.cpus} \
+  --spark-master local[${task.cpus}] \
   -R ${fasta} \
   -V ${gvcf} \
   -o ${file_id}_joint.vcf
@@ -223,7 +223,7 @@ process select_variants_snp {
   xmx_memory = "${task.memory}" - ~/\s*GB/
 """
 gatk --java-options "-Xmx${xmx_memory}GG" SelectVariants \
-  -nct ${task.cpus} \
+  --spark-master local[${task.cpus}] \
   -R ${fasta} \
   -V ${vcf} \
   -selectType SNP \
@@ -245,7 +245,7 @@ process select_variants_indels {
   xmx_memory = "${task.memory}" - ~/\s*GB/
 """
 gatk --java-options "-Xmx${xmx_memory}G" SelectVariants \
-  -nct ${task.cpus} \
+  --spark-master local[${task.cpus}] \
   -R ${fasta} \
   -V ${vcf} \
   -selectType INDEL \
