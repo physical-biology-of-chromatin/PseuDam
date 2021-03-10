@@ -82,8 +82,8 @@ process high_confidence_snp {
 gatk --java-options "-Xmx${xmx_memory}G" VariantFiltration \
   -R ${fasta} \
   -V ${vcf} \
-  --filterExpression "${high_confidence_snp_filter}" \
-  --filterName "basic_snp_filter" \
+  --filter-expression "${high_confidence_snp_filter}" \
+  --filter-name "basic_snp_filter" \
   -O ${file_id}_filtered_snp.vcf
 """
 }
@@ -106,8 +106,8 @@ process high_confidence_indels {
 gatk --java-options "-Xmx${xmx_memory}G" VariantFiltration \
   -R ${fasta} \
   -V ${vcf} \
-  --filterExpression "${high_confidence_indel_filter}" \
-  --filterName "basic_indel_filter" \
+  --filter-expression "${high_confidence_indel_filter}" \
+  --filter-name "basic_indel_filter" \
   -O ${file_id}_filtered_indel.vcf
 """
 }
