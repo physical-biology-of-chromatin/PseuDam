@@ -38,7 +38,7 @@ process filter_snp {
 gatk --java-options "-Xmx${xmx_memory}G" SelectVariants \
   -R ${fasta} \
   -V ${vcf} \
-  -selectType SNP \
+  -select-type SNP \
   -O ${file_id}_snp.vcf
 """
 }
@@ -59,7 +59,7 @@ process filter_indels {
 gatk --java-options "-Xmx${xmx_memory}G" SelectVariants \
   -R ${fasta} \
   -V ${vcf} \
-  -selectType INDEL \
+  -select-type INDEL \
   -O ${file_id}_indel.vcf
 """
 }
@@ -216,7 +216,7 @@ process select_variants_snp {
 gatk --java-options "-Xmx${xmx_memory}GG" SelectVariants \
   -R ${fasta} \
   -V ${vcf} \
-  -selectType SNP \
+  -select-type SNP \
   -O ${file_id}_joint_snp.vcf
 """
 }
@@ -237,7 +237,7 @@ process select_variants_indels {
 gatk --java-options "-Xmx${xmx_memory}G" SelectVariants \
   -R ${fasta} \
   -V ${vcf} \
-  -selectType INDEL \
+  -select-type INDEL \
   -O ${file_id}_joint_indel.vcf
 """
 }
