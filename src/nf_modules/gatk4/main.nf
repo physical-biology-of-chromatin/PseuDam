@@ -56,7 +56,7 @@ process filter_indels {
   script:
   xmx_memory = "${task.memory}" - ~/\s*GB/
 """
-gatk --java-options "-Xmx${xmx_memory}G"-T SelectVariants \
+gatk --java-options "-Xmx${xmx_memory}G" SelectVariants \
   -R ${fasta} \
   -V ${vcf} \
   -selectType INDEL \
@@ -79,7 +79,7 @@ process high_confidence_snp {
   script:
   xmx_memory = "${task.memory}" - ~/\s*GB/
 """
-gatk --java-options "-Xmx${xmx_memory}G"-T VariantFiltration \
+gatk --java-options "-Xmx${xmx_memory}G" VariantFiltration \
   -R ${fasta} \
   -V ${vcf} \
   --filterExpression "${high_confidence_snp_filter}" \
