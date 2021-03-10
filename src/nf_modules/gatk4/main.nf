@@ -125,6 +125,10 @@ process recalibrate_snp_table {
   script:
   xmx_memory = "${task.memory}" - ~/\s*GB/
 """
+gatk --java-options "-Xmx${xmx_memory}G" IndexFeatureFile \
+  -I ${snp_file}
+gatk --java-options "-Xmx${xmx_memory}G" IndexFeatureFile \
+  -I ${indel_file}
 gatk --java-options "-Xmx${xmx_memory}G" BaseRecalibrator \
   -R ${fasta} \
   -I ${bam} \
