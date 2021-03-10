@@ -152,12 +152,10 @@ process recalibrate_snp {
   script:
   xmx_memory = "${task.memory}" - ~/\s*GB/
 """
-gatk --java-options "-Xmx${xmx_memory}G" PrintReads \
-  --use_jdk_deflater \
-  --use_jdk_inflater \
+gatk --java-options "-Xmx${xmx_memory}G" ApplyBQSR \
   -R ${fasta} \
   -I ${bam} \
-  -BQSR recal_data_table \
+  --bqsr-recal-file recal_data_table \
   -O ${file_id}_recal.bam
 """
 }
