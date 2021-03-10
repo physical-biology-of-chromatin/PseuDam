@@ -128,8 +128,8 @@ process recalibrate_snp_table {
 gatk --java-options "-Xmx${xmx_memory}G" BaseRecalibrator \
   -R ${fasta} \
   -I ${bam} \
-  -knownSites ${snp_file} \
-  -knownSites ${indel_file} \
+  -known-sites ${snp_file} \
+  -known-sites ${indel_file} \
   -O recal_data_table
 """
 }
