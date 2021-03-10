@@ -144,8 +144,7 @@ process recalibrate_snp {
   tag "$file_id"
 
   input:
-    tuple val(file_id), path(snp_file), path(indel_file), path(bam), path(bam_idx)
-    tuple val(table_id), path(recal_data_table)
+    tuple val(file_id), path(snp_file), path(indel_file), path(bam), path(bam_idx), path(recal_table)
     tuple val(ref_id), path(fasta), path(fai), path(dict)
   output:
     tuple val(file_id), path("*.bam"), emit: bam
