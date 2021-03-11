@@ -176,7 +176,6 @@ gatk --java-options "-Xmx${xmx_memory}G" HaplotypeCaller \
   -R ${fasta} \
   -I ${bam} \
   -ERC GVCF \
-  -variant_index_type LINEAR -variant_index_parameter 128000 \
   -O ${file_id}.gvcf
 """
 }
