@@ -8,6 +8,7 @@ RUN apk add --update --no-cache bash musl-dev linux-headers g++ cmake make build
  && tar -xvf v${G2GTOOLS_VERSION}.tar.gz \
  && cd g2gtools-${G2GTOOLS_VERSION} \
  && pip install numpy \
+ && pip install pysam \
  && make install 
 
 
