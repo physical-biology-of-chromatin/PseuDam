@@ -1,9 +1,10 @@
-FROM python:3.8-alpine
+FROM python:3.9-slim
 MAINTAINER Laurent Modolo
 
 ENV G2GTOOLS_VERSION=0.2.8
 
-RUN apk add --update --no-cache bash musl-dev linux-headers g++ cmake make build-base bzip2-dev zlib-dev xz-dev autoconf \
+RUN apt update \
+ && apt install -y wget build-essential zlib1g-dev libbz2-dev liblzma-dev \
  && wget https://github.com/churchill-lab/g2gtools/archive/v${G2GTOOLS_VERSION}.tar.gz \
  && tar -xvf v${G2GTOOLS_VERSION}.tar.gz \
  && cd g2gtools-${G2GTOOLS_VERSION} \
