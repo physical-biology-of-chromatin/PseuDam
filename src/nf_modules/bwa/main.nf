@@ -32,7 +32,7 @@ process mapping_fastq {
 
   output:
   tuple val(file_id), path("*.bam"), emit: bam
-  tuple val(file_id), path("${file_id}_bwa_report.txt"), emit: report
+  tuple val(file_id), path("${id}_bwa_report.txt"), emit: report
 
   script:
 if (file_id.containsKey('library')) {
@@ -43,10 +43,20 @@ if (file_id.containsKey('library')) {
   id = file_id
 }
 bwa_mem_R = "@RG\\tID:${library}\\tSM:${library}\\tLB:lib_${library}\\tPL:illumina"
+if (reads instanceof List)
 """
 bwa mem -t ${task.cpus} \
 -R '${bwa_mem_R}' \
 ${index_id} ${reads[0]} ${reads[1]} 2> \
+  ${id}_bwa_report.txt | \
+  samtools view -@ ${task.cpus} -Sb - > ${id}.bam
+"""
+else
+
+"""
+bwa mem -t ${task.cpus} \
+-R '${bwa_mem_R}' \
+${index_id} ${reads} 2> \
   ${id}_bwa_report.txt | \
   samtools view -@ ${task.cpus} -Sb - > ${id}.bam
 """
