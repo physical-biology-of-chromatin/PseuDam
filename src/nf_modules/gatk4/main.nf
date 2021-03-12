@@ -189,14 +189,14 @@ process gvcf_genotyping {
     tuple val(file_id), path(gvcf)
     tuple val(ref_id), path(fasta), path(fai), path(dict)
   output:
-    tuple val(file_id), path("*.vcf"), emit: vcf
+    tuple val(file_id), path("*.vcf.gz"), emit: vcf
   script:
   xmx_memory = "${task.memory}" - ~/\s*GB/
 """
 gatk --java-options "-Xmx${xmx_memory}G" GenotypeGVCFs \
   -R ${fasta} \
   -V ${gvcf} \
-  -O ${file_id}_joint.vcf
+  -O ${file_id}_joint.vcf.gz
 """
 }
 
