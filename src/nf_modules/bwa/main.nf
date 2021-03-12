@@ -21,7 +21,6 @@ bwa index -p ${fasta.simpleName} ${fasta} \
 }
 
 
-params.bwa_mem_R = '@RG\\tID:${library}\\tSM:${library}\\tLB:lib_${library}\\tPL:illumina'
 process mapping_fastq {
   container = "${container_url}"
   label "big_mem_multi_cpus"
@@ -36,6 +35,7 @@ process mapping_fastq {
   tuple val(file_id), path("${file_id}_bwa_report.txt"), emit: report
 
   script:
+bwa_mem_R = "@RG\\tID:${library}\\tSM:${library}\\tLB:lib_${library}\\tPL:illumina"
 """
 bwa mem -t ${task.cpus} \
 -R '${params.bwa_mem_R}' \
