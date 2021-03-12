@@ -37,16 +37,18 @@ process mapping_fastq {
   script:
 if (file_id.containsKey('library')) {
   library = file_id.library
+  id = file_id.id
 } else {
   library = file_id
+  id = file_id
 }
 bwa_mem_R = "@RG\\tID:${library}\\tSM:${library}\\tLB:lib_${library}\\tPL:illumina"
 """
 bwa mem -t ${task.cpus} \
 -R '${bwa_mem_R}' \
 ${index_id} ${reads[0]} ${reads[1]} 2> \
-  ${file_id}_bwa_report.txt | \
-  samtools view -@ ${task.cpus} -Sb - > ${file_id}.bam
+  ${id}_bwa_report.txt | \
+  samtools view -@ ${task.cpus} -Sb - > ${id}.bam
 """
 }
 
