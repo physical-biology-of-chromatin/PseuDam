@@ -35,10 +35,11 @@ process mapping_fastq {
   tuple val(file_id), path("${file_id}_bwa_report.txt"), emit: report
 
   script:
-if (file_id.containsKey('library')):
+if (file_id.containsKey('library')) {
   library = file_id.library
-else:
+} else {
   library = file_id
+}
 bwa_mem_R = "@RG\\tID:${library}\\tSM:${library}\\tLB:lib_${library}\\tPL:illumina"
 """
 bwa mem -t ${task.cpus} \
