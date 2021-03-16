@@ -17,8 +17,8 @@ g2gtools vcf2vci \
   -p ${task.cpus} \
   -f ${fasta} \
   -i ${vcf} \
-  -s ${file_id} \
-  -o ${file_id}.vci.gz
+  -s ${file_id.library} \
+  -o ${file_id.id}.vci.gz
 """
 }
 
@@ -31,14 +31,14 @@ process incorporate_snp {
     tuple val(file_id), path(vci)
     tuple val(ref_id), path(fasta)
   output:
-    tuple val(file_id), path("${file_id}_snp.fasta"), path("${vci}"), emit: fasta
+    tuple val(file_id), path("${file_id.id}_snp.fasta"), path("${vci}"), emit: fasta
   script:
 """
 g2gtools patch \
   -p ${task.cpus} \
   -i ${fasta} \
   -c ${vci} \
-  -o ${file_id}_snp.fasta
+  -o ${file_id.id}_snp.fasta
 """
 }
 
@@ -50,14 +50,14 @@ process incorporate_indel {
   input:
     tuple val(file_id), path(fasta), path(vci)
   output:
-    tuple val(file_id), path("${file_id}_snp_indel.fasta"), path("${vci}"), emit: fasta
+    tuple val(file_id), path("${file_id.id}_snp_indel.fasta"), path("${vci}"), emit: fasta
   script:
 """
 g2gtools transform \
   -p ${task.cpus} \
   -i ${fasta} \
   -c ${vci} \
-  -o ${file_id}_snp_indel.fasta
+  -o ${file_id.id}_snp_indel.fasta
 """
 }
 
@@ -70,13 +70,13 @@ process convert_gtf {
     tuple val(file_id), path(vci)
     tuple val(annot_id), path(gtf)
   output:
-    tuple val(file_id), path("${file_id}.gtf"), emit: gtf
+    tuple val(file_id), path("${file_id.id}.gtf"), emit: gtf
   script:
 """
 g2gtools convert \
   -i ${gtf} \
   -c ${vci} \
-  -o ${file_id}.gtf
+  -o ${file_id.id}.gtf
 """
 }
 
@@ -89,13 +89,13 @@ process convert_bed {
     tuple val(file_id), path(vci)
     tuple val(annot_id), path(bed)
   output:
-    tuple val(file_id), path("${file_id}.bed"), emit: bed
+    tuple val(file_id), path("${file_id.id}.bed"), emit: bed
   script:
 """
 g2gtools convert \
   -i ${bed} \
   -c ${vci} \
-  -o ${file_id}.bed
+  -o ${file_id.id}.bed
 """
 }
 
@@ -108,12 +108,12 @@ process convert_bam {
     tuple val(file_id), path(vci)
     tuple val(bam_id), path(bam)
   output:
-    tuple val(file_id), path("${file_id}_${bam_id}.bam"), emit: bam
+    tuple val(file_id), path("${file_id.id}_${bam_id.baseName}.bam"), emit: bam
   script:
 """
 g2gtools convert \
   -i ${bam} \
   -c ${vci} \
-  -o ${file_id}_${bam_id}.bam
+  -o ${file_id.id}_${bam.baseName}.bam
 """
 }
