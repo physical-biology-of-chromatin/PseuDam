@@ -208,7 +208,7 @@ process flagstat_2_multiqc {
     tuple val(file_id), path(tsv), emit: tsv
 
   output:
-    tuple val(file_id), path("*.txt"), emit: report
+    path "*.txt" , emit: report
 """
 mv ${tsv} ${tsv.simpleName}.flagstat.txt
 """
@@ -221,7 +221,7 @@ process idxstat_2_multiqc {
     tuple val(file_id), path(tsv), emit: tsv
 
   output:
-    tuple val(file_id), path("*.txt"), emit: report
+    path "*.txt", emit: report
 """
 mv ${tsv} ${tsv.simpleName}.idxstats.txt
 """
