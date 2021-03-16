@@ -196,7 +196,7 @@ process gvcf_genotyping {
 gatk --java-options "-Xmx${xmx_memory}G" GenotypeGVCFs \
   -R ${fasta} \
   -V ${gvcf} \
-  -O ${bam.simpleName}_joint.vcf.gz
+  -O ${gvcf.simpleName}_joint.vcf.gz
 """
 }
 
