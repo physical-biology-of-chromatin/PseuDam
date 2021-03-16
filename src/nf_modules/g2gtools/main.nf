@@ -18,7 +18,7 @@ g2gtools vcf2vci \
   -f ${fasta} \
   -i ${vcf} \
   -s ${file_id.library} \
-  -o ${file_id.id}.vci.gz
+  -o ${file_id.id}.vci.gz > ${file_id.id}
 """
 }
 
