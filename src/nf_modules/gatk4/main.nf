@@ -18,7 +18,7 @@ process variant_calling {
 gatk --java-options "-Xmx${xmx_memory}G" HaplotypeCaller \
   -R ${fasta} \
   -I ${bam} \
-  -O ${file_id}.vcf
+  -O ${bam.simpleName}.vcf
 """
 }
 
@@ -39,7 +39,7 @@ gatk --java-options "-Xmx${xmx_memory}G" SelectVariants \
   -R ${fasta} \
   -V ${vcf} \
   -select-type SNP \
-  -O ${file_id}_snp.vcf
+  -O ${vcf.simpleName}_snp.vcf
 """
 }
 
@@ -60,7 +60,7 @@ gatk --java-options "-Xmx${xmx_memory}G" SelectVariants \
   -R ${fasta} \
   -V ${vcf} \
   -select-type INDEL \
-  -O ${file_id}_indel.vcf
+  -O ${vcf.simpleName}_indel.vcf
 """
 }
 
@@ -84,7 +84,7 @@ gatk --java-options "-Xmx${xmx_memory}G" VariantFiltration \
   -V ${vcf} \
   --filter-expression "${high_confidence_snp_filter}" \
   --filter-name "basic_snp_filter" \
-  -O ${file_id}_filtered_snp.vcf
+  -O ${vcf.simpleName}_filtered_snp.vcf
 """
 }
 
@@ -108,7 +108,7 @@ gatk --java-options "-Xmx${xmx_memory}G" VariantFiltration \
   -V ${vcf} \
   --filter-expression "${high_confidence_indel_filter}" \
   --filter-name "basic_indel_filter" \
-  -O ${file_id}_filtered_indel.vcf
+  -O ${vcf.simpleName}_filtered_indel.vcf
 """
 }
 
@@ -155,7 +155,7 @@ gatk --java-options "-Xmx${xmx_memory}G" ApplyBQSR \
   -R ${fasta} \
   -I ${bam} \
   --bqsr-recal-file recal_data_table \
-  -O ${file_id}_recal.bam
+  -O ${bam.simpleName}_recal.bam
 """
 }
 
@@ -176,7 +176,7 @@ gatk --java-options "-Xmx${xmx_memory}G" HaplotypeCaller \
   -R ${fasta} \
   -I ${bam} \
   -ERC GVCF \
-  -O ${file_id}.gvcf
+  -O ${bam.simpleName}.gvcf
 """
 }
 
@@ -196,7 +196,7 @@ process gvcf_genotyping {
 gatk --java-options "-Xmx${xmx_memory}G" GenotypeGVCFs \
   -R ${fasta} \
   -V ${gvcf} \
-  -O ${file_id}_joint.vcf.gz
+  -O ${bam.simpleName}_joint.vcf.gz
 """
 }
 
@@ -217,7 +217,7 @@ gatk --java-options "-Xmx${xmx_memory}GG" SelectVariants \
   -R ${fasta} \
   -V ${vcf} \
   -select-type SNP \
-  -O ${file_id}_joint_snp.vcf
+  -O ${vcf.simpleName}_joint_snp.vcf
 """
 }
 
@@ -259,7 +259,7 @@ process personalized_genome {
 gatk --java-options "-Xmx${xmx_memory}G" FastaAlternateReferenceMaker\
   -R ${reference} \
   -V ${vcf} \
-  -O ${file_id[0]}_genome.fasta
+  -O ${vcf.simpleName}_genome.fasta
 """
 }
 
