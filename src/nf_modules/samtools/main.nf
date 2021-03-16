@@ -200,3 +200,29 @@ process stats_bam {
 samtools flagstat -@ ${task.cpus} -O tsv ${bam} > ${bam.simpleName}_stats.tsv
 """
 }
+
+process flagstat_2_multiqc {
+  tag "$file_id"
+
+  input:
+    tuple val(file_id), path(tsv), emit: tsv
+
+  output:
+    tuple val(file_id), path("*.txt"), emit: report
+"""
+mv ${tsv} ${tsv.simpleName}.flagstat.txt
+"""
+}
+
+process idxstat_2_multiqc {
+  tag "$file_id"
+
+  input:
+    tuple val(file_id), path(tsv), emit: tsv
+
+  output:
+    tuple val(file_id), path("*.txt"), emit: report
+"""
+mv ${tsv} ${tsv.simpleName}.idxstats.txt
+"""
+}
