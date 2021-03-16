@@ -205,7 +205,7 @@ process flagstat_2_multiqc {
   tag "$file_id"
 
   input:
-    tuple val(file_id), path(tsv), emit: tsv
+    tuple val(file_id), path(tsv)
 
   output:
     path "*.txt" , emit: report
@@ -218,7 +218,7 @@ process idxstat_2_multiqc {
   tag "$file_id"
 
   input:
-    tuple val(file_id), path(tsv), emit: tsv
+    tuple val(file_id), path(tsv)
 
   output:
     path "*.txt", emit: report
