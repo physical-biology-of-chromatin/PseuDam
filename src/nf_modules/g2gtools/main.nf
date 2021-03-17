@@ -10,7 +10,7 @@ process vci_build {
     tuple val(file_id), path(vcf)
     tuple val(ref_id), path(fasta)
   output:
-    tuple val(file_id), path("*.vci.gz"), path("*.tbi"), emit: vci
+    tuple val(file_id), path("*.vci.gz"), path("*.vci.gz.tbi"), emit: vci
     tuple val(file_id), path("*_report.txt"), emit: report
   script:
   input_vcf = ""
