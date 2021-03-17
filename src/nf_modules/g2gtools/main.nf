@@ -23,7 +23,7 @@ g2gtools vcf2vci \
   -f ${fasta} \
   ${input_vcf} \
   -s ${file_id} \
-  -o ${file_id}.vci.gz 2> ${file_id}_g2gtools_vcf2vci_report.txt
+  -o ${file_id}.vci 2> ${file_id}_g2gtools_vcf2vci_report.txt
 """
 }
 
