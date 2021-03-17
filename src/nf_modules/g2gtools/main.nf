@@ -10,7 +10,7 @@ process vci_build {
     tuple val(file_id), path(vcf)
     tuple val(ref_id), path(fasta)
   output:
-    tuple val(file_id), path("*.vci.gz"), path("*.tbi"), emit: vci
+    tuple val(file_id), path("*.vci"), path("*.tbi"), emit: vci
     tuple val(file_id), path("*_report.txt"), emit: report
   script:
   input_vcf = ""
@@ -36,7 +36,7 @@ process incorporate_snp {
     tuple val(file_id), path(vci), path(tbi)
     tuple val(ref_id), path(fasta)
   output:
-    tuple val(file_id), path("${file_id}_snp.fa.gz"), path("${vci}"), path("${tbi}"), emit: fasta
+    tuple val(file_id), path("${file_id}_snp.fa"), path("${vci}"), path("${tbi}"), emit: fasta
     tuple val(file_id), path("*_report.txt"), emit: report
   script:
 """
@@ -44,7 +44,7 @@ g2gtools patch \
   -p ${task.cpus} \
   -i ${fasta} \
   -c ${vci} \
-  -o ${file_id}_snp.fa.gz 2> ${file_id}_g2gtools_path_report.txt
+  -o ${file_id}_snp.fa 2> ${file_id}_g2gtools_path_report.txt
 """
 }
 
@@ -56,7 +56,7 @@ process incorporate_indel {
   input:
     tuple val(file_id), path(fasta), path(vci), path(tbi)
   output:
-    tuple val(file_id), path("${file_id}_snp_indel.fa.gz"), path("${vci}"), path("${tbi}"), emit: fasta
+    tuple val(file_id), path("${file_id}_snp_indel.fa"), path("${vci}"), path("${tbi}"), emit: fasta
     tuple val(file_id), path("*_report.txt"), emit: report
   script:
 """
@@ -64,7 +64,7 @@ g2gtools transform \
   -p ${task.cpus} \
   -i ${fasta} \
   -c ${vci} \
-  -o ${file_id}_snp_indel.fa.gz 2> ${file_id}_g2gtools_transform_report.txt
+  -o ${file_id}_snp_indel.fa 2> ${file_id}_g2gtools_transform_report.txt
 """
 }
 
