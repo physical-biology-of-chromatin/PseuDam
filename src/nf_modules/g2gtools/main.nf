@@ -13,11 +13,15 @@ process vci_build {
     tuple val(file_id), path("*.vci.gz"), emit: vci
     tuple val(file_id), path("*_report.txt"), emit: report
   script:
+  input_vcf = ""
+  for (vcf_file in vcf) {
+    input_vcf += " -i ${vcf_file}"
+  }
 """
 g2gtools vcf2vci \
   -p ${task.cpus} \
   -f ${fasta} \
-  -i ${vcf} \
+  ${input_vcf} \
   -s ${file_id} \
   -o ${file_id}.vci.gz 2> ${file_id}_g2gtools_vcf2vci_report.txt
 """
