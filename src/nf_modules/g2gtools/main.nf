@@ -44,7 +44,7 @@ g2gtools patch \
   -p ${task.cpus} \
   -i ${fasta} \
   -c ${vci} \
-  -o ${file_id}_snp.fa.gz > ${file_id}_g2gtools_path_report.txt
+  -o ${file_id}_snp.fa.gz 2> ${file_id}_g2gtools_path_report.txt
 """
 }
 
