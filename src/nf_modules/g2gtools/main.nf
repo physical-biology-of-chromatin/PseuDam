@@ -10,7 +10,7 @@ process vci_build {
     tuple val(file_id), path(vcf)
     tuple val(ref_id), path(fasta)
   output:
-    tuple val(file_id), path("*.vci.gz"), emit: vci
+    tuple val(file_id), path("*.vci.gz"), path("*.tbi"), emit: vci
     tuple val(file_id), path("*_report.txt"), emit: report
   script:
   input_vcf = ""
@@ -33,10 +33,10 @@ process incorporate_snp {
   tag "$file_id"
 
   input:
-    tuple val(file_id), path(vci)
+    tuple val(file_id), path(vci), path(tbi)
     tuple val(ref_id), path(fasta)
   output:
-    tuple val(file_id), path("${file_id}_snp.fasta"), path("${vci}"), emit: fasta
+    tuple val(file_id), path("${file_id}_snp.fasta"), path("${vci}"), path("${tbi}"), emit: fasta
     tuple val(file_id), path("*_report.txt"), emit: report
   script:
 """
@@ -54,9 +54,9 @@ process incorporate_indel {
   tag "$file_id"
 
   input:
-    tuple val(file_id), path(fasta), path(vci)
+    tuple val(file_id), path(fasta), path(vci), path(tbi)
   output:
-    tuple val(file_id), path("${file_id}_snp_indel.fasta"), path("${vci}"), emit: fasta
+    tuple val(file_id), path("${file_id}_snp_indel.fasta"), path("${vci}"), path("${tbi}"), emit: fasta
     tuple val(file_id), path("*_report.txt"), emit: report
   script:
 """
@@ -74,7 +74,7 @@ process convert_gtf {
   tag "$file_id"
 
   input:
-    tuple val(file_id), path(vci)
+    tuple val(file_id), path(vci), path(tbi)
     tuple val(annot_id), path(gtf)
   output:
     tuple val(file_id), path("${file_id}.gtf"), emit: gtf
@@ -94,7 +94,7 @@ process convert_bed {
   tag "$file_id"
 
   input:
-    tuple val(file_id), path(vci)
+    tuple val(file_id), path(vci), path(tbi)
     tuple val(annot_id), path(bed)
   output:
     tuple val(file_id), path("${file_id}.bed"), emit: bed
@@ -114,7 +114,7 @@ process convert_bam {
   tag "${bam_id} ${file_id}"
 
   input:
-    tuple val(file_id), path(vci)
+    tuple val(file_id), path(vci), path(tbi)
     tuple val(bam_id), path(bam)
   output:
     tuple val(file_id), path("${file_id}_${bam_id.baseName}.bam"), emit: bam
