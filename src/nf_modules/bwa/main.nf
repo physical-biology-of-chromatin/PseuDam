@@ -1,6 +1,9 @@
 version = "0.7.17"
 container_url = "lbmc/bwa:${version}"
 
+params.index_fasta = ""
+params.mapping_fastq = ""
+
 process index_fasta {
   container = "${container_url}"
   label "big_mem_mono_cpus"
@@ -15,7 +18,7 @@ process index_fasta {
 
   script:
 """
-bwa index -p ${fasta.simpleName} ${fasta} \
+bwa index ${params.index_fastq} -p ${fasta.simpleName} ${fasta} \
 &> ${fasta.simpleName}_bwa_report.txt
 """
 }
@@ -46,6 +49,7 @@ bwa_mem_R = "@RG\\tID:${library}\\tSM:${library}\\tLB:lib_${library}\\tPL:illumi
 if (reads instanceof List)
 """
 bwa mem -t ${task.cpus} \
+${params.mapping_fastq} \
 -R '${bwa_mem_R}' \
 ${index_id} ${reads[0]} ${reads[1]} 2> \
   ${id}_bwa_report.txt | \
@@ -55,6 +59,7 @@ else
 
 """
 bwa mem -t ${task.cpus} \
+${params.mapping_fastq} \
 -R '${bwa_mem_R}' \
 ${index_id} ${reads} 2> \
   ${id}_bwa_report.txt | \
