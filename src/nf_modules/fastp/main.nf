@@ -1,6 +1,10 @@
 version = "0.20.1"
 container_url = "lbmc/fastp:${version}"
 
+params.fastp = ""
+params.fastp_pairedend = ""
+params.fastp_singleend = ""
+
 process fastp {
   container = "${container_url}"
   label "big_mem_multi_cpus"
@@ -22,6 +26,7 @@ fastp --thread ${task.cpus} \
 --qualified_quality_phred 20 \
 --disable_length_filtering \
 --detect_adapter_for_pe \
+${params.fastp} \
 --in1 ${reads[0]} \
 --in2 ${reads[1]} \
 --out1 ${pair_id}_R1_trim.fastq.gz \
@@ -36,6 +41,7 @@ fastp --thread ${task.cpus} \
 --qualified_quality_phred 20 \
 --disable_length_filtering \
 --detect_adapter_for_pe \
+${params.fastp} \
 --in1 ${reads} \
 --out1 ${pair_id}_trim.fastq.gz \
 --html ${pair_id}.html \
@@ -64,6 +70,7 @@ fastp --thread ${task.cpus} \
 --qualified_quality_phred 20 \
 --disable_length_filtering \
 --detect_adapter_for_pe \
+${params.fastp_pairedend} \
 --in1 ${reads[0]} \
 --in2 ${reads[1]} \
 --out1 ${pair_id}_R1_trim.fastq.gz \
@@ -94,6 +101,7 @@ fastp --thread ${task.cpus} \
 --qualified_quality_phred 20 \
 --disable_length_filtering \
 --detect_adapter_for_pe \
+${params.fastp_singleend} \
 --in1 ${reads} \
 --out1 ${pair_id}_trim.fastq.gz \
 --html ${pair_id}.html \
