@@ -1,6 +1,7 @@
 version = "2.3.4.1"
 container_url = "lbmc/bowtie2:${version}"
 
+params.index_fasta = ""
 process index_fasta {
   container = "${container_url}"
   label "big_mem_multi_cpus"
@@ -26,7 +27,7 @@ fi
 """
 }
 
-
+params.mapping_fastq = "--very-sensitive"
 process mapping_fastq {
   container = "${container_url}"
   label "big_mem_multi_cpus"
@@ -49,7 +50,7 @@ process mapping_fastq {
   }
 if (reads instanceof List)
 """
-bowtie2 --very-sensitive \
+bowtie2 ${params.mapping_fastq} \
   -p ${task.cpus} \
   -x ${index_id} \
   -1 ${reads[0]} \
@@ -65,7 +66,7 @@ tail -n 19 ${pair_id}_bowtie2_mapping_report_tmp.txt > \
 """
 else
 """
-bowtie2 --very-sensitive \
+bowtie2 ${params.mapping_fastq} \
   -p ${task.cpus} \
   -x ${index_id} \
   -U ${reads} 2> \
@@ -80,6 +81,7 @@ tail -n 19 ${reads.baseName}_bowtie2_mapping_report_tmp.txt > \
 """
 }
 
+params.mapping_fastq_pairedend = "--very-sensitive"
 process mapping_fastq_pairedend {
   container = "${container_url}"
   label "big_mem_multi_cpus"
@@ -101,7 +103,7 @@ process mapping_fastq_pairedend {
     }
   }
 """
-bowtie2 --very-sensitive \
+bowtie2 ${params.mapping_fastq_pairedend} \
   -p ${task.cpus} \
   -x ${index_id} \
   -1 ${reads[0]} \
@@ -117,7 +119,7 @@ tail -n 19 ${pair_id}_bowtie2_mapping_report_tmp.txt > \
 """
 }
 
-
+params.mapping_fastq_singleend = "--very-sensitive"
 process mapping_fastq_singleend {
   container = "${container_url}"
   label "big_mem_multi_cpus"
@@ -139,7 +141,7 @@ process mapping_fastq_singleend {
     }
   }
 """
-bowtie2 --very-sensitive \
+bowtie2 ${params.mapping_fastq_singleend} \
   -p ${task.cpus} \
   -x ${index_id} \
   -U ${reads} 2> \

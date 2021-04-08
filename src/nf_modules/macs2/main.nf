@@ -4,6 +4,7 @@ container_url = "lbmc/macs2:${version}"
 params.macs_gsize=3e9
 params.macs_mfold="5 50"
 
+params.peak_calling = ""
 process peak_calling {
   container = "${container_url}"
   label "big_mem_mono_cpus"
@@ -21,6 +22,7 @@ process peak_calling {
 /* remove --nomodel option for real dataset */
 """
 macs2 callpeak \
+  ${params.peak_calling} \
   --treatment ${bam_ip} \
   --call-summits \
   --control ${bam_control} \
@@ -37,6 +39,7 @@ fi
 """
 }
 
+params.peak_calling_bg = ""
 process peak_calling_bg {
   container = "${container_url}"
   label "big_mem_mono_cpus"
@@ -58,6 +61,7 @@ awk '{print \$1"\t"\$2"\t"\$3"\t.\t+\t"\$4}' ${bg_ip} > \
 awk '{print \$1"\t"\$2"\t"\$3"\t.\t+\t"\$4}' ${bg_control} > \
   ${bg_control.simpleName}.bed
 macs2 callpeak \
+  ${params.peak_calling_bg} \
   --treatment ${bg_ip.simpleName}.bed \
   --call-summits \
   --control ${bg_control.simpleName}.bed \

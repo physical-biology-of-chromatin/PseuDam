@@ -1,6 +1,7 @@
 version = "2.25.0"
 container_url = "lbmc/bedtools:${version}"
 
+params.fasta_from_bed = "-name"
 process fasta_from_bed {
   container = "${container_url}"
   label "big_mem_mono_cpus"
@@ -15,11 +16,12 @@ process fasta_from_bed {
 
   script:
 """
-bedtools getfasta -name \
+bedtools getfasta ${params.fasta_from_bed} \
 -fi ${fasta} -bed ${bed} -fo ${bed.baseName}_extracted.fasta
 """
 }
 
+params.merge_bed = ""
 process merge_bed {
   container = "${container_url}"
   label "big_mem_mono_cpus"
@@ -33,10 +35,11 @@ process merge_bed {
 
   script:
 """
-bedtools merge -i ${bed} > ${bed[0].simpleName}_merged.bed
+bedtools merge ${params.merge_bed} -i ${bed} > ${bed[0].simpleName}_merged.bed
 """
 }
 
+params.bam_to_fastq_singleend = ""
 process bam_to_fastq_singleend {
   container = "${container_url}"
   label "big_mem_mono_cpus"
@@ -51,10 +54,12 @@ process bam_to_fastq_singleend {
   script:
 """
 bedtools bamtofastq \
--i ${bam} -fq ${bam.baseName}.fastq
+  ${params.bam_to_fastq_singleend} \
+  -i ${bam} -fq ${bam.baseName}.fastq
 """
 }
 
+params.bam_to_fastq_pairedend = ""
 process bam_to_fastq_pairedend {
   container = "${container_url}"
   label "big_mem_mono_cpus"
@@ -69,10 +74,12 @@ process bam_to_fastq_pairedend {
   script:
 """
 bedtools bamtofastq \
--i ${bam} -fq ${bam.baseName}_R1.fastq -fq2 ${bam.baseName}_R2.fastq
+  ${params.bam_to_fastq_pairedend} \
+  -i ${bam} -fq ${bam.baseName}_R1.fastq -fq2 ${bam.baseName}_R2.fastq
 """
 }
 
+params.bam_to_bedgraph = ""
 process bam_to_bedgraph {
   container = "${container_url}"
   label "big_mem_mono_cpus"
@@ -87,6 +94,7 @@ process bam_to_bedgraph {
   script:
 """
 bedtools genomecov \
+  ${params.bam_to_bedgraph} \
   -ibam ${bam} \
   -bg > ${bam.simpleName}.bg
 """

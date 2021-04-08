@@ -1,6 +1,7 @@
 version = "2.17"
 container_url = "lbmc/minimap2:${version}"
 
+params.index_fasta = ""
 process index_fasta {
   container = "${container_url}"
   label "big_mem_multi_cpus"
@@ -16,11 +17,11 @@ process index_fasta {
   script:
   memory = "${task.memory}" - ~/\s*GB/
 """
-minimap2 -t ${task.cpus} -I ${memory}G -d ${fasta.baseName}.mmi ${fasta}
+minimap2 ${params.index_fasta} -t ${task.cpus} -I ${memory}G -d ${fasta.baseName}.mmi ${fasta}
 """
 }
 
-
+params.mapping_fastq = "-ax sr"
 process mapping_fastq {
   container = "${container_url}"
   label "big_mem_multi_cpus"
@@ -39,12 +40,12 @@ process mapping_fastq {
   memory = memory / (task.cpus + 1.0)
 if (reads instanceof List)
 """
-minimap2 -ax sr -t ${task.cpus} -K ${memory} ${fasta} ${reads[0]} ${reads[1]} |
+minimap2 ${params.mapping_fastq} -t ${task.cpus} -K ${memory} ${fasta} ${reads[0]} ${reads[1]} |
   samtools view -Sb - > ${pair_id}.bam
 """
 else
 """
-minimap2 -ax sr -t ${task.cpus} -K ${memory} ${fasta} ${reads} |
+minimap2 ${params.mapping_fastq} -t ${task.cpus} -K ${memory} ${fasta} ${reads} |
   samtools view -Sb - > ${reads.baseName}.bam
 """
 }

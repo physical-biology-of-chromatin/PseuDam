@@ -1,6 +1,7 @@
 version = "2.18.11"
 container_url = "lbmc/picard:${version}"
 
+params.mark_duplicate = "VALIDATION_STRINGENCY=LENIENT REMOVE_DUPLICATES=true"
 process mark_duplicate {
   container = "${container_url}"
   label "big_mem_mono_cpus"
@@ -16,8 +17,7 @@ process mark_duplicate {
   script:
 """
 PicardCommandLine MarkDuplicates \
-  VALIDATION_STRINGENCY=LENIENT \
-  REMOVE_DUPLICATES=true \
+  ${params.mark_duplicate} \
   INPUT=${bam} \
   OUTPUT=${bam.baseName}_dedup.bam \
   METRICS_FILE=${bam.baseName}_picard_dedup_report.txt &> \
@@ -25,6 +25,7 @@ PicardCommandLine MarkDuplicates \
 """
 }
 
+params.index_fasta = ""
 process index_fasta {
   container = "${container_url}"
   label "big_mem_mono_cpus"
@@ -38,11 +39,13 @@ process index_fasta {
   script:
 """
 PicardCommandLine CreateSequenceDictionary \
-REFERENCE=${fasta} \
-OUTPUT=${fasta.baseName}.dict
+  ${params.index_fasta} \
+  REFERENCE=${fasta} \
+  OUTPUT=${fasta.baseName}.dict
 """
 }
 
+params.index_bam = ""
 process index_bam {
   container = "${container_url}"
   label "big_mem_mono_cpus"
@@ -56,6 +59,7 @@ process index_bam {
   script:
 """
 PicardCommandLine BuildBamIndex \
-INPUT=${bam}
+  ${params.index_bam} \
+  INPUT=${bam}
 """
 }

@@ -5,7 +5,7 @@ adapter_3_prim = "AGATCGGAAGAG"
 adapter_5_prim = "CTCTTCCGATCT"
 trim_quality = "20"
 
-
+params.adaptor_removal = "-a ${adapter_3_prim} -g ${adapter_5_prim} -A ${adapter_3_prim} -G ${adapter_5_prim}"
 process adaptor_removal {
   container = "${container_url}"
   label "big_mem_mono_cpus"
@@ -21,18 +21,19 @@ process adaptor_removal {
   script:
 if (reads instanceof List)
   """
-  cutadapt -a ${adapter_3_prim} -g ${adapter_5_prim} -A ${adapter_3_prim} -G ${adapter_5_prim} \
+  cutadapt ${params.adaptor_removal} \
   -o ${pair_id}_cut_R1.fastq.gz -p ${pair_id}_cut_R2.fastq.gz \
   ${reads[0]} ${reads[1]} > ${pair_id}_report.txt
   """
 else:
   """
-  cutadapt -a ${adapter_3_prim} -g ${adapter_5_prim} \
+  cutadapt ${params.adaptor_removal} \
   -o ${file_id}_cut.fastq.gz \
   ${reads} > ${file_id}_report.txt
   """
 }
 
+params.adaptor_removal_pairedend = "-a ${adapter_3_prim} -g ${adapter_5_prim} -A ${adapter_3_prim} -G ${adapter_5_prim}"
 process adaptor_removal_pairedend {
   container = "${container_url}"
   label "big_mem_mono_cpus"
@@ -47,12 +48,13 @@ process adaptor_removal_pairedend {
 
   script:
   """
-  cutadapt -a ${adapter_3_prim} -g ${adapter_5_prim} -A ${adapter_3_prim} -G ${adapter_5_prim} \
+  cutadapt ${params.adaptor_removal_pairedend} \
   -o ${pair_id}_cut_R1.fastq.gz -p ${pair_id}_cut_R2.fastq.gz \
   ${reads[0]} ${reads[1]} > ${pair_id}_report.txt
   """
 }
 
+params.adaptor_removal_singleend = "-a ${adapter_3_prim} -g ${adapter_5_prim}"
 process adaptor_removal_singleend {
   container = "${container_url}"
   label "big_mem_mono_cpus"
@@ -67,7 +69,7 @@ process adaptor_removal_singleend {
 
   script:
   """
-  cutadapt -a ${adapter_3_prim} -g ${adapter_5_prim} \
+  cutadapt ${params.adaptor_removal_singleend} \
   -o ${file_id}_cut.fastq.gz \
   ${reads} > ${file_id}_report.txt
   """

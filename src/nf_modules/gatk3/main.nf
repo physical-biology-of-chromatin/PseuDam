@@ -1,6 +1,7 @@
 version = "3.8.0"
 container_url = "lbmc/gatk:${version}"
 
+params.variant_calling = ""
 process variant_calling {
   container = "${container_url}"
   label "big_mem_multi_cpus"
@@ -16,12 +17,14 @@ process variant_calling {
 """
 gatk3 -T HaplotypeCaller \
   -nct ${task.cpus} \
+  ${params.variant_calling} \
   -R ${fasta} \
   -I ${bam} \
   -o ${file_id}.vcf
 """
 }
 
+params.filter_snp = ""
 process filter_snp {
   container = "${container_url}"
   label "big_mem_multi_cpus"
@@ -36,6 +39,7 @@ process filter_snp {
 """
 gatk3 -T SelectVariants \
   -nct ${task.cpus} \
+  ${params.filter_snp} \
   -R ${fasta} \
   -V ${vcf} \
   -selectType SNP \
@@ -43,6 +47,7 @@ gatk3 -T SelectVariants \
 """
 }
 
+params.filter_indels = ""
 process filter_indels {
   container = "${container_url}"
   label "big_mem_multi_cpus"
@@ -57,6 +62,7 @@ process filter_indels {
 """
 gatk3 -T SelectVariants \
   -nct ${task.cpus} \
+  ${params.filter_indels} \
   -R ${fasta} \
   -V ${vcf} \
   -selectType INDEL \
@@ -65,7 +71,7 @@ gatk3 -T SelectVariants \
 }
 
 high_confidence_snp_filter = "(QD < 2.0) || (FS > 60.0) || (MQ < 40.0) || (MQRankSum < -12.5) || (ReadPosRankSum < -8.0) || (SOR > 4.0)"
-
+params.high_confidence_snp = "--filterExpression \"${high_confidence_snp_filter}\" --filterName \"basic_snp_filter\""
 process high_confidence_snp {
   container = "${container_url}"
   label "big_mem_multi_cpus"
@@ -82,14 +88,13 @@ gatk3 -T VariantFiltration \
   -nct ${task.cpus} \
   -R ${fasta} \
   -V ${vcf} \
-  --filterExpression "${high_confidence_snp_filter}" \
-  --filterName "basic_snp_filter" \
+  ${params.high_confidence_snp} \
   -o ${file_id}_filtered_snp.vcf
 """
 }
 
 high_confidence_indel_filter = "QD < 3.0 || FS > 200.0 || ReadPosRankSum < -20.0 || SOR > 10.0"
-
+params.high_confidence_indels = "--filterExpression \"${high_confidence_indel_filter}\" --filterName \"basic_indel_filter\""
 process high_confidence_indels {
   container = "${container_url}"
   label "big_mem_multi_cpus"
@@ -106,12 +111,12 @@ gatk3 -T VariantFiltration \
   -nct ${task.cpus} \
   -R ${fasta} \
   -V ${vcf} \
-  --filterExpression "${high_confidence_indel_filter}" \
-  --filterName "basic_indel_filter" \
+  ${params.high_confidence_indels} \
   -o ${file_id}_filtered_indel.vcf
 """
 }
 
+params.recalibrate_snp_table = ""
 process recalibrate_snp_table {
   container = "${container_url}"
   label "big_mem_multi_cpus"
@@ -126,6 +131,7 @@ process recalibrate_snp_table {
 """
 gatk3 -T BaseRecalibrator \
   -nct ${task.cpus} \
+  ${recalibrate_snp_table} \
   -R ${fasta} \
   -I ${bam} \
   -knownSites ${snp_file} \
@@ -134,6 +140,7 @@ gatk3 -T BaseRecalibrator \
 """
 }
 
+params.recalibrate_snp = ""
 process recalibrate_snp {
   container = "${container_url}"
   label "big_mem_multi_cpus"
@@ -150,6 +157,7 @@ process recalibrate_snp {
 gatk3 -T PrintReads \
   --use_jdk_deflater \
   --use_jdk_inflater \
+  ${recalibrate_snp} \
   -nct ${task.cpus} \
   -R ${fasta} \
   -I ${bam} \
@@ -158,6 +166,7 @@ gatk3 -T PrintReads \
 """
 }
 
+params.haplotype_caller = ""
 process haplotype_caller {
   container = "${container_url}"
   label "big_mem_multi_cpus"
@@ -172,6 +181,7 @@ process haplotype_caller {
 """
 gatk3 -T HaplotypeCaller \
   -nct ${task.cpus} \
+  ${params.haplotype_caller} \
   -R ${fasta} \
   -I ${bam} \
   -ERC GVCF \
@@ -180,6 +190,7 @@ gatk3 -T HaplotypeCaller \
 """
 }
 
+params.gvcf_genotyping = ""
 process gvcf_genotyping {
   container = "${container_url}"
   label "big_mem_multi_cpus"
@@ -194,12 +205,14 @@ process gvcf_genotyping {
 """
 gatk3 -T GenotypeGVCFs \
   -nct ${task.cpus} \
+  ${params.gvcf_genotyping} \
   -R ${fasta} \
   -V ${gvcf} \
   -o ${file_id}_joint.vcf
 """
 }
 
+params.select_variants_snp = ""
 process select_variants_snp {
   container = "${container_url}"
   label "big_mem_multi_cpus"
@@ -214,6 +227,7 @@ process select_variants_snp {
 """
 gatk3 -T SelectVariants \
   -nct ${task.cpus} \
+  ${params.select_variants_snp} \
   -R ${fasta} \
   -V ${vcf} \
   -selectType SNP \
@@ -221,6 +235,7 @@ gatk3 -T SelectVariants \
 """
 }
 
+params.select_variants_indels = ""
 process select_variants_indels {
   container = "${container_url}"
   label "big_mem_multi_cpus"
@@ -235,6 +250,7 @@ process select_variants_indels {
 """
 gatk3 -T SelectVariants \
   -nct ${task.cpus} \
+  ${params.select_variants_indels} \
   -R ${fasta} \
   -V ${vcf} \
   -selectType INDEL \
@@ -242,6 +258,7 @@ gatk3 -T SelectVariants \
 """
 }
 
+params.personalized_genome = ""
 process personalized_genome {
   container = "${container_url}"
   label "big_mem_mono_cpus"
@@ -257,6 +274,7 @@ process personalized_genome {
   library = pick_library(file_id, library_list)
 """
 gatk3 -T FastaAlternateReferenceMaker\
+  ${params.personalized_genome} \
   -R ${reference} \
   -V ${vcf} \
   -o ${library}_genome.fasta

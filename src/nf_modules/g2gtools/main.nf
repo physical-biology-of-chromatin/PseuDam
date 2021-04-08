@@ -1,6 +1,7 @@
 version = "0.2.8"
 container_url = "lbmc/g2gtools:${version}"
 
+params.vci_build = ""
 process vci_build {
   container = "${container_url}"
   label "big_mem_multi_cpus"
@@ -19,6 +20,7 @@ process vci_build {
   }
 """
 g2gtools vcf2vci \
+  ${params.vci_build} \
   -p ${task.cpus} \
   -f ${fasta} \
   ${input_vcf} \
@@ -27,6 +29,7 @@ g2gtools vcf2vci \
 """
 }
 
+params.incorporate_snp = ""
 process incorporate_snp {
   container = "${container_url}"
   label "big_mem_multi_cpus"
@@ -41,6 +44,7 @@ process incorporate_snp {
   script:
 """
 g2gtools patch \
+  ${params.incorporate_snp} \
   -p ${task.cpus} \
   -i ${fasta} \
   -c ${vci} \
@@ -48,6 +52,7 @@ g2gtools patch \
 """
 }
 
+params.incorporate_indel = ""
 process incorporate_indel {
   container = "${container_url}"
   label "big_mem_multi_cpus"
@@ -61,6 +66,7 @@ process incorporate_indel {
   script:
 """
 g2gtools transform \
+  ${params.incorporate_indel} \
   -p ${task.cpus} \
   -i ${fasta} \
   -c ${vci} \
@@ -68,6 +74,7 @@ g2gtools transform \
 """
 }
 
+params.convert_gtf = ""
 process convert_gtf {
   container = "${container_url}"
   label "big_mem_mono_cpus"
@@ -82,12 +89,14 @@ process convert_gtf {
   script:
 """
 g2gtools convert \
+  ${params.convert_gtf} \
   -i ${gtf} \
   -c ${vci} \
   -o ${file_id}.gtf 2> ${file_id}_g2gtools_convert_report.txt
 """
 }
 
+params.convert_bed = ""
 process convert_bed {
   container = "${container_url}"
   label "big_mem_mono_cpus"
@@ -102,12 +111,14 @@ process convert_bed {
   script:
 """
 g2gtools convert \
+  ${params.convert_bed} \
   -i ${bed} \
   -c ${vci} \
   -o ${file_id}.bed 2> ${file_id}_g2gtools_convert_report.txt
 """
 }
 
+params.convert_bam = ""
 process convert_bam {
   container = "${container_url}"
   label "big_mem_mono_cpus"
@@ -122,6 +133,7 @@ process convert_bam {
   script:
 """
 g2gtools convert \
+  ${params.convert_bam} \
   -i ${bam} \
   -c ${vci} \
   -o ${file_id}_${bam.baseName}.bam 2> ${file_id}_g2gtools_convert_report.txt

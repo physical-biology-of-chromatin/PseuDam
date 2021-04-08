@@ -1,6 +1,7 @@
 version = "407"
 container_url = "lbmc/ucsc:${version}"
 
+params.bedgraph_to_bigwig = ""
 process bedgraph_to_bigwig {
   container = "${container_url}"
   label "big_mem_mono_cpus"
@@ -20,7 +21,7 @@ LC_COLLATE=C
 awk -v OFS="\\t" '{print \$1, \$3}' ${bed} > chromsize.txt
 
 sort -T ./ -k1,1 -k2,2n ${bg} > \
-  bedGraphToBigWig - \
+  bedGraphToBigWig ${params.bedgraph_to_bigwig} - \
     chromsize.txt \
     ${bg.simpleName}_norm.bw
 """

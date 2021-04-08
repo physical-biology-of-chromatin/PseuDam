@@ -1,6 +1,7 @@
 version = "1.2.2"
 container_url = "lbmc/bowtie:${version}"
 
+params.index_fasta = ""
 process index_fasta {
   container = "${container_url}"
   label "big_mem_multi_cpus"
@@ -16,6 +17,7 @@ process index_fasta {
   script:
 """
 bowtie-build --threads ${task.cpus} \
+  ${params.index_fasta} \
   -f ${fasta} ${fasta.baseName}.index &> \
   ${fasta.baseName}_bowtie_index_report.txt
 
@@ -25,6 +27,7 @@ fi
 """
 }
 
+params.mapping_fastq = ""
 process mapping_fastq {
   container = "${container_url}"
   label "big_mem_multi_cpus"
@@ -50,6 +53,7 @@ if (reads instanceof List)
 # -v specify the max number of missmatch, -k the number of match reported per
 # reads
 bowtie --best -v 3 -k 1 --sam -p ${task.cpus} ${index_id} \
+  ${params.mapping_fastq} \
   -1 ${reads[0]} -2 ${reads[1]} 2> \
   ${pair_id}_bowtie_report_tmp.txt | \
   samtools view -Sb - > ${pair_id}.bam
@@ -63,6 +67,7 @@ tail -n 19 ${pair_id}_bowtie_report_tmp.txt > \
 else
 """
 bowtie --best -v 3 -k 1 --sam -p ${task.cpus} ${index_id} \
+  ${params.mapping_fastq}
   -q ${reads} 2> \
   ${file_id}_bowtie_report_tmp.txt | \
   samtools view -Sb - > ${file_id}.bam
@@ -75,6 +80,7 @@ tail -n 19 ${file_id}_bowtie_report_tmp.txt > \
 """
 }
 
+params.mapping_fastq_pairedend = ""
 process mapping_fastq_pairedend {
   container = "${container_url}"
   label "big_mem_multi_cpus"
@@ -99,6 +105,7 @@ process mapping_fastq_pairedend {
 # -v specify the max number of missmatch, -k the number of match reported per
 # reads
 bowtie --best -v 3 -k 1 --sam -p ${task.cpus} ${index_id} \
+  ${params.mapping_fastq_pairedend} \
   -1 ${reads[0]} -2 ${reads[1]} 2> \
   ${pair_id}_bowtie_report_tmp.txt | \
   samtools view -Sb - > ${pair_id}.bam
@@ -111,7 +118,7 @@ tail -n 19 ${pair_id}_bowtie_report_tmp.txt > \
 """
 }
 
-
+params.mapping_fastq_singleend = ""
 process mapping_fastq_singleend {
   container = "${container_url}"
   label "big_mem_multi_cpus"
@@ -134,6 +141,7 @@ process mapping_fastq_singleend {
   }
 """
 bowtie --best -v 3 -k 1 --sam -p ${task.cpus} ${index_id} \
+  ${params.mapping_fastq_singleend} \
   -q ${reads} 2> \
   ${file_id}_bowtie_report_tmp.txt | \
   samtools view -Sb - > ${file_id}.bam

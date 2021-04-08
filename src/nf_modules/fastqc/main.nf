@@ -1,6 +1,7 @@
 version = "0.11.5"
 container_url = "lbmc/fastqc:${version}"
 
+params.fastqc_fastq = ""
 process fastqc_fastq {
   container = "${container_url}"
   label "big_mem_mono_cpus"
@@ -16,6 +17,7 @@ process fastqc_fastq {
 if (reads instanceof List)
 """
 fastqc --quiet --threads ${task.cpus} --format fastq --outdir ./ \
+  ${params.fastqc_fastq} \
   ${reads[0]} ${reads[1]}
 """
 else
@@ -24,6 +26,7 @@ else
 """
 }
 
+params.fastqc_fastq_pairedend = ""
 process fastqc_fastq_pairedend {
   container = "${container_url}"
   label "big_mem_mono_cpus"
@@ -38,10 +41,12 @@ process fastqc_fastq_pairedend {
   script:
 """
 fastqc --quiet --threads ${task.cpus} --format fastq --outdir ./ \
+  ${params.fastqc_fastq_pairedend} \
   ${reads[0]} ${reads[1]}
 """
 }
 
+params.fastqc_fastq_singleend = ""
 process fastqc_fastq_singleend {
   container = "${container_url}"
   label "big_mem_mono_cpus"
@@ -55,7 +60,7 @@ process fastqc_fastq_singleend {
 
   script:
 """
-  fastqc --quiet --threads ${task.cpus} --format fastq --outdir ./ ${reads}
+  fastqc --quiet --threads ${task.cpus} ${params.fastqc_fastq_singleend} --format fastq --outdir ./ ${reads}
 """
 }
 

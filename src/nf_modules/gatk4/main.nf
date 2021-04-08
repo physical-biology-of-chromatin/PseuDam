@@ -1,6 +1,8 @@
 version = "4.2.0.0"
 container_url = "broadinstitute/gatk:${version}"
 
+params.variant_calling = ""
+
 process variant_calling {
   container = "${container_url}"
   label "big_mem_mono_cpus"
@@ -16,12 +18,14 @@ process variant_calling {
   xmx_memory = "${task.memory}" - ~/\s*GB/
 """
 gatk --java-options "-Xmx${xmx_memory}G" HaplotypeCaller \
+  ${params.variant_calling} \
   -R ${fasta} \
   -I ${bam} \
   -O ${bam.simpleName}.vcf
 """
 }
 
+params.filter_snp = ""
 process filter_snp {
   container = "${container_url}"
   label "big_mem_mono_cpus"
@@ -36,6 +40,7 @@ process filter_snp {
   xmx_memory = "${task.memory}" - ~/\s*GB/
 """
 gatk --java-options "-Xmx${xmx_memory}G" SelectVariants \
+  ${params.filter_snp} \
   -R ${fasta} \
   -V ${vcf} \
   -select-type SNP \
@@ -43,6 +48,7 @@ gatk --java-options "-Xmx${xmx_memory}G" SelectVariants \
 """
 }
 
+params.filter_indels = ""
 process filter_indels {
   container = "${container_url}"
   label "big_mem_mono_cpus"
@@ -57,6 +63,7 @@ process filter_indels {
   xmx_memory = "${task.memory}" - ~/\s*GB/
 """
 gatk --java-options "-Xmx${xmx_memory}G" SelectVariants \
+  ${params.filter_indels} \
   -R ${fasta} \
   -V ${vcf} \
   -select-type INDEL \
@@ -66,6 +73,7 @@ gatk --java-options "-Xmx${xmx_memory}G" SelectVariants \
 
 high_confidence_snp_filter = "(QD < 2.0) || (FS > 60.0) || (MQ < 40.0) || (MQRankSum < -12.5) || (ReadPosRankSum < -8.0) || (SOR > 4.0)"
 
+params.high_confidence_snp_filter = ""
 process high_confidence_snp {
   container = "${container_url}"
   label "big_mem_mono_cpus"
@@ -82,6 +90,7 @@ process high_confidence_snp {
 gatk --java-options "-Xmx${xmx_memory}G" VariantFiltration \
   -R ${fasta} \
   -V ${vcf} \
+  ${params.high_confidence_snp_filter} \
   --filter-expression "${high_confidence_snp_filter}" \
   --filter-name "basic_snp_filter" \
   -O ${vcf.simpleName}_filtered_snp.vcf
@@ -90,6 +99,7 @@ gatk --java-options "-Xmx${xmx_memory}G" VariantFiltration \
 
 high_confidence_indel_filter = "QD < 3.0 || FS > 200.0 || ReadPosRankSum < -20.0 || SOR > 10.0"
 
+params.high_confidence_indels = ""
 process high_confidence_indels {
   container = "${container_url}"
   label "big_mem_mono_cpus"
@@ -106,12 +116,14 @@ process high_confidence_indels {
 gatk --java-options "-Xmx${xmx_memory}G" VariantFiltration \
   -R ${fasta} \
   -V ${vcf} \
+  ${params.high_confidence_indels} \
   --filter-expression "${high_confidence_indel_filter}" \
   --filter-name "basic_indel_filter" \
   -O ${vcf.simpleName}_filtered_indel.vcf
 """
 }
 
+params.recalibrate_snp_table = ""
 process recalibrate_snp_table {
   container = "${container_url}"
   label "big_mem_mono_cpus"
@@ -130,6 +142,7 @@ gatk --java-options "-Xmx${xmx_memory}G" IndexFeatureFile \
 gatk --java-options "-Xmx${xmx_memory}G" IndexFeatureFile \
   -I ${indel_file}
 gatk --java-options "-Xmx${xmx_memory}G" BaseRecalibrator \
+  ${params.recalibrate_snp_table} \
   -R ${fasta} \
   -I ${bam} \
   -known-sites ${snp_file} \
@@ -138,6 +151,7 @@ gatk --java-options "-Xmx${xmx_memory}G" BaseRecalibrator \
 """
 }
 
+params.recalibrate_snp = ""
 process recalibrate_snp {
   container = "${container_url}"
   label "big_mem_mono_cpus"
@@ -152,6 +166,7 @@ process recalibrate_snp {
   xmx_memory = "${task.memory}" - ~/\s*GB/
 """
 gatk --java-options "-Xmx${xmx_memory}G" ApplyBQSR \
+  ${params.recalibrate_snp} \
   -R ${fasta} \
   -I ${bam} \
   --bqsr-recal-file recal_data_table \
@@ -159,6 +174,7 @@ gatk --java-options "-Xmx${xmx_memory}G" ApplyBQSR \
 """
 }
 
+params.haplotype_caller = ""
 process haplotype_caller {
   container = "${container_url}"
   label "big_mem_mono_cpus"
@@ -173,6 +189,7 @@ process haplotype_caller {
   xmx_memory = "${task.memory}" - ~/\s*GB/
 """
 gatk --java-options "-Xmx${xmx_memory}G" HaplotypeCaller \
+  ${params.haplotype_caller} \
   -R ${fasta} \
   -I ${bam} \
   -ERC GVCF \
@@ -180,6 +197,7 @@ gatk --java-options "-Xmx${xmx_memory}G" HaplotypeCaller \
 """
 }
 
+params.gvcf_genotyping = ""
 process gvcf_genotyping {
   container = "${container_url}"
   label "big_mem_mono_cpus"
@@ -194,12 +212,14 @@ process gvcf_genotyping {
   xmx_memory = "${task.memory}" - ~/\s*GB/
 """
 gatk --java-options "-Xmx${xmx_memory}G" GenotypeGVCFs \
+  ${params.gvcf_genotyping} \
   -R ${fasta} \
   -V ${gvcf} \
   -O ${gvcf.simpleName}_joint.vcf.gz
 """
 }
 
+params.select_variants_snp = ""
 process select_variants_snp {
   container = "${container_url}"
   label "big_mem_mono_cpus"
@@ -214,6 +234,7 @@ process select_variants_snp {
   xmx_memory = "${task.memory}" - ~/\s*GB/
 """
 gatk --java-options "-Xmx${xmx_memory}GG" SelectVariants \
+  ${params.select_variants_snp} \
   -R ${fasta} \
   -V ${vcf} \
   -select-type SNP \
@@ -221,6 +242,7 @@ gatk --java-options "-Xmx${xmx_memory}GG" SelectVariants \
 """
 }
 
+params.select_variants_indels = ""
 process select_variants_indels {
   container = "${container_url}"
   label "big_mem_mono_cpus"
@@ -235,6 +257,7 @@ process select_variants_indels {
   xmx_memory = "${task.memory}" - ~/\s*GB/
 """
 gatk --java-options "-Xmx${xmx_memory}G" SelectVariants \
+  ${params.select_variants_indels} \
   -R ${fasta} \
   -V ${vcf} \
   -select-type INDEL \
@@ -242,6 +265,7 @@ gatk --java-options "-Xmx${xmx_memory}G" SelectVariants \
 """
 }
 
+params.personalized_genome = ""
 process personalized_genome {
   container = "${container_url}"
   label "big_mem_mono_cpus"
@@ -257,6 +281,7 @@ process personalized_genome {
   xmx_memory = "${task.memory}" - ~/\s*GB/
 """
 gatk --java-options "-Xmx${xmx_memory}G" FastaAlternateReferenceMaker\
+  ${params.personalized_genome} \
   -R ${reference} \
   -V ${vcf} \
   -O ${vcf.simpleName}_genome.fasta
