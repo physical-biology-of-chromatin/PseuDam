@@ -1,47 +1,44 @@
-## Getting Started
+# Getting Started
 
 These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. See deployment for notes on how to deploy the project on a live system.
 
-### Prerequisites
+## Prerequisites
 
-To run nextflow on you computer you need to have java (>= 1.8) installed.
+To run nextflow on you computer you need to have `java` (>= 1.8) installed.
 
 ```sh
 java --version
 ```
 
-To be able to easily test tools already implemented for nextflow on your computer (`src/nf_modules/` to see their list). You need to have docker installed.
+and `git`
+
+```sh
+git --version
+```
+
+To be able to run existing tools in nextflow on your computer (`src/nf_modules/` to see the list). You need to have `docker` installed.
 
 ```sh
 docker run hello-world
 ```
 
-### Installing
+Alternatively if you are on Linux, you can use `singularity`:
+
+```sh
+singularity run docker://hello-world
+```
+
+## Installing
 
 To install nextflow on you computer simply run the following command:
 
 ```sh
+git clone git@gitbio.ens-lyon.fr/LBMC/nextflow
+cd nextflow/
 src/install_nextflow.sh
 ```
 
-Then to initialize a given tools run the following command:
-
-```sh
-src/docker_modules/<tool_name>/<tool_version>/docker_init.sh
-```
-
-For example to initialize `file_handle` version `0.1.1`, run:
-
-```sh
-src/docker_modules/file_handle/0.1.1/docker_init.sh
-```
-
-To initialize all the tools:
-```sh
-find src/docker_modules/ -name "docker_init.sh" | awk '{system($0)}'
-```
-
-## Running the tests
+## Running a toy RNASeq quantification pipeline
 
 To run tests we first need to get a training set
 ```sh
@@ -56,11 +53,26 @@ cd ..
 Then to run the tests for a given tools run the following command:
 
 ```sh
-src/nf_modules/<tool_name>/<tool_version>/tests.sh
+./nextflow src/solution_RNASeq.nf --fastq "data/tiny_dataset/fastq/tiny2_R{1,2}.fastq.gz" --fasta "data/tiny_dataset/fasta/tiny_v2_10.fasta" --bed "data/tiny_dataset/annot/tiny.bed" -profile docker
 ```
 
-For example to run the tests on `Bowtie2` run:
+## Nextflow profile
+
+By default le `src/nextflow.config` file define 4 different profiles
+
+- `-profile docker` each process of the pipeline will be executed within a `docker` container locally
+- `-profile singularity` each process of the pipeline will be executed within a `singularity` container locally
+- `-profile psmn` each process will be sent as a separate job within a `singularity` container on the PSMN
+- `-profile ccin2p3` each process will be sent as a separate job within a `singularity` container on the CCIN2P3
+
+If the container are not found locally, they are automatically downloaded befor running the process. For the PSMN and CCIN2P3, the `singularity` images are downloaded in a shared folder (`/scratch/Bio/singularity` for the PSMN)
+
+When running `nextflow` on the PSMN, we recommand to use `tmux` before launching the pipeline:
 
 ```sh
-src/nf_modules/bowtie2/tests.sh
+tmux
+./nextflow src/solution_RNASeq.nf --fastq "data/tiny_dataset/fastq/tiny2_R{1,2}.fastq.gz" --fasta "data/tiny_dataset/fasta/tiny_v2_10.fasta" --bed "data/tiny_dataset/annot/tiny.bed" -profile psmn
 ```
+
+Therefore, the `nextflow` process will continue to run even if you are disconnected.
+You can reatach the `tmux` session, with the command `tmux a` (and press `ctrl` `+` `b` `+` `d` to detach the attached session).
