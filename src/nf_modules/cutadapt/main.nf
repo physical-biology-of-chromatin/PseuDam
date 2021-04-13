@@ -19,19 +19,18 @@ process adaptor_removal {
   path "*_report.txt", emit: report
 
   script:
-  if (reads instanceof List) {
+  if (reads instanceof List)
   """
   cutadapt ${params.adaptor_removal} \
   -o ${pair_id}_cut_R1.fastq.gz -p ${pair_id}_cut_R2.fastq.gz \
   ${reads[0]} ${reads[1]} > ${pair_id}_report.txt
   """
-  } else {
+  else
   """
   cutadapt ${params.adaptor_removal} \
   -o ${file_id}_cut.fastq.gz \
   ${reads} > ${file_id}_report.txt
   """
-  }
 }
 
 params.adaptor_removal_pairedend = "-a ${adapter_3_prim} -g ${adapter_5_prim} -A ${adapter_3_prim} -G ${adapter_5_prim}"
@@ -76,7 +75,7 @@ process adaptor_removal_singleend {
   """
 }
 
-process trimming_pairedend {
+process trimming {
   container = "${container_url}"
   label "big_mem_mono_cpus"
   tag "$pair_id"
@@ -89,13 +88,13 @@ process trimming_pairedend {
   path "*_report.txt", emit: report
 
   script:
-if (reads instanceof List)
+  if (reads instanceof List)
   """
   cutadapt -q ${trim_quality},${trim_quality} \
   -o ${pair_id}_trim_R1.fastq.gz -p ${pair_id}_trim_R2.fastq.gz \
   ${reads[0]} ${reads[1]} > ${pair_id}_report.txt
   """
-else
+  else
   """
   cutadapt -q ${trim_quality},${trim_quality} \
   -o ${file_id}_trim.fastq.gz \

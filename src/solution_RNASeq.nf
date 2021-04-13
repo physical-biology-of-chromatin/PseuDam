@@ -11,13 +11,15 @@ log.info "bed file : ${params.bed}"
 Channel
   .fromPath( params.fasta )
   .ifEmpty { error "Cannot find any fasta files matching: ${params.fasta}" }
+  .map { it -> [it.simpleName, it]}
   .set { fasta_files }
 Channel
   .fromPath( params.bed )
   .ifEmpty { error "Cannot find any bed files matching: ${params.bed}" }
+  .map { it -> [it.simpleName, it]}
   .set { bed_files }
 Channel
-  .fromFilePairs( params.fastq )
+  .fromFilePairs( params.fastq, size: -1)
   .ifEmpty { error "Cannot find any fastq files matching: ${params.fastq}" }
   .set { fastq_files }
 
@@ -27,10 +29,10 @@ include { fasta_from_bed } from './nf_modules/bedtools/main'
 include { index_fasta; mapping_fastq } from './nf_modules/kallisto/main'
 
 workflow {
-    adaptor_removal(fastq_files)
-    trimming(adaptor_removal.out.fastq)
+    adaptor_removal(fastq_files.view())
+    trimming(adaptor_removal.out.fastq.view())
     fasta_from_bed(fasta_files, bed_files)
     index_fasta(fasta_from_bed.out.fasta)
-    mapping_fastq(index_fasta.out.index.collect(), trimming.out.fastq)
+    mapping_fastq(index_fasta.out.index.collect(), trimming.out.fastq.view())
 }
 
