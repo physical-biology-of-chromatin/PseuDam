@@ -2,17 +2,21 @@ version = "2.25.0"
 container_url = "lbmc/bedtools:${version}"
 
 params.fasta_from_bed = "-name"
+params.fasta_from_bed_out = "-name"
 process fasta_from_bed {
   container = "${container_url}"
   label "big_mem_mono_cpus"
-  tag "${bed.baseName}"
+  tag "${file_id}"
+  if (params.fasta_from_bed_out != "") {
+    publishDir "results/${params.fasta_from_bed_out}", mode: 'copy'
+  }
 
   input:
-  path fasta
-  path bed
+  tuple val(fasta_id), path(fasta)
+  tuple val(file_id), path(bed)
 
   output:
-  tuple val(bed.baseName), path("*_extracted.fasta"), emit: fasta
+  tuple val(bed_id), path("*_extracted.fasta"), emit: fasta
 
   script:
 """
@@ -22,16 +26,20 @@ bedtools getfasta ${params.fasta_from_bed} \
 }
 
 params.merge_bed = ""
+params.merge_bed_out = ""
 process merge_bed {
   container = "${container_url}"
   label "big_mem_mono_cpus"
-  tag "${bed.baseName}"
+  tag "${file_id}"
+  if (params.merge_bed_out != "") {
+    publishDir "results/${params.merge_bed_out}", mode: 'copy'
+  }
 
   input:
-  path bed
+  tuple val(file_id), path(bed)
 
   output:
-  tuple val(bed[0].simpleName), path("*_merged.fasta"), emit: bed
+  tuple val(file_id), path("*_merged.fasta"), emit: bed
 
   script:
 """
@@ -40,10 +48,14 @@ bedtools merge ${params.merge_bed} -i ${bed} > ${bed[0].simpleName}_merged.bed
 }
 
 params.bam_to_fastq_singleend = ""
+params.bam_to_fastq_singleend_out = ""
 process bam_to_fastq_singleend {
   container = "${container_url}"
   label "big_mem_mono_cpus"
   tag "${bam_id}"
+  if (params.bam_to_fastq_singleend_out != "") {
+    publishDir "results/${params.bam_to_fastq_singleend_out}", mode: 'copy'
+  }
 
   input:
   tuple val(bam_id), path(bam)
@@ -60,10 +72,14 @@ bedtools bamtofastq \
 }
 
 params.bam_to_fastq_pairedend = ""
+params.bam_to_fastq_pairedend_out = ""
 process bam_to_fastq_pairedend {
   container = "${container_url}"
   label "big_mem_mono_cpus"
   tag "${bam_id}"
+  if (params.bam_to_fastq_pairedend_out != "") {
+    publishDir "results/${params.bam_to_fastq_pairedend_out}", mode: 'copy'
+  }
 
   input:
   tuple val(bam_id), path(bam)
@@ -80,10 +96,14 @@ bedtools bamtofastq \
 }
 
 params.bam_to_bedgraph = ""
+params.bam_to_bedgraph_out = ""
 process bam_to_bedgraph {
   container = "${container_url}"
   label "big_mem_mono_cpus"
   tag "${bam_id}"
+  if (params.bam_to_bedgraph_out != "") {
+    publishDir "results/${params.bam_to_bedgraph_out}", mode: 'copy'
+  }
 
   input:
   tuple val(bam_id), path(bam)
