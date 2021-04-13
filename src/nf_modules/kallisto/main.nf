@@ -12,7 +12,7 @@ process index_fasta {
   }
 
   input:
-    tuble val(file_id), path(fasta)
+    tuple val(file_id), path(fasta)
 
   output:
     tuple val(file_id), path("*.index*"), emit: index
@@ -37,13 +37,18 @@ process mapping_fastq {
 
   input:
   tuple val(index_id), path(index)
-  tuple val(pair_id), path(reads)
+  tuple val(file_id), path(reads)
 
   output:
-  tuple val(pair_id), path("${pair_id}"), emit: counts
-  tuple val(pair_id), path("*_report.txt"), emit: report
+  tuple val(file_id), path("${pair_id}"), emit: counts
+  tuple val(file_id), path("*_report.txt"), emit: report
 
   script:
+if (file_id instanceof List){
+  pair_id = file_id[0]
+} else {
+  pair_id = file_id
+}
 
 if (reads instanceof List)
 """
