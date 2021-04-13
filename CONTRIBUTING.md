@@ -1,92 +1,134 @@
 # Contributing
 
 When contributing to this repository, please first discuss the change you wish to make via issue,
-email, or any other method with the owners of this repository before making a change. 
+email, or on the [ENS-Bioinfo channel](https://matrix.to/#/#ens-bioinfo:matrix.org) before making a change. 
 
-Please note we have a code of conduct, please follow it in all your interactions with the project.
+## Project organisation
 
-## Pull Request Process
+The `LBMC/nextflow` project is structured as follow:
+- all the code is in the `src/` folder
+- scripts downloading external tools should download them in the `bin/` folder
+- all the documentation (including this file) can be found int he `doc/` folder
+- the `data` and `results` folders contain the data and results of your piplines and are ignored by `git`
 
-1. Ensure any install or build dependencies are removed before the end of the layer when doing a 
-   build.
-2. Update the README.md with details of changes to the interface, this includes new environment 
-   variables, exposed ports, useful file locations and container parameters.
-3. Increase the version numbers in any examples files and the README.md to the new version that this
-   Pull Request would represent. The versioning scheme we use is [SemVer](http://semver.org/).
-4. You may merge the Pull Request in once you have the sign-off of two other developers, or if you 
-   do not have permission to do that, you may request the second reviewer to merge it for you.
+## Code structure
 
-## Code of Conduct
+The `src/` folder is where we want to save the pipline (`.nf`) script. This folder also contains:
+- the `src/install_nextflow.sh` to install the nextflow executable at the root of the project.
+- some pipelines examples (like the one build during the nf_pratical)
+- the `src/nextflow.config` global configuration file which contains the `docker`, `singularity`, `psmn` and `ccin2p3` profiles.
+- the `src/nf_modules` folder contains per tools `main.nf` modules with predefined process that users can imports in their projects with the [DSL2](https://www.nextflow.io/docs/latest/dsl2.html)
 
-### Our Pledge
+But also some hidden folders that users don't need to see when building their pipeline:
+- the `src/.docker_modules` contains the recipies for the `docker` containers used in the `src/nf_modules/<tool_names>/main.nf` files
+- the `src/.singularity_in2p3` and `src/.singularity_psmn` are symbolic links to the shared folder where the singularity images are downloaded on the PSMN and CCIN2P3 
 
-In the interest of fostering an open and welcoming environment, we as
-contributors and maintainers pledge to making participation in our project and
-our community a harassment-free experience for everyone, regardless of age, body
-size, disability, ethnicity, gender identity and expression, level of experience,
-nationality, personal appearance, race, religion, or sexual identity and
-orientation.
+# Proposing a new tool
 
-### Our Standards
+Each tool named `<tool_name>` must have two dedicated folders:
 
-Examples of behavior that contributes to creating a positive environment
-include:
+- `src/nf_modules/<tool_name>` where users can find `.nf` files to include
+- `src/.docker_modules/<tool_name>/<version_number>` where we have the `.Dockerfile` to construct the container used in the `main.nf` file
 
-* Using welcoming and inclusive language
-* Being respectful of differing viewpoints and experiences
-* Gracefully accepting constructive criticism
-* Focusing on what is best for the community
-* Showing empathy towards other community members
+## `src/nf_module` guide lines
 
-Examples of unacceptable behavior by participants include:
+We are going to take the `fastp`, `nf_module` as an example.
 
-* The use of sexualized language or imagery and unwelcome sexual attention or
-advances
-* Trolling, insulting/derogatory comments, and personal or political attacks
-* Public or private harassment
-* Publishing others' private information, such as a physical or electronic
-  address, without explicit permission
-* Other conduct which could reasonably be considered inappropriate in a
-  professional setting
+The `src/nf_modules/<tool_name>` should contain a `main.nf` file that describe at least one process using `<tool_name>`
 
-### Our Responsibilities
+### container informations
 
-Project maintainers are responsible for clarifying the standards of acceptable
-behavior and are expected to take appropriate and fair corrective action in
-response to any instances of unacceptable behavior.
+The first two lines of `main.nf` should define two variables
+```
+version = "0.20.1"
+container_url = "lbmc/fastp:${version}"
+```
 
-Project maintainers have the right and responsibility to remove, edit, or
-reject comments, commits, code, wiki edits, issues, and other contributions
-that are not aligned to this Code of Conduct, or to ban temporarily or
-permanently any contributor for other behaviors that they deem inappropriate,
-threatening, offensive, or harmful.
+we can then use the `container_url` definition in each `process` in the `container` attribute.
+In addition to the `container` directive, each `process` should have one of the following `label` attributes (defined in the `src/nextflow.config` file)
+- `big_mem_mono_cpus`
+- `big_mem_multi_cpus`
+- `small_mem_mono_cpus`
+- `small_mem_multi_cpus`
 
-### Scope
+```
+process fastp {
+  container = "${container_url}"
+  label = "big_mem_multi_cpus"
+  ...
+}
+```
 
-This Code of Conduct applies both within project spaces and in public spaces
-when an individual is representing the project or its community. Examples of
-representing a project or community include using an official project e-mail
-address, posting via an official social media account, or acting as an appointed
-representative at an online or offline event. Representation of a project may be
-further defined and clarified by project maintainers.
+### process options
 
-### Enforcement
+Before each process, you shoud declare at least two `params.` variables:
+- A `params.<process_name>` defaulting to `""` (empty string) to allow user to add more commmand line option to your process without rewritting the process definition
+- A `params.<process_name>_out` defaulting to `""` (empty string) that define the `results/` subfolder where the process output should be copied if the user want to save the process output
 
-Instances of abusive, harassing, or otherwise unacceptable behavior may be
-reported by contacting the project team at [INSERT EMAIL ADDRESS]. All
-complaints will be reviewed and investigated and will result in a response that
-is deemed necessary and appropriate to the circumstances. The project team is
-obligated to maintain confidentiality with regard to the reporter of an incident.
-Further details of specific enforcement policies may be posted separately.
+```
+params.fastp = ""
+params.fastp_out = ""
+process fastp {
+  container = "${container_url}"
+  label "big_mem_multi_cpus"
+  if (params.fastp_out != "") {
+    publishDir "results/${params.fastp_out}", mode: 'copy'
+  }
+  ...
+  script:
+"""
+fastp --thread ${task.cpus} \
+${params.fastp} \
+...
+"""
+}
+```
 
-Project maintainers who do not follow or enforce the Code of Conduct in good
-faith may face temporary or permanent repercussions as determined by other
-members of the project's leadership.
+The user can then change the value of these variables:
+- from the command line `--fastp "--trim_head1=10"``
+- with the `include` command within their pipeline: `include { fastq } from "nf_modules/fastq/main" addParams(fastq_out: "QC/fastq/")
+- by defining the variable within their pipeline: `params.fastq_out = "QC/fastq/"
 
-### Attribution
+### `input` and `output` format
 
-This Code of Conduct is adapted from the [Contributor Covenant][homepage], version 1.4,
-available at [http://contributor-covenant.org/version/1/4][version]
+You should always use `tuple` for input and output channel format with at least:
+- a `val` containing variable(s) related to the item
+- a `path` for the file(s) that you want to process
 
-[homepage]: http://contributor-covenant.org
-[version]: http://contributor-covenant.org/version/1/4/
+for example:
+```
+process fastp {
+  container = "${container_url}"
+  label "big_mem_multi_cpus"
+  tag "$file_id"
+  if (params.fastp_out != "") {
+    publishDir "results/${params.fastp_out}", mode: 'copy'
+  }
+
+  input:
+  tuple val(file_id), path(reads)
+
+  output:
+    tuple val(file_id), path("*.fastq.gz"), emit: fastq
+    tuple val(file_id), path("*.html"), emit: html
+    tuple val(file_id), path("*.json"), emit: report
+...
+```
+
+Here `file_id` can be anything from a simple identifier to a list of several variables.
+So you have to keep that in mind if you want to use it to define output file names (you can test for that with `file_id instanceof List`).
+
+The rational behind taking a `file_id` and emitting the same `file_id` is to facilitate complex channel operations in pipelines without having to rewrite the `process` blocks.
+
+### dealing with paired-end and single-end data
+
+Fastq files opened with `channel.fromFilePairs( params.fastq )`
+
+
+
+### Handling single and paired end data
+
+For process that have to deal with single
+
+## `src/.docker_modules` guide lines
+
