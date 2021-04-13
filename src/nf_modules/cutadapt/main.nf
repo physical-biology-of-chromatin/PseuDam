@@ -19,13 +19,13 @@ process adaptor_removal {
   path "*_report.txt", emit: report
 
   script:
-if (reads instanceof List)
+if (reads instanceof List) {
   """
   cutadapt ${params.adaptor_removal} \
   -o ${pair_id}_cut_R1.fastq.gz -p ${pair_id}_cut_R2.fastq.gz \
   ${reads[0]} ${reads[1]} > ${pair_id}_report.txt
   """
-else:
+} else {
   """
   cutadapt ${params.adaptor_removal} \
   -o ${file_id}_cut.fastq.gz \
