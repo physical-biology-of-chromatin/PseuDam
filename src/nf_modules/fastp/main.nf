@@ -101,6 +101,7 @@ fastp --thread ${task.cpus} \
   --out2 ${pair_id}_R2_trim.fastq.gz | \
   fastp --thread ${task.cpus} \
     --stdin \
+    --interleaved_in \
     --trim_front1=10 \
     --trim_front2=10 \
     --qualified_quality_phred 20 \
