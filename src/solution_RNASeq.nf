@@ -21,16 +21,16 @@ Channel
   .ifEmpty { error "Cannot find any fastq files matching: ${params.fastq}" }
   .set { fastq_files }
 
-include { adaptor_removal_pairedend } from './nf_modules/cutadapt/main'
-include { trimming_pairedend } from './nf_modules/urqt/main'
+include { adaptor_removal } from './nf_modules/cutadapt/main'
+include { trimming } from './nf_modules/urqt/main'
 include { fasta_from_bed } from './nf_modules/bedtools/main'
-include { index_fasta; mapping_fastq_pairedend } from './nf_modules/kallisto/main'
+include { index_fasta; mapping_fastq } from './nf_modules/kallisto/main'
 
 workflow {
-    adaptor_removal_pairedend(fastq_files)
-    trimming_pairedend(adaptor_removal_pairedend.out.fastq)
+    adaptor_removal(fastq_files)
+    trimming(adaptor_removal_pairedend.out.fastq)
     fasta_from_bed(fasta_files, bed_files)
     index_fasta(fasta_from_bed.out.fasta)
-    mapping_fastq_pairedend(index_fasta.out.index.collect(), trimming_pairedend.out.fastq)
+    mapping_fastq(index_fasta.out.index.collect(), trimming_pairedend.out.fastq)
 }
 
