@@ -16,7 +16,7 @@ process fasta_from_bed {
   tuple val(file_id), path(bed)
 
   output:
-  tuple val(bed_id), path("*_extracted.fasta"), emit: fasta
+  tuple val(file_id), path("*_extracted.fasta"), emit: fasta
 
   script:
 """
