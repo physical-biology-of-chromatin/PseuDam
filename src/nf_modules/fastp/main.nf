@@ -46,30 +46,30 @@ process fastp_default {
 if (reads instanceof List)
 """
 fastp --thread ${task.cpus} \
---qualified_quality_phred 20 \
---disable_length_filtering \
---detect_adapter_for_pe \
-${params.fastp} \
---in1 ${reads[0]} \
---in2 ${reads[1]} \
---out1 ${pair_id}_R1_trim.fastq.gz \
---out2 ${pair_id}_R2_trim.fastq.gz \
---html ${pair_id}.html \
---json ${pair_id}_fastp.json \
---report_title ${pair_id}
+  --qualified_quality_phred 20 \
+  --disable_length_filtering \
+  --detect_adapter_for_pe \
+  ${params.fastp} \
+  --in1 ${reads[0]} \
+  --in2 ${reads[1]} \
+  --out1 ${pair_id}_R1_trim.fastq.gz \
+  --out2 ${pair_id}_R2_trim.fastq.gz \
+  --html ${pair_id}.html \
+  --json ${pair_id}_fastp.json \
+  --report_title ${pair_id}
 """
 else
 """
 fastp --thread ${task.cpus} \
---qualified_quality_phred 20 \
---disable_length_filtering \
---detect_adapter_for_pe \
-${params.fastp} \
---in1 ${reads} \
---out1 ${pair_id}_trim.fastq.gz \
---html ${pair_id}.html \
---json ${pair_id}_fastp.json \
---report_title ${pair_id}
+  --qualified_quality_phred 20 \
+  --disable_length_filtering \
+  --detect_adapter_for_pe \
+  ${params.fastp} \
+  --in1 ${reads} \
+  --out1 ${pair_id}_trim.fastq.gz \
+  --html ${pair_id}.html \
+  --json ${pair_id}_fastp.json \
+  --report_title ${pair_id}
 """
 }
 
@@ -91,47 +91,45 @@ process fastp_accel_1splus {
 if (reads instanceof List)
 """
 fastp --thread ${task.cpus} \
---disable_quality_filtering \
---disable_length_filtering \
---disable_trim_poly_g \
---stdout \
---in1 ${reads[0]} \
---in2 ${reads[1]} \
---out1 ${pair_id}_R1_trim.fastq.gz \
---out2 ${pair_id}_R2_trim.fastq.gz | \
-fastp --thread ${task.cpus} \
---stdin \
---trim_front1=10 \
---trim_tail1=10 \
---trim_tail2=10 \
---qualified_quality_phred 20 \
---disable_length_filtering \
---detect_adapter_for_pe \
-${params.fastp} \
---html ${pair_id}.html \
---json ${pair_id}_fastp.json \
---report_title ${pair_id}
+  --disable_quality_filtering \
+  --disable_length_filtering \
+  --disable_trim_poly_g \
+  --stdout \
+  --in1 ${reads[0]} \
+  --in2 ${reads[1]} \
+  --out1 ${pair_id}_R1_trim.fastq.gz \
+  --out2 ${pair_id}_R2_trim.fastq.gz | \
+  fastp --thread ${task.cpus} \
+    --stdin \
+    --trim_front1=10 \
+    --trim_front2=10 \
+    --qualified_quality_phred 20 \
+    --disable_length_filtering \
+    --detect_adapter_for_pe \
+    ${params.fastp} \
+    --html ${pair_id}.html \
+    --json ${pair_id}_fastp.json \
+    --report_title ${pair_id}
 """
 else
 """
 fastp --thread ${task.cpus} \
---disable_quality_filtering \
---disable_length_filtering \
---disable_trim_poly_g \
---stdout \
---in1 ${reads[0]} \
---out1 ${pair_id}_R1_trim.fastq.gz \
-fastp --thread ${task.cpus} \
---stdin \
---trim_front1=10 \
---trim_tail1=10 \
---qualified_quality_phred 20 \
---disable_length_filtering \
---detect_adapter_for_pe \
-${params.fastp} \
---html ${pair_id}.html \
---json ${pair_id}_fastp.json \
---report_title ${pair_id}
+  --disable_quality_filtering \
+  --disable_length_filtering \
+  --disable_trim_poly_g \
+  --stdout \
+  --in1 ${reads[0]} \
+  --out1 ${pair_id}_R1_trim.fastq.gz \
+  fastp --thread ${task.cpus} \
+    --stdin \
+    --trim_front1=10 \
+    --qualified_quality_phred 20 \
+    --disable_length_filtering \
+    --detect_adapter_for_pe \
+    ${params.fastp} \
+    --html ${pair_id}.html \
+    --json ${pair_id}_fastp.json \
+    --report_title ${pair_id}
 """
 }
 
