@@ -28,9 +28,9 @@ include { index_fasta; mapping_fastq } from './nf_modules/kallisto/main'
 
 workflow {
     adaptor_removal(fastq_files)
-    trimming(adaptor_removal_pairedend.out.fastq)
+    trimming(adaptor_removal.out.fastq)
     fasta_from_bed(fasta_files, bed_files)
     index_fasta(fasta_from_bed.out.fasta)
-    mapping_fastq(index_fasta.out.index.collect(), trimming_pairedend.out.fastq)
+    mapping_fastq(index_fasta.out.index.collect(), trimming.out.fastq)
 }
 
