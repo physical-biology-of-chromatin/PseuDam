@@ -1,1 +1,0 @@
-/Xnfs/lbmcdb/common/conda/init.sh
