@@ -42,7 +42,7 @@ process mapping_fastq {
   }
 
   input:
-  path index
+  tuple val(index_id), path(index)
   tuple val(pair_id), path(reads)
 
   output:
