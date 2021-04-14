@@ -88,12 +88,12 @@ process fastp_accel_1splus {
   }
 
   input:
-  tuple val(file_prefix), path(reads)
+  tuple val(file_id), path(reads)
 
   output:
-    tuple val(file_prefix), path("*.fastq.gz"), emit: fastq
-    tuple val(file_prefix), path("*.html"), emit: html
-    tuple val(file_prefix), path("*.json"), emit: report
+    tuple val(file_id), path("*.fastq.gz"), emit: fastq
+    tuple val(file_id), path("*.html"), emit: html
+    tuple val(file_id), path("*.json"), emit: report
 
   script:
   if (file_id instanceof List){
