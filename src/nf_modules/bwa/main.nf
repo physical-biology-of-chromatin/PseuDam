@@ -1,13 +1,16 @@
 version = "0.7.17"
 container_url = "lbmc/bwa:${version}"
 
-params.index_fasta = ""
-params.mapping_fastq = ""
 
+params.index_fasta = ""
+params.index_fasta_out = ""
 process index_fasta {
   container = "${container_url}"
   label "big_mem_mono_cpus"
   tag "$file_id"
+  if (params.index_fasta_out != "") {
+    publishDir "results/${params.index_fasta_out}", mode: 'copy'
+  }
 
   input:
     tuple val(file_id), path(fasta)
@@ -24,10 +27,15 @@ bwa index ${params.index_fastq} -p ${fasta.simpleName} ${fasta} \
 }
 
 
+params.mapping_fastq = ""
+params.mapping_fastq_out = ""
 process mapping_fastq {
   container = "${container_url}"
   label "big_mem_multi_cpus"
   tag "$file_id"
+  if (params.mapping_fastq_out != "") {
+    publishDir "results/${params.mapping_fastq_out}", mode: 'copy'
+  }
 
   input:
   tuple val(file_id), path(reads)
@@ -38,32 +46,36 @@ process mapping_fastq {
   tuple val(file_id), path("${id}_bwa_report.txt"), emit: report
 
   script:
-if (file_id.containsKey('library')) {
-  library = file_id.library
-  id = file_id.id
-} else {
-  library = file_id
-  id = file_id
-}
+  if (file_id instanceof List){
+    file_prefix = file_id[0]
+    if (file_id.containsKey('library')) {
+      library = file_id.library
+      file_prefix = file_id.id
+    } else {
+      library = file_id
+      file_prefix = file_id
+    }
+  } else {
+    file_prefix = file_id
+  }
 bwa_mem_R = "@RG\\tID:${library}\\tSM:${library}\\tLB:lib_${library}\\tPL:illumina"
-if (reads instanceof List)
+  if (reads.size() == 2)
 """
 bwa mem -t ${task.cpus} \
 ${params.mapping_fastq} \
 -R '${bwa_mem_R}' \
 ${index_id} ${reads[0]} ${reads[1]} 2> \
-  ${id}_bwa_report.txt | \
-  samtools view -@ ${task.cpus} -Sb - > ${id}.bam
+  ${file_prefix}_bwa_report.txt | \
+  samtools view -@ ${task.cpus} -Sb - > ${file_prefix}.bam
 """
-else
-
+  else if (reads.size() == 1)
 """
 bwa mem -t ${task.cpus} \
 ${params.mapping_fastq} \
 -R '${bwa_mem_R}' \
 ${index_id} ${reads} 2> \
-  ${id}_bwa_report.txt | \
-  samtools view -@ ${task.cpus} -Sb - > ${id}.bam
+  ${file_prefix}_bwa_report.txt | \
+  samtools view -@ ${task.cpus} -Sb - > ${file_prefix}.bam
 """
 }
 
