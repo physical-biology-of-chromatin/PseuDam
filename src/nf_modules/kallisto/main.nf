@@ -50,22 +50,20 @@ process mapping_fastq {
     pair_id = file_id
   }
 
-  if (reads instanceof List) {
+  if (reads instanceof List)
   """
   mkdir ${pair_id}
   kallisto quant -i ${index} -t ${task.cpus} \
   ${params.mapping_fastq} -o ${pair_id} \
   ${reads[0]} ${reads[1]} &> ${pair_id}_kallisto_mapping_report.txt
   """
-  } else {
+  else
   """
   mkdir ${pair_id}
   kallisto quant -i ${index} -t ${task.cpus} --single \
   ${params.mapping_fastq} -o ${pair_id} \
-  -l ${params.mean} -s ${params.sd} \
   ${reads} &> ${reads.simpleName}_kallisto_mapping_report.txt
   """
-  }
 }
 
 params.mapping_fastq_pairedend = "--bias --bootstrap-samples 100"
