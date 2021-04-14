@@ -8,17 +8,17 @@ log.info "fastq files : ${params.fastq}"
 log.info "fasta file : ${params.fasta}"
 log.info "bed file : ${params.bed}"
 
-Channel
+channel
   .fromPath( params.fasta )
   .ifEmpty { error "Cannot find any fasta files matching: ${params.fasta}" }
   .map { it -> [it.simpleName, it]}
   .set { fasta_files }
-Channel
+channel
   .fromPath( params.bed )
   .ifEmpty { error "Cannot find any bed files matching: ${params.bed}" }
   .map { it -> [it.simpleName, it]}
   .set { bed_files }
-Channel
+channel
   .fromFilePairs( params.fastq, size: -1)
   .ifEmpty { error "Cannot find any fastq files matching: ${params.fastq}" }
   .set { fastq_files }

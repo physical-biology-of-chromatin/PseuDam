@@ -3,12 +3,15 @@ container_url = "lbmc/macs2:${version}"
 
 params.macs_gsize=3e9
 params.macs_mfold="5 50"
-
-params.peak_calling = ""
+params.peak_calling = "--mfold ${params.macs_mfold} --gsize ${params.macs_gsize}"
+params.peak_calling_out = ""
 process peak_calling {
   container = "${container_url}"
   label "big_mem_mono_cpus"
   tag "${file_id}"
+  if (params.peak_calling_out != "") {
+    publishDir "results/${params.peak_calling_out}", mode: 'copy'
+  }
 
   input:
     tuple val(file_id), path(bam_ip), path(bam_control)
@@ -27,9 +30,7 @@ macs2 callpeak \
   --call-summits \
   --control ${bam_control} \
   --keep-dup all \
-  --name ${bam_ip.simpleName} \
-  --mfold ${params.macs_mfold} \
-  --gsize ${params.macs_gsize} 2> \
+  --name ${bam_ip.simpleName} 2> \
   ${bam_ip.simpleName}_macs2_report.txt
 
 if grep -q "ERROR" ${bam_ip.simpleName}_macs2_report.txt; then
@@ -39,11 +40,15 @@ fi
 """
 }
 
-params.peak_calling_bg = ""
+params.peak_calling_bg = "--mfold ${params.macs_mfold} --gsize ${params.macs_gsize}"
+params.peak_calling_bg_out = ""
 process peak_calling_bg {
   container = "${container_url}"
   label "big_mem_mono_cpus"
   tag "${file_id}"
+  if (params.peak_calling_bg_out != "") {
+    publishDir "results/${params.peak_calling_bg_out}", mode: 'copy'
+  }
 
   input:
     tuple val(file_id), path(bg_ip), path(bg_control)
@@ -66,9 +71,7 @@ macs2 callpeak \
   --call-summits \
   --control ${bg_control.simpleName}.bed \
   --keep-dup all \
-  --name ${bg_ip.simpleName} \
-  --mfold ${params.macs_mfold} \
-  --gsize ${params.macs_gsize} 2> \
+  --name ${bg_ip.simpleName} 2> \
   ${bg_ip.simpleName}_macs2_report.txt
 
 if grep -q "ERROR" ${bg_ip.simpleName}_macs2_report.txt; then

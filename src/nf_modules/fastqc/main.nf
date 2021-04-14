@@ -2,65 +2,30 @@ version = "0.11.5"
 container_url = "lbmc/fastqc:${version}"
 
 params.fastqc_fastq = ""
+params.fastqc_fastq_out = ""
 process fastqc_fastq {
   container = "${container_url}"
   label "big_mem_mono_cpus"
-  tag "$pair_id"
-
-  input:
-  tuple val(pair_id), path(reads)
-
-  output:
-  path "*.{zip,html}", emit: report
-
-  script:
-if (reads instanceof List)
-"""
-fastqc --quiet --threads ${task.cpus} --format fastq --outdir ./ \
-  ${params.fastqc_fastq} \
-  ${reads[0]} ${reads[1]}
-"""
-else
-"""
-  fastqc --quiet --threads ${task.cpus} --format fastq --outdir ./ ${reads}
-"""
-}
-
-params.fastqc_fastq_pairedend = ""
-process fastqc_fastq_pairedend {
-  container = "${container_url}"
-  label "big_mem_mono_cpus"
-  tag "$pair_id"
-
-  input:
-  tuple val(pair_id), path(reads)
-
-  output:
-  path "*.{zip,html}", emit: report
-
-  script:
-"""
-fastqc --quiet --threads ${task.cpus} --format fastq --outdir ./ \
-  ${params.fastqc_fastq_pairedend} \
-  ${reads[0]} ${reads[1]}
-"""
-}
-
-params.fastqc_fastq_singleend = ""
-process fastqc_fastq_singleend {
-  container = "${container_url}"
-  label "big_mem_mono_cpus"
   tag "$file_id"
+  if (params.fastqc_fastq_out != "") {
+    publishDir "results/${params.fastqc_fastq_out}", mode: 'copy'
+  }
 
   input:
   tuple val(file_id), path(reads)
 
   output:
-    path "*.{zip,html}", emit: report
+  tuple val(file_id), path("*.{zip,html}"), emit: report
 
   script:
-"""
-  fastqc --quiet --threads ${task.cpus} ${params.fastqc_fastq_singleend} --format fastq --outdir ./ ${reads}
-"""
+  if (reads.size() == 2)
+  """
+  fastqc --quiet --threads ${task.cpus} --format fastq --outdir ./ \
+    ${params.fastqc_fastq} \
+    ${reads[0]} ${reads[1]}
+  """
+  else if (reads.size() == 1)
+  """
+    fastqc --quiet --threads ${task.cpus} --format fastq --outdir ./ ${params.fastqc_fastq} ${reads[0]}
+  """
 }
-

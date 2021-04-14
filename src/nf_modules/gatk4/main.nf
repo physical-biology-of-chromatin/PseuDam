@@ -2,11 +2,14 @@ version = "4.2.0.0"
 container_url = "broadinstitute/gatk:${version}"
 
 params.variant_calling = ""
-
+params.variant_calling_out = ""
 process variant_calling {
   container = "${container_url}"
   label "big_mem_mono_cpus"
   tag "$file_id"
+  if (params.variant_calling_out != "") {
+    publishDir "results/${params.variant_calling_out}", mode: 'copy'
+  }
 
   input:
     tuple val(file_id), path(bam), path(bai)
@@ -16,6 +19,11 @@ process variant_calling {
 
   script:
   xmx_memory = "${task.memory}" - ~/\s*GB/
+  if (file_id instanceof List){
+    file_prefix = file_id[0]
+  } else {
+    file_prefix = file_id
+  }
 """
 gatk --java-options "-Xmx${xmx_memory}G" HaplotypeCaller \
   ${params.variant_calling} \
@@ -26,10 +34,14 @@ gatk --java-options "-Xmx${xmx_memory}G" HaplotypeCaller \
 }
 
 params.filter_snp = ""
+params.filter_snp_out = ""
 process filter_snp {
   container = "${container_url}"
   label "big_mem_mono_cpus"
   tag "$file_id"
+  if (params.filter_snp_out != "") {
+    publishDir "results/${params.filter_snp_out}", mode: 'copy'
+  }
 
   input:
     tuple val(file_id), path(vcf)
@@ -38,6 +50,11 @@ process filter_snp {
     tuple val(file_id), path("*_snp.vcf"), emit: vcf
   script:
   xmx_memory = "${task.memory}" - ~/\s*GB/
+  if (file_id instanceof List){
+    file_prefix = file_id[0]
+  } else {
+    file_prefix = file_id
+  }
 """
 gatk --java-options "-Xmx${xmx_memory}G" SelectVariants \
   ${params.filter_snp} \
@@ -49,10 +66,14 @@ gatk --java-options "-Xmx${xmx_memory}G" SelectVariants \
 }
 
 params.filter_indels = ""
+params.filter_indels_out = ""
 process filter_indels {
   container = "${container_url}"
   label "big_mem_mono_cpus"
   tag "$file_id"
+  if (params.filter_indels_out != "") {
+    publishDir "results/${params.filter_indels_out}", mode: 'copy'
+  }
 
   input:
     tuple val(file_id), path(vcf)
@@ -61,6 +82,11 @@ process filter_indels {
     tuple val(file_id), path("*_indel.vcf"), emit: vcf
   script:
   xmx_memory = "${task.memory}" - ~/\s*GB/
+  if (file_id instanceof List){
+    file_prefix = file_id[0]
+  } else {
+    file_prefix = file_id
+  }
 """
 gatk --java-options "-Xmx${xmx_memory}G" SelectVariants \
   ${params.filter_indels} \
@@ -71,13 +97,16 @@ gatk --java-options "-Xmx${xmx_memory}G" SelectVariants \
 """
 }
 
-high_confidence_snp_filter = "(QD < 2.0) || (FS > 60.0) || (MQ < 40.0) || (MQRankSum < -12.5) || (ReadPosRankSum < -8.0) || (SOR > 4.0)"
-
-params.high_confidence_snp_filter = ""
+params.high_confidence_snp_filter = "(QD < 2.0) || (FS > 60.0) || (MQ < 40.0) || (MQRankSum < -12.5) || (ReadPosRankSum < -8.0) || (SOR > 4.0)"
+params.high_confidence_snp = ""
+params.high_confidence_snp_out = ""
 process high_confidence_snp {
   container = "${container_url}"
   label "big_mem_mono_cpus"
   tag "$file_id"
+  if (params.high_confidence_snp_out != "") {
+    publishDir "results/${params.high_confidence_snp_out}", mode: 'copy'
+  }
 
   input:
     tuple val(file_id), path(vcf)
@@ -86,6 +115,11 @@ process high_confidence_snp {
     tuple val(file_id), path("*_snp.vcf"), emit: vcf
   script:
   xmx_memory = "${task.memory}" - ~/\s*GB/
+  if (file_id instanceof List){
+    file_prefix = file_id[0]
+  } else {
+    file_prefix = file_id
+  }
 """
 gatk --java-options "-Xmx${xmx_memory}G" VariantFiltration \
   -R ${fasta} \
@@ -100,10 +134,14 @@ gatk --java-options "-Xmx${xmx_memory}G" VariantFiltration \
 high_confidence_indel_filter = "QD < 3.0 || FS > 200.0 || ReadPosRankSum < -20.0 || SOR > 10.0"
 
 params.high_confidence_indels = ""
+params.high_confidence_indels_out = ""
 process high_confidence_indels {
   container = "${container_url}"
   label "big_mem_mono_cpus"
   tag "$file_id"
+  if (params.high_confidence_indels_out != "") {
+    publishDir "results/${params.high_confidence_indels_out}", mode: 'copy'
+  }
 
   input:
     tuple val(file_id), path(vcf)
@@ -112,6 +150,11 @@ process high_confidence_indels {
     tuple val(file_id), path("*_indel.vcf"), emit: vcf
   script:
   xmx_memory = "${task.memory}" - ~/\s*GB/
+  if (file_id instanceof List){
+    file_prefix = file_id[0]
+  } else {
+    file_prefix = file_id
+  }
 """
 gatk --java-options "-Xmx${xmx_memory}G" VariantFiltration \
   -R ${fasta} \
@@ -124,10 +167,14 @@ gatk --java-options "-Xmx${xmx_memory}G" VariantFiltration \
 }
 
 params.recalibrate_snp_table = ""
+params.recalibrate_snp_table_out = ""
 process recalibrate_snp_table {
   container = "${container_url}"
   label "big_mem_mono_cpus"
   tag "$file_id"
+  if (params.recalibrate_snp_table_out != "") {
+    publishDir "results/${params.recalibrate_snp_table_out}", mode: 'copy'
+  }
 
   input:
     tuple val(file_id), path(snp_file), path(indel_file), path(bam), path(bam_idx)
@@ -136,6 +183,11 @@ process recalibrate_snp_table {
     tuple val(file_id), path("recal_data_table"), emit: recal_table
   script:
   xmx_memory = "${task.memory}" - ~/\s*GB/
+  if (file_id instanceof List){
+    file_prefix = file_id[0]
+  } else {
+    file_prefix = file_id
+  }
 """
 gatk --java-options "-Xmx${xmx_memory}G" IndexFeatureFile \
   -I ${snp_file}
@@ -152,10 +204,14 @@ gatk --java-options "-Xmx${xmx_memory}G" BaseRecalibrator \
 }
 
 params.recalibrate_snp = ""
+params.recalibrate_snp_out = ""
 process recalibrate_snp {
   container = "${container_url}"
   label "big_mem_mono_cpus"
   tag "$file_id"
+  if (params.recalibrate_snp_out != "") {
+    publishDir "results/${params.recalibrate_snp_out}", mode: 'copy'
+  }
 
   input:
     tuple val(file_id), path(snp_file), path(indel_file), path(bam), path(bam_idx), path(recal_table)
@@ -164,6 +220,11 @@ process recalibrate_snp {
     tuple val(file_id), path("*.bam"), emit: bam
   script:
   xmx_memory = "${task.memory}" - ~/\s*GB/
+  if (file_id instanceof List){
+    file_prefix = file_id[0]
+  } else {
+    file_prefix = file_id
+  }
 """
 gatk --java-options "-Xmx${xmx_memory}G" ApplyBQSR \
   ${params.recalibrate_snp} \
@@ -175,10 +236,14 @@ gatk --java-options "-Xmx${xmx_memory}G" ApplyBQSR \
 }
 
 params.haplotype_caller = ""
+params.haplotype_caller_out = ""
 process haplotype_caller {
   container = "${container_url}"
   label "big_mem_mono_cpus"
   tag "$file_id"
+  if (params.haplotype_caller_out != "") {
+    publishDir "results/${params.haplotype_caller_out}", mode: 'copy'
+  }
 
   input:
     tuple val(file_id), path(bam)
@@ -187,6 +252,11 @@ process haplotype_caller {
     tuple val(file_id), path("*.gvcf"), emit: gvcf
   script:
   xmx_memory = "${task.memory}" - ~/\s*GB/
+  if (file_id instanceof List){
+    file_prefix = file_id[0]
+  } else {
+    file_prefix = file_id
+  }
 """
 gatk --java-options "-Xmx${xmx_memory}G" HaplotypeCaller \
   ${params.haplotype_caller} \
@@ -198,10 +268,14 @@ gatk --java-options "-Xmx${xmx_memory}G" HaplotypeCaller \
 }
 
 params.gvcf_genotyping = ""
+params.gvcf_genotyping_out = ""
 process gvcf_genotyping {
   container = "${container_url}"
   label "big_mem_mono_cpus"
   tag "$file_id"
+  if (params.gvcf_genotyping_out != "") {
+    publishDir "results/${params.gvcf_genotyping_out}", mode: 'copy'
+  }
 
   input:
     tuple val(file_id), path(gvcf)
@@ -210,6 +284,11 @@ process gvcf_genotyping {
     tuple val(file_id), path("*.vcf.gz"), emit: vcf
   script:
   xmx_memory = "${task.memory}" - ~/\s*GB/
+  if (file_id instanceof List){
+    file_prefix = file_id[0]
+  } else {
+    file_prefix = file_id
+  }
 """
 gatk --java-options "-Xmx${xmx_memory}G" GenotypeGVCFs \
   ${params.gvcf_genotyping} \
@@ -220,10 +299,14 @@ gatk --java-options "-Xmx${xmx_memory}G" GenotypeGVCFs \
 }
 
 params.select_variants_snp = ""
+params.select_variants_snp_out = ""
 process select_variants_snp {
   container = "${container_url}"
   label "big_mem_mono_cpus"
   tag "$file_id"
+  if (params.select_variants_snp_out != "") {
+    publishDir "results/${params.select_variants_snp_out}", mode: 'copy'
+  }
 
   input:
     tuple val(file_id), path(vcf)
@@ -232,6 +315,11 @@ process select_variants_snp {
     tuple val(file_id), path("*_joint_snp.vcf"), emit: vcf
   script:
   xmx_memory = "${task.memory}" - ~/\s*GB/
+  if (file_id instanceof List){
+    file_prefix = file_id[0]
+  } else {
+    file_prefix = file_id
+  }
 """
 gatk --java-options "-Xmx${xmx_memory}GG" SelectVariants \
   ${params.select_variants_snp} \
@@ -243,10 +331,14 @@ gatk --java-options "-Xmx${xmx_memory}GG" SelectVariants \
 }
 
 params.select_variants_indels = ""
+params.select_variants_indels_out = ""
 process select_variants_indels {
   container = "${container_url}"
   label "big_mem_mono_cpus"
   tag "$file_id"
+  if (params.select_variants_indels_out != "") {
+    publishDir "results/${params.select_variants_indels_out}", mode: 'copy'
+  }
 
   input:
     tuple val(file_id), path(vcf)
@@ -255,21 +347,30 @@ process select_variants_indels {
     tuple val(file_id), path("*_joint_indel.vcf"), emit: vcf
   script:
   xmx_memory = "${task.memory}" - ~/\s*GB/
+  if (file_id instanceof List){
+    file_prefix = file_id[0]
+  } else {
+    file_prefix = file_id
+  }
 """
 gatk --java-options "-Xmx${xmx_memory}G" SelectVariants \
   ${params.select_variants_indels} \
   -R ${fasta} \
   -V ${vcf} \
   -select-type INDEL \
-  -O ${file_id}_joint_indel.vcf
+  -O ${file_prefix}_joint_indel.vcf
 """
 }
 
 params.personalized_genome = ""
+params.personalized_genome_out = ""
 process personalized_genome {
   container = "${container_url}"
   label "big_mem_mono_cpus"
   tag "$file_id"
+  if (params.personalized_genome_out != "") {
+    publishDir "results/${params.personalized_genome_out}", mode: 'copy'
+  }
 
   input:
     tuple val(file_id), path(vcf)
@@ -279,6 +380,11 @@ process personalized_genome {
 
   script:
   xmx_memory = "${task.memory}" - ~/\s*GB/
+  if (file_id instanceof List){
+    file_prefix = file_id[0]
+  } else {
+    file_prefix = file_id
+  }
 """
 gatk --java-options "-Xmx${xmx_memory}G" FastaAlternateReferenceMaker\
   ${params.personalized_genome} \
