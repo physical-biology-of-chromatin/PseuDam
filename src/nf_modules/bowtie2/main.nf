@@ -2,17 +2,21 @@ version = "2.3.4.1"
 container_url = "lbmc/bowtie2:${version}"
 
 params.index_fasta = ""
+params.index_fasta_out = ""
 process index_fasta {
   container = "${container_url}"
   label "big_mem_multi_cpus"
-  tag "$fasta.baseName"
+  tag "$file_id"
+  if (params.index_fasta_out != "") {
+    publishDir "results/${params.index_fasta_out}", mode: 'copy'
+  }
 
   input:
-    path fasta
+    tuple val(file_id), path(fasta)
 
   output:
-    path "*.index*", emit: index
-    path "*_report.txt", emit: report
+    tuple val(file_id), path("*.index*"), emit: index
+    tuple val(file_id), path("*_report.txt"), emit: report
 
   script:
 """
@@ -28,109 +32,21 @@ fi
 }
 
 params.mapping_fastq = "--very-sensitive"
+params.mapping_fastq_out = ""
 process mapping_fastq {
   container = "${container_url}"
   label "big_mem_multi_cpus"
-  tag "$pair_id"
-
-  input:
-  path index
-  tuple val(pair_id), path(reads)
-
-  output:
-  tuple val(pair_id), path("*.bam"), emit: bam
-  path "*_report.txt", emit: report
-
-  script:
-  index_id = index[0]
-  for (index_file in index) {
-    if (index_file =~ /.*\.1\.bt2/ && !(index_file =~ /.*\.rev\.1\.bt2/)) {
-        index_id = ( index_file =~ /(.*)\.1\.bt2/)[0][1]
-    }
-  }
-if (reads instanceof List)
-"""
-bowtie2 ${params.mapping_fastq} \
-  -p ${task.cpus} \
-  -x ${index_id} \
-  -1 ${reads[0]} \
-  -2 ${reads[1]} 2> \
-  ${pair_id}_bowtie2_mapping_report_tmp.txt | \
-  samtools view -Sb - > ${pair_id}.bam
-
-if grep -q "Error" ${pair_id}_bowtie2_mapping_report_tmp.txt; then
-  exit 1
-fi
-tail -n 19 ${pair_id}_bowtie2_mapping_report_tmp.txt > \
-  ${pair_id}_bowtie2_mapping_report.txt
-"""
-else
-"""
-bowtie2 ${params.mapping_fastq} \
-  -p ${task.cpus} \
-  -x ${index_id} \
-  -U ${reads} 2> \
-  ${reads.baseName}_bowtie2_mapping_report_tmp.txt | \
-  samtools view -Sb - > ${reads.baseName}.bam
-
-if grep -q "Error" ${reads.baseName}_bowtie2_mapping_report_tmp.txt; then
-  exit 1
-fi
-tail -n 19 ${reads.baseName}_bowtie2_mapping_report_tmp.txt > \
-  ${reads.baseName}_bowtie2_mapping_report.txt
-"""
-}
-
-params.mapping_fastq_pairedend = "--very-sensitive"
-process mapping_fastq_pairedend {
-  container = "${container_url}"
-  label "big_mem_multi_cpus"
-  tag "$pair_id"
-
-  input:
-  path index
-  tuple val(pair_id), path(reads)
-
-  output:
-  tuple val(pair_id), path("*.bam"), emit: bam
-  path "*_report.txt", emit: report
-
-  script:
-  index_id = index[0]
-  for (index_file in index) {
-    if (index_file =~ /.*\.1\.bt2/ && !(index_file =~ /.*\.rev\.1\.bt2/)) {
-        index_id = ( index_file =~ /(.*)\.1\.bt2/)[0][1]
-    }
-  }
-"""
-bowtie2 ${params.mapping_fastq_pairedend} \
-  -p ${task.cpus} \
-  -x ${index_id} \
-  -1 ${reads[0]} \
-  -2 ${reads[1]} 2> \
-  ${pair_id}_bowtie2_mapping_report_tmp.txt | \
-  samtools view -Sb - > ${pair_id}.bam
-
-if grep -q "Error" ${pair_id}_bowtie2_mapping_report_tmp.txt; then
-  exit 1
-fi
-tail -n 19 ${pair_id}_bowtie2_mapping_report_tmp.txt > \
-  ${pair_id}_bowtie2_mapping_report.txt
-"""
-}
-
-params.mapping_fastq_singleend = "--very-sensitive"
-process mapping_fastq_singleend {
-  container = "${container_url}"
-  label "big_mem_multi_cpus"
   tag "$file_id"
+  if (params.mapping_fastq_out != "") {
+    publishDir "results/${params.mapping_fastq_out}", mode: 'copy'
+  }
 
   input:
   path index
-  tuple val(file_id), path(reads)
+  tuple val(pair_id), path(reads)
 
   output:
-  tuple val(file_id), path("*.bam"), emit: bam
+  tuple val(pair_id), path("*.bam"), emit: bam
   path "*_report.txt", emit: report
 
   script:
@@ -140,18 +56,41 @@ process mapping_fastq_singleend {
         index_id = ( index_file =~ /(.*)\.1\.bt2/)[0][1]
     }
   }
-"""
-bowtie2 ${params.mapping_fastq_singleend} \
-  -p ${task.cpus} \
-  -x ${index_id} \
-  -U ${reads} 2> \
-  ${reads.baseName}_bowtie2_mapping_report_tmp.txt | \
-  samtools view -Sb - > ${reads.baseName}.bam
+  if (file_id instanceof List){
+    file_prefix = file_id[0]
+  } else {
+    file_prefix = file_id
+  }
 
-if grep -q "Error" ${reads.baseName}_bowtie2_mapping_report_tmp.txt; then
-  exit 1
-fi
-tail -n 19 ${reads.baseName}_bowtie2_mapping_report_tmp.txt > \
-  ${reads.baseName}_bowtie2_mapping_report.txt
-"""
+  if (reads.size() == 2)
+  """
+  bowtie2 ${params.mapping_fastq} \
+    -p ${task.cpus} \
+    -x ${index_id} \
+    -1 ${reads[0]} \
+    -2 ${reads[1]} 2> \
+    ${file_prefix}_bowtie2_mapping_report_tmp.txt | \
+    samtools view -Sb - > ${file_prefix}.bam
+
+  if grep -q "Error" ${file_prefix}_bowtie2_mapping_report_tmp.txt; then
+    exit 1
+  fi
+  tail -n 19 ${file_prefix}_bowtie2_mapping_report_tmp.txt > \
+    ${file_prefix}_bowtie2_mapping_report.txt
+  """
+  else if (reads.size() == 1)
+  """
+  bowtie2 ${params.mapping_fastq} \
+    -p ${task.cpus} \
+    -x ${index_id} \
+    -U ${reads} 2> \
+    ${file_prefix}_bowtie2_mapping_report_tmp.txt | \
+    samtools view -Sb - > ${file_prefix}.bam
+
+  if grep -q "Error" ${file_prefix}_bowtie2_mapping_report_tmp.txt; then
+    exit 1
+  fi
+  tail -n 19 ${file_prefix}_bowtie2_mapping_report_tmp.txt > \
+    ${file_prefix}_bowtie2_mapping_report.txt
+  """
 }
