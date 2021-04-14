@@ -118,17 +118,68 @@ process fastp {
 Here `file_id` can be anything from a simple identifier to a list of several variables.
 So you have to keep that in mind if you want to use it to define output file names (you can test for that with `file_id instanceof List`).
 
+If you want to use information within the `file_id` to name outputs in your `script` section, you can use the following snipet:
+
+```
+  script:
+  if (file_id instanceof List){
+    file_prefix = file_id[0]
+  } else {
+    file_prefix = file_id
+  }
+```
+and use the `file_prefix` variable.
+
 The rational behind taking a `file_id` and emitting the same `file_id` is to facilitate complex channel operations in pipelines without having to rewrite the `process` blocks.
 
 ### dealing with paired-end and single-end data
 
-Fastq files opened with `channel.fromFilePairs( params.fastq )`
+Fastq files opened with `channel.fromFilePairs( params.fastq )` create item of the following shape:
 
+```
+[file_id, [read_1_file, read_2_file]]
+```
 
+To make this call more generic, we can use the `size: -1` option, and accept arbitrary number of associated fastq file:
 
-### Handling single and paired end data
+```
+channel.fromFilePairs( params.fastq, size: -1 )
+```
 
-For process that have to deal with single
+will thus give `[file_id, [read_1_file, read_2_file]]` for paired-end data and `[file_id, [read_1_file]]` for single-end data
+
+```
+...
+  script:
+  if (file_id instanceof List){
+    file_prefix = file_id[0]
+  } else {
+    file_prefix = file_id
+  }
+  if (reads.size() == 2)
+  """
+  fastp --thread ${task.cpus} \
+    ${params.fastp} \
+    --in1 ${reads[0]} \
+    --in2 ${reads[1]} \
+    --out1 ${file_prefix}_R1_trim.fastq.gz \
+    --out2 ${file_prefix}_R2_trim.fastq.gz \
+    --html ${file_prefix}.html \
+    --json ${file_prefix}_fastp.json \
+    --report_title ${file_prefix}
+  """
+  else if (reads.size() == 1)
+  """
+  fastp --thread ${task.cpus} \
+    ${params.fastp} \
+    --in1 ${reads[0]} \
+    --out1 ${file_prefix}_trim.fastq.gz \
+    --html ${file_prefix}.html \
+    --json ${file_prefix}_fastp.json \
+    --report_title ${file_prefix}
+  """
+...
+```
 
 ## `src/.docker_modules` guide lines
 
