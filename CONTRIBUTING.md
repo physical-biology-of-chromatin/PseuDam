@@ -130,6 +130,23 @@ If you want to use information within the `file_id` to name outputs in your `scr
 ```
 and use the `file_prefix` variable.
 
+This also means that channel emitting `path` item should be transformed with at least the following map function:
+
+```
+.map { it -> [it.simpleName, it]}
+````
+
+for example:
+
+```
+channel
+  .fromPath( params.fasta )
+  .ifEmpty { error "Cannot find any fasta files matching: ${params.fasta}" }
+  .map { it -> [it.simpleName, it]}
+  .set { fasta_files }
+```
+
+
 The rational behind taking a `file_id` and emitting the same `file_id` is to facilitate complex channel operations in pipelines without having to rewrite the `process` blocks.
 
 ### dealing with paired-end and single-end data
