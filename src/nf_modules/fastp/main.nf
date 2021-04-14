@@ -108,6 +108,7 @@ process fastp_accel_1splus {
     --disable_quality_filtering \
     --disable_length_filtering \
     --disable_trim_poly_g \
+    --detect_adapter_for_pe \
     --stdout \
     --in1 ${reads[0]} \
     --in2 ${reads[1]} \
@@ -132,6 +133,7 @@ process fastp_accel_1splus {
     --disable_quality_filtering \
     --disable_length_filtering \
     --disable_trim_poly_g \
+    --detect_adapter_for_pe \
     --stdout \
     --in1 ${reads[0]} \
     --out1 ${file_prefix}_R1_trim.fastq.gz \
