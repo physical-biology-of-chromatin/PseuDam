@@ -2,7 +2,7 @@ version = "2.25.0"
 container_url = "lbmc/bedtools:${version}"
 
 params.fasta_from_bed = "-name"
-params.fasta_from_bed_out = "-name"
+params.fasta_from_bed_out = ""
 process fasta_from_bed {
   container = "${container_url}"
   label "big_mem_mono_cpus"

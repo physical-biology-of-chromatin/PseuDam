@@ -44,7 +44,7 @@ process filter_bam {
 
   input:
     tuple val(file_id), path(bam)
-    path bed
+    tuple val(bed_id), path(bed)
 
   output:
     tuple val(file_id), path("*_filtered.bam"), emit: bam
@@ -208,7 +208,7 @@ process flagstat_2_multiqc {
     tuple val(file_id), path(tsv)
 
   output:
-    path "*.txt" , emit: report
+    tuple val(file_id), path("*.txt"), emit: report
 """
 mv ${tsv} ${tsv.simpleName}.flagstat.txt
 """
@@ -221,7 +221,7 @@ process idxstat_2_multiqc {
     tuple val(file_id), path(tsv)
 
   output:
-    path "*.txt", emit: report
+    tuple val(file_id), path("*.txt"), emit: report
 """
 mv ${tsv} ${tsv.simpleName}.idxstats.txt
 """
