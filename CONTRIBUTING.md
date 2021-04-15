@@ -1,27 +1,27 @@
 # Contributing
 
-When contributing to this repository, please first discuss the change you wish to make via issue,
+When contributing to this repository, please first discuss the change you wish to make via issues,
 email, or on the [ENS-Bioinfo channel](https://matrix.to/#/#ens-bioinfo:matrix.org) before making a change. 
 
-## Project organisation
+## Project organization
 
-The `LBMC/nextflow` project is structured as follow:
-- all the code is in the [`src/`](./src) folder
-- scripts downloading external tools should download them in the [`bin/`](./bin) folder
-- all the documentation (except the README.md and this file) can be found int he [`doc/`](./doc) folder
-- the [`data`](./data) and [`results`](./results) folders contain the data and results of your piplines and are ignored by `git`
+The `LBMC/nextflow` project is structured as follows:
+- all the code is in the `src/` folder
+- scripts downloading external tools should download them in the `bin/` folder
+- all the documentation (including this file) can be found int he `doc/` folder
+- the `data` and `results` folders contain the data and results of your pipelines and are ignored by `git`
 
 ## Code structure
 
-The [`src/`](./src) folder is where we want to save the pipline (`.nf`) script. This folder also contains:
-- the [`src/install_nextflow.sh`](./src/install_nextflow.sh) to install the nextflow executable at the root of the project.
+The `src/` folder is where we want to save the pipeline (`.nf`) script. This folder also contains
+- the `src/install_nextflow.sh` to install the nextflow executable at the root of the project.
 - some pipelines examples (like the one build during the nf_pratical)
-- the [`src/nextflow.config`](./src/nextflow.config) global configuration file which contains the `docker`, `singularity`, `psmn` and `ccin2p3` profiles.
-- the [`src/nf_modules`](./src/nf_modules/) folder contains per tools `main.nf` modules with predefined process that users can imports in their projects with the [DSL2](https://www.nextflow.io/docs/latest/dsl2.html)
+- the `src/nextflow.config` global configuration file which contains the `docker`, `singularity`, `psmn` and `ccin2p3` profiles.
+- the `src/nf_modules` folder contains per tools `main.nf` modules with predefined process that users can import in their projects with the [DSL2](https://www.nextflow.io/docs/latest/dsl2.html)
 
 But also some hidden folders that users don't need to see when building their pipeline:
-- the [`src/.docker_modules`](./src/.docker_modules) contains the recipies for the `docker` containers used in the `src/nf_modules/<tool_names>/main.nf` files
-- the [`src/.singularity_in2p3`](./src/.singularity_in2p3) and [`src/.singularity_psmn`](./src/.singularity_psmn) are symbolic links to the shared folder where the singularity images are downloaded on the [PSMN](http://www.ens-lyon.fr/PSMN/doku.php) and [CCIN2P3](https://login.cc.in2p3.fr/) 
+- the `src/.docker_modules` contains the recipes for the `docker` containers used in the `src/nf_modules/<tool_names>/main.nf` files
+- the `src/.singularity_in2p3` and `src/.singularity_psmn` are symbolic links to the shared folder where the singularity images are downloaded on the PSMN and CCIN2P3 
 
 # Proposing a new tool
 
@@ -61,9 +61,9 @@ process fastp {
 
 ### process options
 
-Before each process, you shoud declare at least two `params.` variables:
-- A `params.<process_name>` defaulting to `""` (empty string) to allow user to add more commmand line option to your process without rewritting the process definition
-- A `params.<process_name>_out` defaulting to `""` (empty string) that define the `results/` subfolder where the process output should be copied if the user want to save the process output
+Before each process, you should declare at least two `params.` variables:
+- A `params.<process_name>` defaulting to `""` (empty string) to allow user to add more command line option to your process without rewriting the process definition
+- A `params.<process_name>_out` defaulting to `""` (empty string) that define the `results/` subfolder where the process output should be copied if the user wants to save the process output
 
 ```
 params.fastp = ""
@@ -138,7 +138,7 @@ This also means that channel emitting `path` item should be transformed with at 
 .map { it -> [it.simpleName, it]}
 ```
 
-for example:
+for example
 
 ```
 channel
@@ -148,7 +148,8 @@ channel
   .set { fasta_files }
 ```
 
-The rational behind taking a `file_id` and emitting the same `file_id` is to facilitate complex channel operations in pipelines without having to rewrite the `process` blocks.
+
+The rationale behind taking a `file_id` and emitting the same `file_id` is to facilitate complex channel operations in pipelines without having to rewrite the `process` blocks.
 
 ### dealing with paired-end and single-end data
 
