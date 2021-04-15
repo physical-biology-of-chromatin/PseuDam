@@ -21,7 +21,7 @@ process index_fasta {
 
   script:
 """
-bwa index ${params.index_fastq} -p ${fasta.simpleName} ${fasta} \
+bwa index ${params.index_fasta} -p ${fasta.simpleName} ${fasta} \
 &> ${fasta.simpleName}_bwa_report.txt
 """
 }
