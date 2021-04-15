@@ -7,8 +7,8 @@ process index_fasta {
   container = "${container_url}"
   label "big_mem_mono_cpus"
   tag "$file_id"
-  if (params.mapping_fastq_out != "") {
-    publishDir "results/${params.mapping_fastq_out}", mode: 'copy'
+  if (params.index_fasta_out != "") {
+    publishDir "results/${params.index_fasta_out}", mode: 'copy'
   }
 
   input:
@@ -29,8 +29,8 @@ process filter_bam_quality {
   container = "${container_url}"
   label "big_mem_multi_cpus"
   tag "$file_id"
-  if (params.mapping_fastq_out != "") {
-    publishDir "results/${params.mapping_fastq_out}", mode: 'copy'
+  if (params.filter_bam_quality_out != "") {
+    publishDir "results/${params.filter_bam_quality_out}", mode: 'copy'
   }
 
   input:
@@ -51,8 +51,8 @@ process filter_bam {
   container = "${container_url}"
   label "big_mem_multi_cpus"
   tag "$file_id"
-  if (params.mapping_fastq_out != "") {
-    publishDir "results/${params.mapping_fastq_out}", mode: 'copy'
+  if (params.filter_bam_out != "") {
+    publishDir "results/${params.filter_bam_out}", mode: 'copy'
   }
 
   input:
@@ -74,6 +74,9 @@ process filter_bam_mapped {
   container = "${container_url}"
   label "big_mem_multi_cpus"
   tag "$file_id"
+  if (params.filter_bam_mapped_out != "") {
+    publishDir "results/${params.filter_bam_mapped_out}", mode: 'copy'
+  }
 
   input:
     tuple val(file_id), path(bam)
@@ -93,8 +96,8 @@ process filter_bam_unmapped {
   container = "${container_url}"
   label "big_mem_multi_cpus"
   tag "$file_id"
-  if (params.mapping_fastq_out != "") {
-    publishDir "results/${params.mapping_fastq_out}", mode: 'copy'
+  if (params.filter_bam_unmapped_out != "") {
+    publishDir "results/${params.filter_bam_unmapped_out}", mode: 'copy'
   }
 
   input:
@@ -114,6 +117,9 @@ process index_bam {
   container = "${container_url}"
   label "big_mem_mono_cpus"
   tag "$file_id"
+  if (params.index_bam_out != "") {
+    publishDir "results/${params.index_bam_out}", mode: 'copy'
+  }
 
   input:
     tuple val(file_id), path(bam)
@@ -134,8 +140,8 @@ process sort_bam {
   container = "${container_url}"
   label "big_mem_multi_cpus"
   tag "$file_id"
-  if (params.mapping_fastq_out != "") {
-    publishDir "results/${params.mapping_fastq_out}", mode: 'copy'
+  if (params.sort_bam_out != "") {
+    publishDir "results/${params.sort_bam_out}", mode: 'copy'
   }
 
   input:
@@ -156,8 +162,8 @@ process split_bam {
   container = "${container_url}"
   label "big_mem_multi_cpus"
   tag "$file_id"
-  if (params.mapping_fastq_out != "") {
-    publishDir "results/${params.mapping_fastq_out}", mode: 'copy'
+  if (params.split_bam_out != "") {
+    publishDir "results/${params.split_bam_out}", mode: 'copy'
   }
 
   input:
@@ -181,8 +187,8 @@ process merge_bam {
   container = "${container_url}"
   label "big_mem_multi_cpus"
   tag "$file_id"
-  if (params.mapping_fastq_out != "") {
-    publishdir "results/${params.mapping_fastq_out}", mode: 'copy'
+  if (params.merge_bam_out != "") {
+    publishDir "results/${params.merge_bam_out}", mode: 'copy'
   }
 
   input:
@@ -204,8 +210,8 @@ process merge_multi_bam {
   container = "${container_url}"
   label "big_mem_multi_cpus"
   tag "$file_id"
-  if (params.mapping_fastq_out != "") {
-    publishdir "results/${params.mapping_fastq_out}", mode: 'copy'
+  if (params.merge_multi_bam_out != "") {
+    publishDir "results/${params.merge_multi_bam_out}", mode: 'copy'
   }
 
   input:
@@ -228,8 +234,8 @@ process stats_bam {
   container = "${container_url}"
   label "big_mem_multi_cpus"
   tag "$file_id"
-  if (params.mapping_fastq_out != "") {
-    publishdir "results/${params.mapping_fastq_out}", mode: 'copy'
+  if (params.stats_bam_out != "") {
+    publishDir "results/${params.stats_bam_out}", mode: 'copy'
   }
 
   input:
@@ -247,8 +253,8 @@ params.flagstat_2_multiqc = ""
 params.flagstat_2_multiqc_out = ""
 process flagstat_2_multiqc {
   tag "$file_id"
-  if (params.mapping_fastq_out != "") {
-    publishdir "results/${params.mapping_fastq_out}", mode: 'copy'
+  if (params.flagstat_2_multiqc_out != "") {
+    publishDir "results/${params.flagstat_2_multiqc_out}", mode: 'copy'
   }
 
   input:
@@ -265,8 +271,8 @@ params.idxstat_2_multiqc = ""
 params.idxstat_2_multiqc_out = ""
 process idxstat_2_multiqc {
   tag "$file_id"
-  if (params.mapping_fastq_out != "") {
-    publishdir "results/${params.mapping_fastq_out}", mode: 'copy'
+  if (params.idxstat_2_multiqc_out != "") {
+    publishDir "results/${params.idxstat_2_multiqc_out}", mode: 'copy'
   }
 
   input:
