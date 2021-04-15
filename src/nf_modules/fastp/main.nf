@@ -111,18 +111,19 @@ process fastp_accel_1splus {
     --detect_adapter_for_pe \
     --stdout \
     --in1 ${reads[0]} \
-    --in2 ${reads[1]} \
-    --out1 ${file_prefix}_R1_trim.fastq.gz \
-    --out2 ${file_prefix}_R2_trim.fastq.gz | \
+    --in2 ${reads[1]} 2> /dev/null | \
     fastp --thread ${task.cpus} \
       --stdin \
       --interleaved_in \
       --trim_front1=10 \
       --trim_front2=10 \
+      --disable_adapter_trimming \
       --qualified_quality_phred 20 \
       --disable_length_filtering \
       --detect_adapter_for_pe \
       ${params.fastp} \
+      --out1 ${file_prefix}_R1_trim.fastq.gz \
+      --out2 ${file_prefix}_R2_trim.fastq.gz \
       --html ${file_prefix}.html \
       --json ${file_prefix}_fastp.json \
       --report_title ${file_prefix}
@@ -135,15 +136,16 @@ process fastp_accel_1splus {
     --disable_trim_poly_g \
     --detect_adapter_for_pe \
     --stdout \
-    --in1 ${reads[0]} \
-    --out1 ${file_prefix}_R1_trim.fastq.gz \
+    --in1 ${reads[0]} 2> /dev/null  | \
     fastp --thread ${task.cpus} \
+      --disable_adapter_trimming \
       --stdin \
       --trim_front1=10 \
       --qualified_quality_phred 20 \
       --disable_length_filtering \
       --detect_adapter_for_pe \
       ${params.fastp} \
+      --out1 ${file_prefix}_trim.fastq.gz \
       --html ${file_prefix}.html \
       --json ${file_prefix}_fastp.json \
       --report_title ${file_prefix}
