@@ -23,7 +23,7 @@ samtools faidx ${params.index_fasta} ${fasta}
 }
 
 params.filter_bam_quality_threshold = 30
-params.filter_bam_quality = "-q ${filter_bam_quality_threshold}"
+params.filter_bam_quality = "-q ${params.filter_bam_quality_threshold}"
 params.filter_bam_quality_out = ""
 process filter_bam_quality {
   container = "${container_url}"
