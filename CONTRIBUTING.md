@@ -6,39 +6,39 @@ email, or on the [ENS-Bioinfo channel](https://matrix.to/#/#ens-bioinfo:matrix.o
 ## Project organisation
 
 The `LBMC/nextflow` project is structured as follow:
-- all the code is in the `src/` folder
-- scripts downloading external tools should download them in the `bin/` folder
-- all the documentation (including this file) can be found int he `doc/` folder
-- the `data` and `results` folders contain the data and results of your piplines and are ignored by `git`
+- all the code is in the [`src/`](./src) folder
+- scripts downloading external tools should download them in the [`bin/`](./bin) folder
+- all the documentation (except the README.md and this file) can be found int he [`doc/`](./doc) folder
+- the [`data`](./data) and [`results`](./results) folders contain the data and results of your piplines and are ignored by `git`
 
 ## Code structure
 
-The `src/` folder is where we want to save the pipline (`.nf`) script. This folder also contains:
-- the `src/install_nextflow.sh` to install the nextflow executable at the root of the project.
+The [`src/`](./src) folder is where we want to save the pipline (`.nf`) script. This folder also contains:
+- the [`src/install_nextflow.sh`](./src/install_nextflow.sh) to install the nextflow executable at the root of the project.
 - some pipelines examples (like the one build during the nf_pratical)
-- the `src/nextflow.config` global configuration file which contains the `docker`, `singularity`, `psmn` and `ccin2p3` profiles.
-- the `src/nf_modules` folder contains per tools `main.nf` modules with predefined process that users can imports in their projects with the [DSL2](https://www.nextflow.io/docs/latest/dsl2.html)
+- the [`src/nextflow.config`](./src/nextflow.config) global configuration file which contains the `docker`, `singularity`, `psmn` and `ccin2p3` profiles.
+- the [`src/nf_modules`](./src/nf_modules/) folder contains per tools `main.nf` modules with predefined process that users can imports in their projects with the [DSL2](https://www.nextflow.io/docs/latest/dsl2.html)
 
 But also some hidden folders that users don't need to see when building their pipeline:
-- the `src/.docker_modules` contains the recipies for the `docker` containers used in the `src/nf_modules/<tool_names>/main.nf` files
-- the `src/.singularity_in2p3` and `src/.singularity_psmn` are symbolic links to the shared folder where the singularity images are downloaded on the PSMN and CCIN2P3 
+- the [`src/.docker_modules`](./src/.docker_modules) contains the recipies for the `docker` containers used in the `src/nf_modules/<tool_names>/main.nf` files
+- the [`src/.singularity_in2p3`](./src/.singularity_in2p3) and [`src/.singularity_psmn`](./src/.singularity_psmn) are symbolic links to the shared folder where the singularity images are downloaded on the [PSMN](http://www.ens-lyon.fr/PSMN/doku.php) and [CCIN2P3](https://login.cc.in2p3.fr/) 
 
 # Proposing a new tool
 
 Each tool named `<tool_name>` must have two dedicated folders:
 
-- `src/nf_modules/<tool_name>` where users can find `.nf` files to include
-- `src/.docker_modules/<tool_name>/<version_number>` where we have the `.Dockerfile` to construct the container used in the `main.nf` file
+- [`src/nf_modules/<tool_name>`](./src/nf_modules/fastp/) where users can find `.nf` files to include
+- [`src/.docker_modules/<tool_name>/<version_number>`](./src/.docker_modules/fastp/0.20.1/) where we have the [`Dockerfile`](./src/.docker_modules/fastp/0.20.1/Dockerfile) to construct the container used in the `main.nf` file
 
 ## `src/nf_module` guide lines
 
-We are going to take the `fastp`, `nf_module` as an example.
+We are going to take the [`fastp`, `nf_module`](./src/nf_modules/fastp/) as an example.
 
-The `src/nf_modules/<tool_name>` should contain a `main.nf` file that describe at least one process using `<tool_name>`
+The [`src/nf_modules/<tool_name>`](./src/nf_modules/fastp/) should contain a [`main.nf`](./src/nf_modules/fastp/main.nf) file that describe at least one process using `<tool_name>`
 
 ### container informations
 
-The first two lines of `main.nf` should define two variables
+The first two lines of [`main.nf`](./src/nf_modules/fastp/main.nf) should define two variables
 ```
 version = "0.20.1"
 container_url = "lbmc/fastp:${version}"
@@ -116,6 +116,7 @@ process fastp {
 ```
 
 Here `file_id` can be anything from a simple identifier to a list of several variables.
+In which case the first item of the List should be usable as a file prefix.
 So you have to keep that in mind if you want to use it to define output file names (you can test for that with `file_id instanceof List`).
 
 If you want to use information within the `file_id` to name outputs in your `script` section, you can use the following snipet:
@@ -128,13 +129,14 @@ If you want to use information within the `file_id` to name outputs in your `scr
     file_prefix = file_id
   }
 ```
+
 and use the `file_prefix` variable.
 
 This also means that channel emitting `path` item should be transformed with at least the following map function:
 
 ```
 .map { it -> [it.simpleName, it]}
-````
+```
 
 for example:
 
@@ -146,24 +148,26 @@ channel
   .set { fasta_files }
 ```
 
-
 The rational behind taking a `file_id` and emitting the same `file_id` is to facilitate complex channel operations in pipelines without having to rewrite the `process` blocks.
 
 ### dealing with paired-end and single-end data
 
-Fastq files opened with `channel.fromFilePairs( params.fastq )` create item of the following shape:
+When oppening fastq files with `channel.fromFilePairs( params.fastq )`, item in the channel have the following shape:
 
 ```
 [file_id, [read_1_file, read_2_file]]
 ```
 
-To make this call more generic, we can use the `size: -1` option, and accept arbitrary number of associated fastq file:
+To make this call more generic, we can use the `size: -1` option, and accept arbitrary number of associated fastq files:
 
 ```
 channel.fromFilePairs( params.fastq, size: -1 )
 ```
 
 will thus give `[file_id, [read_1_file, read_2_file]]` for paired-end data and `[file_id, [read_1_file]]` for single-end data
+
+
+You can the use tests on `read.size()` to define conditional `script` block:
 
 ```
 ...
@@ -199,4 +203,35 @@ will thus give `[file_id, [read_1_file, read_2_file]]` for paired-end data and `
 ```
 
 ## `src/.docker_modules` guide lines
+
+We are going to take the [`fastp`, `.docker_modules`](./src/.docker_module/fastp/0.20.1/) as an example.
+
+The [`src/.docker_modules/<tool_name>/<version_number>`](./src/nf_modules/fastp/0.20.1/) should contain a [`Dockerfile`](./src/.docker_module/fastp/0.20.1/Dockerfile) and a [`docker_init.sh`](./src/.docker_module/fastp/0.20.1/docker_init.sh).
+
+### `Dockerfile`
+
+The [`Dockerfile`](./src/.docker_module/fastp/0.20.1/Dockerfile) shoud contains a `docker` recipe to build a image with `<tool_name>` installed in a system-wide binary folder (`/bin`, `/usr/local/bin/`, etc).
+
+This recipe should have:
+
+- an easily changeable `<version_number>` to be able to update the corresponding image to a newer version of the tool
+- the `ps` executable (package `procps` in debian)
+- a default `bash` command (`CMD ["bash"]`)
+
+### `docker_init.sh`
+
+The [`docker_init.sh`](./src/.docker_module/fastp/0.20.1/docker_init.sh) script is a small sh script with the following content:
+
+```
+#!/bin/sh
+docker pull lbmc/fastp:0.20.1
+docker build src/.docker_modules/fastp/0.20.1 -t 'lbmc/fastp:0.20.1'
+docker push lbmc/fastp:0.20.1
+```
+
+We want to be able to execute the `src/.docker_module/fastp/0.20.1/docker_init.sh` from the root of the project to :
+
+- try to download the corresponding container if it exists on the [Docker Hub](https://hub.docker.com/repository/docker/lbmc/)
+- if not build the container from the correspondig [`Dockerfile`](./src/.docker_module/fastp/0.20.1/Dockerfile) and with the same name as the name we would get from the `docker pull` command
+- push the container on the [Docker Hub](https://hub.docker.com/repository/docker/lbmc/) (only [laurent.modolo@ens-lyon.fr](mailto:laurent.modolo@ens-lyon.fr) can do this step for the group **lbmc**)
 
