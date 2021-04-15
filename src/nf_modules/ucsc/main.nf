@@ -2,10 +2,14 @@ version = "407"
 container_url = "lbmc/ucsc:${version}"
 
 params.bedgraph_to_bigwig = ""
+params.bedgraph_to_bigwig_out = ""
 process bedgraph_to_bigwig {
   container = "${container_url}"
   label "big_mem_mono_cpus"
   tag "${file_id}"
+  if (params.bedgraph_to_bigwig_out != "") {
+    publishDir "results/${params.bedgraph_to_bigwig_out}", mode: 'copy'
+  }
 
   input:
   tuple val(file_id) path(bg)

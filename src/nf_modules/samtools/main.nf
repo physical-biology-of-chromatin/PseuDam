@@ -1,10 +1,15 @@
 version = "1.11"
 container_url = "lbmc/samtools:${version}"
 
+params.index_fasta = ""
+params.index_fasta_out = ""
 process index_fasta {
   container = "${container_url}"
   label "big_mem_mono_cpus"
   tag "$file_id"
+  if (params.mapping_fastq_out != "") {
+    publishDir "results/${params.mapping_fastq_out}", mode: 'copy'
+  }
 
   input:
     tuple val(file_id), path(fasta)
@@ -13,16 +18,20 @@ process index_fasta {
 
   script:
 """
-samtools faidx ${fasta}
+samtools faidx ${params.index_fasta} ${fasta}
 """
 }
 
-filter_bam_quality_threshold = 30
-
+params.filter_bam_quality_threshold = 30
+params.filter_bam_quality = "-q ${filter_bam_quality_threshold}"
+params.filter_bam_quality_out = ""
 process filter_bam_quality {
   container = "${container_url}"
   label "big_mem_multi_cpus"
   tag "$file_id"
+  if (params.mapping_fastq_out != "") {
+    publishDir "results/${params.mapping_fastq_out}", mode: 'copy'
+  }
 
   input:
     tuple val(file_id), path(bam)
@@ -31,16 +40,20 @@ process filter_bam_quality {
     tuple val(file_id), path("*_filtered.bam"), emit: bam
   script:
 """
-samtools view -@ ${task.cpus} -hb ${bam} -q ${filter_bam_quality_threshold} > \
+samtools view -@ ${task.cpus} -hb ${bam} ${params.filter_bam_quality} > \
   ${bam.simpleName}_filtered.bam
 """
 }
 
-
+params.filter_bam = ""
+params.filter_bam_out = ""
 process filter_bam {
   container = "${container_url}"
   label "big_mem_multi_cpus"
   tag "$file_id"
+  if (params.mapping_fastq_out != "") {
+    publishDir "results/${params.mapping_fastq_out}", mode: 'copy'
+  }
 
   input:
     tuple val(file_id), path(bam)
@@ -50,11 +63,13 @@ process filter_bam {
     tuple val(file_id), path("*_filtered.bam"), emit: bam
   script:
 """
-samtools view -@ ${task.cpus} -hb ${bam} -L ${bed} > \
+samtools view -@ ${task.cpus} -hb ${bam} -L ${bed} ${params.filter_bam} > \
   ${bam.simpleName}_filtered.bam
 """
 }
 
+params.filter_bam_mapped = "-F 4"
+params.filter_bam_mapped_out = ""
 process filter_bam_mapped {
   container = "${container_url}"
   label "big_mem_multi_cpus"
@@ -67,15 +82,20 @@ process filter_bam_mapped {
     tuple val(file_id), path("*_mapped.bam"), emit: bam
   script:
 """
-samtools view -@ ${task.cpus} -F 4 -hb ${bam} > \
+samtools view -@ ${task.cpus} ${params.filter_bam_mapped} -hb ${bam} > \
   ${bam.simpleName}_mapped.bam
 """
 }
 
+params.filter_bam_unmapped = "-f 4"
+params.filter_bam_unmapped_out = ""
 process filter_bam_unmapped {
   container = "${container_url}"
   label "big_mem_multi_cpus"
   tag "$file_id"
+  if (params.mapping_fastq_out != "") {
+    publishDir "results/${params.mapping_fastq_out}", mode: 'copy'
+  }
 
   input:
     tuple val(file_id), path(bam)
@@ -84,11 +104,12 @@ process filter_bam_unmapped {
     tuple val(file_id), path("*_unmapped.bam"), emit: bam
   script:
 """
-samtools view -@ ${task.cpus} -f 4 -hb ${bam} > ${bam.simpleName}_unmapped.bam
+samtools view -@ ${task.cpus} ${params.filter_bam_unmapped} -hb ${bam} > ${bam.simpleName}_unmapped.bam
 """
 }
 
-
+params.index_bam = ""
+params.index_bam_out = ""
 process index_bam {
   container = "${container_url}"
   label "big_mem_mono_cpus"
@@ -103,14 +124,19 @@ process index_bam {
 
   script:
 """
-samtools index ${bam}
+samtools index ${params.index_bam} ${bam}
 """
 }
 
+params.sort_bam = ""
+params.sort_bam_out = ""
 process sort_bam {
   container = "${container_url}"
   label "big_mem_multi_cpus"
   tag "$file_id"
+  if (params.mapping_fastq_out != "") {
+    publishDir "results/${params.mapping_fastq_out}", mode: 'copy'
+  }
 
   input:
     tuple val(file_id), path(bam)
@@ -120,15 +146,19 @@ process sort_bam {
 
   script:
 """
-samtools sort -@ ${task.cpus} -O BAM -o ${bam.simpleName}_sorted.bam ${bam}
+samtools sort -@ ${task.cpus} ${params.sort_bam} -O BAM -o ${bam.simpleName}_sorted.bam ${bam}
 """
 }
 
-
+params.split_bam = ""
+params.split_bam_out = ""
 process split_bam {
   container = "${container_url}"
   label "big_mem_multi_cpus"
   tag "$file_id"
+  if (params.mapping_fastq_out != "") {
+    publishDir "results/${params.mapping_fastq_out}", mode: 'copy'
+  }
 
   input:
     tuple val(file_id), path(bam)
@@ -138,19 +168,22 @@ process split_bam {
     tuple val(file_id), path("*_reverse.bam*"), emit: bam_reverse
   script:
 """
-samtools view --@ ${Math.round(task.cpus/2)} \
+samtools view --@ ${Math.round(task.cpus/2)} ${params.split_bam} \
   -hb -F 0x10 ${bam} > ${bam.simpleName}_forward.bam &
-samtools view --@ ${Math.round(task.cpus/2)} \
+samtools view --@ ${Math.round(task.cpus/2)} ${params.split_bam} \
   -hb -f 0x10 ${bam} > ${bam.simpleName}_reverse.bam
 """
 }
 
-
+params.merge_bam = ""
+params.merge_bam_out = ""
 process merge_bam {
   container = "${container_url}"
   label "big_mem_multi_cpus"
   tag "$file_id"
-  cpus = 2
+  if (params.mapping_fastq_out != "") {
+    publishdir "results/${params.mapping_fastq_out}", mode: 'copy'
+  }
 
   input:
     tuple val(first_file_id), path(first_bam)
@@ -160,16 +193,20 @@ process merge_bam {
     tuple val(file_id), path("*.bam*"), emit: bam
   script:
 """
-samtools merge ${first_bam} ${second_bam} \
+samtools merge -@ ${task.cpus} ${params.merge_bam} ${first_bam} ${second_bam} \
   ${first_bam.simpleName}_${second_file.simpleName}.bam
 """
 }
 
+params.merge_multi_bam = ""
+params.merge_multi_bam_out = ""
 process merge_multi_bam {
   container = "${container_url}"
   label "big_mem_multi_cpus"
   tag "$file_id"
-  cpus = 2
+  if (params.mapping_fastq_out != "") {
+    publishdir "results/${params.mapping_fastq_out}", mode: 'copy'
+  }
 
   input:
     tuple val(file_id), path(bams)
@@ -179,16 +216,21 @@ process merge_multi_bam {
   script:
 """
 samtools merge -@ ${task.cpus} \
+  ${params.merge_multi_bam} \
   ${bams[0].simpleName}_merged.bam \
   ${bams}
 """
 }
 
+params.stats_bam = ""
+params.stats_bam_out = ""
 process stats_bam {
   container = "${container_url}"
   label "big_mem_multi_cpus"
   tag "$file_id"
-  cpus = 2
+  if (params.mapping_fastq_out != "") {
+    publishdir "results/${params.mapping_fastq_out}", mode: 'copy'
+  }
 
   input:
     tuple val(file_id), path(bam)
@@ -197,12 +239,17 @@ process stats_bam {
     tuple val(file_id), path("*.tsv"), emit: tsv
   script:
 """
-samtools flagstat -@ ${task.cpus} -O tsv ${bam} > ${bam.simpleName}_stats.tsv
+samtools flagstat -@ ${task.cpus} ${params.stats_bam} -O tsv ${bam} > ${bam.simpleName}_stats.tsv
 """
 }
 
+params.flagstat_2_multiqc = ""
+params.flagstat_2_multiqc_out = ""
 process flagstat_2_multiqc {
   tag "$file_id"
+  if (params.mapping_fastq_out != "") {
+    publishdir "results/${params.mapping_fastq_out}", mode: 'copy'
+  }
 
   input:
     tuple val(file_id), path(tsv)
@@ -214,8 +261,13 @@ mv ${tsv} ${tsv.simpleName}.flagstat.txt
 """
 }
 
+params.idxstat_2_multiqc = ""
+params.idxstat_2_multiqc_out = ""
 process idxstat_2_multiqc {
   tag "$file_id"
+  if (params.mapping_fastq_out != "") {
+    publishdir "results/${params.mapping_fastq_out}", mode: 'copy'
+  }
 
   input:
     tuple val(file_id), path(tsv)
