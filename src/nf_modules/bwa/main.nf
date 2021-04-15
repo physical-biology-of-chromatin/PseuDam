@@ -47,14 +47,11 @@ process mapping_fastq {
 
   script:
   if (file_id instanceof List){
+    library = file_id[0]
     file_prefix = file_id[0]
-    if (file_id.containsKey('library')) {
-      library = file_id.library
-      file_prefix = file_id.id
-    } else {
-      library = file_id[0]
-      file_prefix = file_id[0]
-    }
+  else if (file_id.containsKey('library')) {
+    library = file_id.library
+    file_prefix = file_id.id
   } else {
     library = file_id
     file_prefix = file_id
