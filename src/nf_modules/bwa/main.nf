@@ -52,10 +52,11 @@ process mapping_fastq {
       library = file_id.library
       file_prefix = file_id.id
     } else {
-      library = file_id
-      file_prefix = file_id
+      library = file_id[0]
+      file_prefix = file_id[0]
     }
   } else {
+    library = file_id
     file_prefix = file_id
   }
 bwa_mem_R = "@RG\\tID:${library}\\tSM:${library}\\tLB:lib_${library}\\tPL:illumina"
