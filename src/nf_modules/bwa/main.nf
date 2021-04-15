@@ -49,7 +49,7 @@ process mapping_fastq {
   if (file_id instanceof List){
     library = file_id[0]
     file_prefix = file_id[0]
-  } else if (file_id instanceof Map)
+  } else if (file_id instanceof Map) {
       library = file_id[0]
       file_prefix = file_id[0]
       if (file_id.containsKey('library')) {
