@@ -43,7 +43,7 @@ process mapping_fastq {
 
   output:
   tuple val(file_id), path("*.bam"), emit: bam
-  tuple val(file_id), path("${id}_bwa_report.txt"), emit: report
+  tuple val(file_id), path("${file_prefix}_bwa_report.txt"), emit: report
 
   script:
   if (file_id instanceof List){
