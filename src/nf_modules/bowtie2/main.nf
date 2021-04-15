@@ -46,7 +46,7 @@ process mapping_fastq {
   tuple val(file_id), path(reads)
 
   output:
-  tuple val(), path("*.bam"), emit: bam
+  tuple val(file_id), path("*.bam"), emit: bam
   path "*_report.txt", emit: report
 
   script:
