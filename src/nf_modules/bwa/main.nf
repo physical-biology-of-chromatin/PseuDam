@@ -38,8 +38,8 @@ process mapping_fastq {
   }
 
   input:
-  tuple val(file_id), path(reads)
   tuple val(index_id), path(index)
+  tuple val(file_id), path(reads)
 
   output:
   tuple val(file_id), path("*.bam"), emit: bam
