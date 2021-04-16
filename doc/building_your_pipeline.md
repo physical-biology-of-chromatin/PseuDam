@@ -2,10 +2,10 @@
 
 The goal of this pratical is to walk you through the nextflow pipeline building process you will learn:
 
-- How to use this [git repository (LBMC/nextflow)](https://gitbio.ens-lyon.fr/LBMC/nextflow) as a template for your project.
-- The basis of [Nextflow](https://www.nextflow.io/) the pipeline manager that we use at the lab.
-- How to build a simple pipeline for the transcript level quantification of RNASeq data
-- How to run the exact same pipeline on a computing center ([PSMN](http://www.ens-lyon.fr/PSMN/doku.php))
+1. How to use this [git repository (LBMC/nextflow)](https://gitbio.ens-lyon.fr/LBMC/nextflow) as a template for your project.
+2. The basis of [Nextflow](https://www.nextflow.io/) the pipeline manager that we use at the lab.
+3. How to build a simple pipeline for the transcript level quantification of RNASeq data
+4. How to run the exact same pipeline on a computing center ([PSMN](http://www.ens-lyon.fr/PSMN/doku.php))
 
 This guide assumes that you followed the [Git basis, trainning course](https://gitbio.ens-lyon.fr/LBMC/hub/formations/git_basis).
 
@@ -87,9 +87,17 @@ file "sample.fasta", emit: fasta_sample
 
 At the end of the script, a file named `sample.fasta` is found in the root the folder where `script:` is executed and will be emited as `fasta_sample`.
 
-Using the WebIDE of Gitlab, create a file `src/fasta_sampler.nf` with this process and commit it to your repository.
-
+Using the WebIDE of Gitlab, create a file `src/fasta_sampler.nf`
 ![webide](img/webide.png)
+
+The first line that you need to add is:
+
+```Groovy
+nextflow.enable.dsl=2
+```
+
+Then add the `sample_fastq` process and commit it to your repository.
+
 
 ## Workflow
 
@@ -98,26 +106,15 @@ For the time beeing, we only have one `process` so `workflow` may look like an u
 
 ```
 workflow {
-  take:
-   fasta_files
-
-  main:
-    sample_fasta(fasta_file)
+  sample_fasta(fasta_file)
 }
 ```
 
-Like `process` blocks `workflow` can take some imputs:
-
-```
-  take:
-   fasta_files
-```
-
+Like `process` blocks `workflow` can take some imputs: `fasta_files`
 and transmit this input to `process`es
 
 ```
-  main:
-    sample_fasta(fasta_file)
+  sample_fasta(fasta_file)
 ```
 
 The `main:` block is where we are goint to call our `process`(es)
@@ -219,3 +216,249 @@ Add this to your `src/fasta_sampler.nf` file with the WebIDE and commit it to yo
 You can run your pipeline again and check the content of the folder `results/sampling`.
 
 
+# Build your own RNASeq pipeline
+
+In this section you are going to build your own pipeline for RNASeq analysis from the code available in the `src/nf_modules` folder.
+
+Open the WebIDE and create a `src/RNASeq.nf` file.
+
+The first line that we are going to add is:
+
+```Groovy
+nextflow.enable.dsl=2
+```
+
+## fastp 
+
+The first step of the pipeline is to remove any Illumina adaptors left in your read files and to trim your reads by quality.
+
+The [LBMC/nextflow](https://gitbio.ens-lyon.fr/LBMC/nextflow) template provide you with many tools for which you can find predefined `process` block.
+You can find a list of these tools in the [`src/nf_modules`](./src/nf_modules) folder.
+You can also ask for a new tool by creating an [new issue for it](https://gitbio.ens-lyon.fr/LBMC/nextflow/-/issues/new) in the [LBMC/nextflow](https://gitbio.ens-lyon.fr/LBMC/nextflow) project.
+
+We are going to include the [`src/nf_modules/fastp/main.nf`](./src/nf_modules/fastp/main.nf) in our `src/RNASeq.nf` file
+
+```Groovy
+include { fastp } from "./nf_modules/fastp/main.nf"
+```
+
+With this ligne we can call the `fastp` block in our future `workflow` without having to write it !
+If we check the content of the file [`src/nf_modules/fastp/main.nf`](./src/nf_modules/fastp/main.nf), we can see that by including `fastp`, we are including a sub-`workflow` (we will come back on this object latter).
+This `sub-workflow` takes a `fastq` `channel`. We need to make one
+The `./nf_modules/fastp/main.nf` is relative to the `src/RNASeq.nf` file, this is why we don't include the `src/` part of the path.
+
+```Groovy
+channel
+  .fromFilePairs( "data/tiny_dataset/fastq/*_R{1,2}.fastq", size: -1)
+  .set { fastq_files }
+```
+
+The `.fromFilePairs()` can create a `channel` of pair of fastq files. Therefore, the items emited by the `fastq_files` channel are going to be pairs of fastq for paired-end data.
+The option `size: -1` allows arbitrary number of associated files. Therefore, we can use the same `channel` creation for single-end data.
+
+We can now include the `workflow` definition, passing the `fastq_files` `channel` to `fastp` to our `src/RNASeq.nf` file
+
+```Groovy
+workflow {
+  fastp(fastq_files)
+}
+```
+
+You can commit your `src/RNASeq.nf` file, `pull` your modification locally and run your pipeline with the command:
+
+```Groovy
+./nextflow src/RNASeq.nf
+```
+
+What is happening ?
+
+## Nextflow `-profile`
+
+Nextflow tells you the following error: `fastp: command not found`. You don't have `fastp` installed on your computer.
+
+Tools instalation can be a tedious process and reinstalling old version of those tools to reproduce old analyses can be very difficult.
+Containers technologies like [Docker](https://www.docker.com/) or [Singularity](https://sylabs.io/singularity/) allows to create small virtual environments where we can install a software in a given version with all it's dependencies. This environement can be saved, and share, to have access to this exact working version of the software.
+
+> Why two differents systems ?
+> Docker is easy to use and can be installed on Windows / MacOS / GNU/Linux but need admin rights
+> Singularity can only be used on GNU/Linux but dont need admin rights, and can be used on shared environement
+
+The [LBMC/nextflow](https://gitbio.ens-lyon.fr/LBMC/nextflow) template provide you with [4 differents `-profile`s to run your pipeline](https://gitbio.ens-lyon.fr/LBMC/nextflow/-/blob/master/doc/getting_started.md#nextflow-profile).
+Profiles are defined in the [`src/nextflow.config`](./src/nextflow.config), which is the default configuration file for your pipeline (you don't have to edit this file).
+
+To run the pipeline locally you can use the profile `singularity` or `docker`
+
+```Groovy
+./nextflow src/RNASeq.nf -profile singularity
+```
+
+The `fastp` `singularity` or `docker` image is downloaded automatically and the fastq file are processed.
+
+## Pipeline `--` arguments
+
+We have defined the fastq file path within our `src/RNASeq.nf` file.
+But, what if we want to share our pipeline with someone who don't want to analyse the `tiny_dataset` and but other fastq.
+We can define a variable instead of fixing the path.
+
+```Groovy
+params.fastq = "data/fastq/*_{1,2}.fastq"
+channel
+  .fromFilePairs( params.fastq, size: -1)
+  .set { fastq_files }
+```
+
+We declare a variable that contains the path of the fastq file to look for. The advantage of using `params.fastq` is that the option `--fastq` is now a parameter of your pipeline.
+Thus, you can call your pipeline with the `--fastq` option:
+
+```sh
+./nextflow src/RNASeq.nf -profile singularity --fastq "data/tiny_dataset/fastq/*_R{1,2}.fastq"
+```
+
+We can also add the following line:
+
+```Groovy
+log.info "fastq files: ${params.fastq}"
+```
+
+This line simply displays the value of the variable
+
+## BEDtools
+
+We need the sequences of the transcripts that need to be quantified. We are going to extract these sequences from the reference `data/tiny_dataset/fasta/tiny_v2.fasta` with the `bed` annotation `data/tiny_dataset/annot/tiny.bed`.
+
+You include the `fasta_from_bed` process from the [src/nf_modules/bedtools/main.nf](https://gitbio.ens-lyon.fr/LBMC/nextflow/blob/master/src/nf_modules/bedtools/main.nf) file to your `src/RNASeq.nf` file.
+
+You need to be able to input a `fasta_files` `channel` and a `bed_files` `channel`.
+
+```Groovy
+log.info "fasta file : ${params.fasta}"
+log.info "bed file : ${params.bed}"
+
+channel
+  .fromPath( params.fasta )
+  .ifEmpty { error "Cannot find any fasta files matching: ${params.fasta}" }
+  .map { it -> [it.simpleName, it]}
+  .set { fasta_files }
+channel
+  .fromPath( params.bed )
+  .ifEmpty { error "Cannot find any bed files matching: ${params.bed}" }
+  .map { it -> [it.simpleName, it]}
+  .set { bed_files }
+```
+
+We introduce 2 new directives:
+- `.ifEmpty { error "Cannot find any fasta files matching: ${params.fasta}" }` to throw an error if the path of the file is not right
+- `.map { it -> [it.simpleName, it]}` to transform our `channel` to a format compatible with the [`CONTRIBUTING`](../CONTRIBUTING.md) rules
+
+We can add the `fastq_from_bed` step to our `workflow`
+
+```Groovy
+workflow {
+  sample_fasta(fasta_file)
+  fasta_from_bed(fasta_files, bed_files)
+}
+```
+
+Commit your work and test your pipeline with the following command:
+
+```sh
+./nextflow src/RNASeq.nf -profile singularity --fastq "data/tiny_dataset/fastq/*_R{1,2}.fastq" --fasta "data/tiny_dataset/fasta/tiny_v2.fasta" --bed "data/tiny_dataset/annot/tiny.bed"
+```
+
+## Kallisto
+
+Kallisto run in two steps: the indexation of the reference and the quantification on this index.
+
+You can include two `process`es with the following syntax:
+
+```Groovy
+include { index_fasta; mapping_fastq } from './nf_modules/kallisto/main.nf'
+```
+
+The `index_fasta` process needs to take as input the output of your `fasta_from_bed` `process`.
+The input of your `mapping_fastq` `process` needs to take as input and the output of your `index_fasta` `process` and the `fastp` `process`.
+
+The output of a `process` is accessible through `<process_name>.out`.
+In the cases where we have an `emit: <channel_name>` we can access the corrsponding channel with `<process_name>.out.<channel_name>`
+
+```Groovy
+workflow {
+  fastp(fastq_files)
+  fasta_from_bed(fasta_files, bed_files)
+  index_fasta(fasta_from_bed.out.fasta)
+  mapping_fastq(index_fasta.out.index.collect(), fastp.out.fastq)
+}
+```
+
+Commit your work and test your pipeline.
+
+## Returning results
+
+By default none of the `process` defined in `src/nf_modules` use the `publishDir` instruction.
+You can specify their `publishDir` directory by specifying the :
+
+```Groovy
+params.<process_name>_out = "path"
+```
+
+Where "path" will describe a path within the `results` folder
+
+Therefore you can either:
+
+- call your pipeline with the following parameter `--mapping_fastq_out "quantification/"`
+- add the following line to your `src/RNASeq.nf` file to get the output of the `mapping_fastq` process:
+
+```Groovy
+include { index_fasta; mapping_fastq } from './nf_modules/kallisto/main.nf' addParams(mapping_fastq_out: "quantification/")
+```
+
+Commit your work and test your pipeline.
+You now have a RNASeq analysis pipeline that can run locally with Docker or Singularity!
+
+## Bonus
+
+A file `report.html` is created for each run with the detail of your pipeline execution
+You can use the `-resume` option to be able to save into cache the process results (the in a `work/` folder).
+
+# Run your RNASeq pipeline on the PSMN
+
+First you need to connect to the PSMN:
+
+```sh
+login@allo-psmn
+```
+Then once connected to `allo-psmn`, you can connect to `e5-2667v4comp1`:
+
+```sh
+login@e5-2667v4comp1
+```
+
+## Set your environment
+
+Create and go to your `scratch` folder:
+
+```sh
+mkdir -p /scratch/Bio/<login>
+cd /scratch/Bio/<login>
+```
+
+Then you need to clone your pipeline and get the data:
+
+```sh
+git clone https://gitbio.ens-lyon.fr/<usr_name>/nextflow.git
+cd nextflow/data
+git clone https://gitbio.ens-lyon.fr/LBMC/hub/tiny_dataset.git
+cd ..
+```
+
+## Run nextflow
+
+As we don’t want nextflow to be killed in case of disconnection, we start by launching `tmux`. In case of deconnection, you can restore your session with the command `tmux a` and close one with `ctr + b + d`
+
+```sh
+tmux
+src/install_nextflow.sh
+./nextflow src/RNASeq.nf -profile psmn --fastq "data/tiny_dataset/fastq/*_R{1,2}.fastq" --fasta "data/tiny_dataset/fasta/tiny_v2.fasta" --bed "data/tiny_dataset/annot/tiny.bed"
+```
+
+You just ran your pipeline on the PSMN!

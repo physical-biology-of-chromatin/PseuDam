@@ -196,7 +196,7 @@ You can the use tests on `read.size()` to define conditional `script` block:
     --json ${file_prefix}_fastp.json \
     --report_title ${file_prefix}
   """
-  else if (reads.size() == 1)
+  else
   """
   fastp --thread ${task.cpus} \
     ${params.fastp} \
