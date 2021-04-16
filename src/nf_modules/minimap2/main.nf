@@ -56,7 +56,7 @@ process mapping_fastq {
   minimap2 ${params.mapping_fastq} -t ${task.cpus} -K ${memory} ${fasta} ${reads[0]} ${reads[1]} |
     samtools view -Sb - > ${pair_id}.bam
   """
-  else if (reads.size() == 1)
+  else
   """
   minimap2 ${params.mapping_fastq} -t ${task.cpus} -K ${memory} ${fasta} ${reads} |
     samtools view -Sb - > ${pair_id}.bam
