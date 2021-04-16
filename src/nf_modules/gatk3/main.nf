@@ -97,8 +97,8 @@ gatk3 -T SelectVariants \
 """
 }
 
-high_confidence_snp_filter = "(QD < 2.0) || (FS > 60.0) || (MQ < 40.0) || (MQRankSum < -12.5) || (ReadPosRankSum < -8.0) || (SOR > 4.0)"
-params.high_confidence_snp = "--filterExpression \"${high_confidence_snp_filter}\" --filterName \"basic_snp_filter\""
+params.high_confidence_snp_filter = "(QD < 2.0) || (FS > 60.0) || (MQ < 40.0) || (MQRankSum < -12.5) || (ReadPosRankSum < -8.0) || (SOR > 4.0)"
+params.high_confidence_snp = "--filterExpression \"${params.high_confidence_snp_filter}\" --filterName \"basic_snp_filter\""
 params.high_confidence_snp_out = ""
 process high_confidence_snp {
   container = "${container_url}"
@@ -129,8 +129,8 @@ gatk3 -T VariantFiltration \
 """
 }
 
-high_confidence_indel_filter = "QD < 3.0 || FS > 200.0 || ReadPosRankSum < -20.0 || SOR > 10.0"
-params.high_confidence_indels = "--filterExpression \"${high_confidence_indel_filter}\" --filterName \"basic_indel_filter\""
+params.high_confidence_indel_filter = "QD < 3.0 || FS > 200.0 || ReadPosRankSum < -20.0 || SOR > 10.0"
+params.high_confidence_indels = "--filterExpression \"${params.high_confidence_indel_filter}\" --filterName \"basic_indel_filter\""
 params.high_confidence_indels_out = ""
 process high_confidence_indels {
   container = "${container_url}"
