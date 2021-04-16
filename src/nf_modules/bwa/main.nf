@@ -70,7 +70,7 @@ ${index_id} ${reads[0]} ${reads[1]} 2> \
   ${file_prefix}_bwa_report.txt | \
   samtools view -@ ${task.cpus} -Sb - > ${file_prefix}.bam
 """
-  else if (reads.size() == 1)
+  else
 """
 bwa mem -t ${task.cpus} \
 ${params.mapping_fastq} \

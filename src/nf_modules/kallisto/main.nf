@@ -57,7 +57,7 @@ process mapping_fastq {
   ${params.mapping_fastq} -o ${file_prefix} \
   ${reads[0]} ${reads[1]} &> ${file_prefix}_kallisto_mapping_report.txt
   """
-  else if (reads.size() == 1)
+  else
   """
   mkdir ${file_prefix}
   kallisto quant -i ${index} -t ${task.cpus} --single \

@@ -29,7 +29,7 @@ UrQt ${params.trimming} --m ${task.cpus} --gz \
   --out ${file_prefix}_trim_R1.fastq.gz --outpair ${file_prefix}_trim_R2.fastq.gz \
   > ${pair_id}_trimming_report.txt
 """
-  else if (reads.size() == 1)
+  else
 """
 UrQt ${params.trimming} --m ${task.cpus} --gz \
   --in ${reads[0]} \

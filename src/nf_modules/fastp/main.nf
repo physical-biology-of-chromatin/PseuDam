@@ -64,7 +64,7 @@ process fastp_default {
     --json ${file_prefix}_fastp.json \
     --report_title ${file_prefix}
   """
-  else if (reads.size() == 1)
+  else
   """
   fastp --thread ${task.cpus} \
     --qualified_quality_phred 20 \
@@ -128,7 +128,7 @@ process fastp_accel_1splus {
       --json ${file_prefix}_fastp.json \
       --report_title ${file_prefix}
   """
-  else if (reads.size() == 1)
+  else
   """
   fastp --thread ${task.cpus} \
     --disable_quality_filtering \

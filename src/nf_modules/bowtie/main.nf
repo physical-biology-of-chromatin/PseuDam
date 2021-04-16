@@ -77,7 +77,7 @@ process mapping_fastq {
   tail -n 19 ${file_id}_bowtie_report_tmp.txt > \
     ${file_id}_bowtie_mapping_report.txt
   """
-  else if (reads.size() == 1)
+  else
   """
   bowtie --best -v 3 -k 1 --sam -p ${task.cpus} ${index_id} \
     ${params.mapping_fastq}
