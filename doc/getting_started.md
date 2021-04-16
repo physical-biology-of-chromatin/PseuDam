@@ -76,3 +76,7 @@ tmux
 
 Therefore, the `nextflow` process will continue to run even if you are disconnected.
 You can reatach the `tmux` session, with the command `tmux a` (and press `ctrl` `+` `b` `+` `d` to detach the attached session).
+
+## Building your pipeline
+
+You can follow the [building your pipeline guide](./doc/building_your_pipeline.md).

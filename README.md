@@ -16,8 +16,6 @@ git pull upstream master
 git merge upstream/master
 ```
 
-**If you created your `.config` file before version `0.4.0` you need to run the script `src/.update_config.sh` to use the latest docker, singularity and conda configuration (don't forget to check your config files afterward for typos).**
-
 ## Getting Started
 
 These instructions will get you a copy of the project as a template when you want to build your own pipeline.
