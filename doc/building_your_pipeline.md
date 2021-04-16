@@ -1,13 +1,13 @@
 # Building your own pipeline
 
-The goal of this pratical is to walk you through the nextflow pipeline building process you will learn:
+The goal of this guide is to walk you through the Nextflow pipeline building process you will learn:
 
 1. How to use this [git repository (LBMC/nextflow)](https://gitbio.ens-lyon.fr/LBMC/nextflow) as a template for your project.
 2. The basis of [Nextflow](https://www.nextflow.io/) the pipeline manager that we use at the lab.
-3. How to build a simple pipeline for the transcript level quantification of RNASeq data
+3. How to build a simple pipeline for the transcript-level quantification of RNASeq data
 4. How to run the exact same pipeline on a computing center ([PSMN](http://www.ens-lyon.fr/PSMN/doku.php))
 
-This guide assumes that you followed the [Git basis, trainning course](https://gitbio.ens-lyon.fr/LBMC/hub/formations/git_basis).
+This guide assumes that you followed the [Git basis, training course](https://gitbio.ens-lyon.fr/LBMC/hub/formations/git_basis).
 
 # Initialize your own project
 
@@ -27,11 +27,11 @@ This repository will keep a link with the original [LBMC/nextflow](https://gitbi
 - propose update (see [contributing guide](https://gitbio.ens-lyon.fr/LBMC/nextflow/-/blob/master/CONTRIBUTING.md#forking))
 
 
-## Project organisation
+## Project organization
 
 This project (and yours) follows the [guide of good practices for the LBMC](http://www.ens-lyon.fr/LBMC/intranet/services-communs/pole-bioinformatique/ressources/good_practice_LBMC)
 
-You are now on the main page of your fork of the [LBMC/nextflow](https://gitbio.ens-lyon.fr/LBMC/nextflow). You can explore this project, all the code in it is under the CeCILL licence (in the [LICENCE](https://gitbio.ens-lyon.fr/LBMC/nextflow/blob/master/LICENSE) file).
+You are now on the main page of your fork of the [LBMC/nextflow](https://gitbio.ens-lyon.fr/LBMC/nextflow). You can explore this project, all the codes in it is under the CeCILL licence (in the [LICENCE](https://gitbio.ens-lyon.fr/LBMC/nextflow/blob/master/LICENSE) file).
 
 The [README.md](https://gitbio.ens-lyon.fr/LBMC/nextflow/blob/master/README.md) file contains instructions to run your pipeline and test its installation.
 
@@ -44,7 +44,7 @@ The [results](https://gitbio.ens-lyon.fr/LBMC/nextflow/tree/master/results) fold
 
 The [doc](https://gitbio.ens-lyon.fr/LBMC/nextflow/tree/master/doc) folder contains the documentation and this guide.
 
-And most interestingly for you, the [src](https://gitbio.ens-lyon.fr/LBMC/nextflow/tree/master/src) contains code to wrap tools. This folder contains one visible subdirectories `nf_modules` some pipeline examples and other hidden folder and files.
+And most interestingly for you, the [src](https://gitbio.ens-lyon.fr/LBMC/nextflow/tree/master/src) contains code to wrap tools. This folder contains one visible subdirectories `nf_modules` some pipeline examples and other hidden folders and files.
 
 # Nextflow pipeline
 
@@ -76,8 +76,8 @@ input:
 file fasta
 ```
 
-When we zoom on the `input:` block we see that we define a variable `fasta` of type `file`.
-This mean that the `sample_fasta` `process` is going to get a flux of fasta file(s).
+When we zoom on the `input:` block, we see that we define a variable `fasta` of type `file`.
+This means that the `sample_fasta` `process` is going to get a flux of fasta file(s).
 Nextflow is going to write a file named as the content of the variable `fasta` in the root of the folder where `script:` is executed.
 
 ```Groovy
@@ -85,12 +85,12 @@ output:
 file "sample.fasta", emit: fasta_sample
 ```
 
-At the end of the script, a file named `sample.fasta` is found in the root the folder where `script:` is executed and will be emited as `fasta_sample`.
+At the end of the script, a file named `sample.fasta` is found in the root the folder where `script:` is executed and will be emitted as `fasta_sample`.
 
 Using the WebIDE of Gitlab, create a file `src/fasta_sampler.nf`
 ![webide](img/webide.png)
 
-The first line that you need to add is:
+The first line that you need to add is
 
 ```Groovy
 nextflow.enable.dsl=2
@@ -102,7 +102,7 @@ Then add the `sample_fastq` process and commit it to your repository.
 ## Workflow
 
 In Nexflow, `process` blocks are chained together within a `workflow` block.
-For the time beeing, we only have one `process` so `workflow` may look like an unessary complication, but keep in mind that we want to be able to write complex bioinformatic pipeline.
+For the time being, we only have one `process` so `workflow` may look like an unnecessary complication, but keep in mind that we want to be able to write complex bioinformatic pipeline.
 
 ```
 workflow {
@@ -110,14 +110,14 @@ workflow {
 }
 ```
 
-Like `process` blocks `workflow` can take some imputs: `fasta_files`
+Like `process` blocks `workflow` can take some inputs: `fasta_files`
 and transmit this input to `process`es
 
 ```
   sample_fasta(fasta_file)
 ```
 
-The `main:` block is where we are goint to call our `process`(es)
+The `main:` block is where we are going to call our `process`(es)
 Add the definition of the `workflow` to the `src/fasta_sampler.nf` file and commit it to your repository.
 
 ## Channels
@@ -132,14 +132,14 @@ channel
   .set { fasta_file }
 ```
 
-Here we defined the `channel`, `fasta_file`, that is going to send every fasta file from the folder `data/tiny_dataset/fasta/` into the process that take it as input.
+Here we defined the `channel`, `fasta_file`, that is going to send every fasta file from the folder `data/tiny_dataset/fasta/` into the process that takes it as input.
 
 Add the definition of the `channel`, above the `workflow` block, to the `src/fasta_sampler.nf` file and commit it to your repository.
 
 ## Run your pipeline locally
 
 After writing this first pipeline, you may want to test it. To do that, first clone your repository.
-After following the [Git basis, trainning course](https://gitbio.ens-lyon.fr/LBMC/hub/formations/git_basis), you should have an up to date `ssh` configuration to connect to the `gitbio.ens-lyon.fr` git server.
+After following the [Git basis, training course](https://gitbio.ens-lyon.fr/LBMC/hub/formations/git_basis), you should have an up-to-date `ssh` configuration to connect to the `gitbio.ens-lyon.fr` git server.
 
 You can then run the following commands to download your project on your computer:
 
@@ -222,7 +222,7 @@ In this section you are going to build your own pipeline for RNASeq analysis fro
 
 Open the WebIDE and create a `src/RNASeq.nf` file.
 
-The first line that we are going to add is:
+The first line that we are going to add is
 
 ```Groovy
 nextflow.enable.dsl=2
@@ -232,9 +232,9 @@ nextflow.enable.dsl=2
 
 The first step of the pipeline is to remove any Illumina adaptors left in your read files and to trim your reads by quality.
 
-The [LBMC/nextflow](https://gitbio.ens-lyon.fr/LBMC/nextflow) template provide you with many tools for which you can find predefined `process` block.
+The [LBMC/nextflow](https://gitbio.ens-lyon.fr/LBMC/nextflow) template provide you with many tools for which you can find a predefined `process` block.
 You can find a list of these tools in the [`src/nf_modules`](./src/nf_modules) folder.
-You can also ask for a new tool by creating an [new issue for it](https://gitbio.ens-lyon.fr/LBMC/nextflow/-/issues/new) in the [LBMC/nextflow](https://gitbio.ens-lyon.fr/LBMC/nextflow) project.
+You can also ask for a new tool by creating a [new issue for it](https://gitbio.ens-lyon.fr/LBMC/nextflow/-/issues/new) in the [LBMC/nextflow](https://gitbio.ens-lyon.fr/LBMC/nextflow) project.
 
 We are going to include the [`src/nf_modules/fastp/main.nf`](./src/nf_modules/fastp/main.nf) in our `src/RNASeq.nf` file
 
@@ -242,10 +242,10 @@ We are going to include the [`src/nf_modules/fastp/main.nf`](./src/nf_modules/fa
 include { fastp } from "./nf_modules/fastp/main.nf"
 ```
 
-With this ligne we can call the `fastp` block in our future `workflow` without having to write it !
+With this line we can call the `fastp` block in our future `workflow` without having to write it !
 If we check the content of the file [`src/nf_modules/fastp/main.nf`](./src/nf_modules/fastp/main.nf), we can see that by including `fastp`, we are including a sub-`workflow` (we will come back on this object latter).
 This `sub-workflow` takes a `fastq` `channel`. We need to make one
-The `./nf_modules/fastp/main.nf` is relative to the `src/RNASeq.nf` file, this is why we don't include the `src/` part of the path.
+The `./nf_modules/fastp/main.nf` is relative to the `src/RNASeq.nf` file, this is why we don’t include the `src/` part of the path.
 
 ```Groovy
 channel
@@ -253,10 +253,10 @@ channel
   .set { fastq_files }
 ```
 
-The `.fromFilePairs()` can create a `channel` of pair of fastq files. Therefore, the items emited by the `fastq_files` channel are going to be pairs of fastq for paired-end data.
+The `.fromFilePairs()` can create a `channel` of pair of fastq files. Therefore, the items emitted by the `fastq_files` channel are going to be pairs of fastq for paired-end data.
 The option `size: -1` allows arbitrary number of associated files. Therefore, we can use the same `channel` creation for single-end data.
 
-We can now include the `workflow` definition, passing the `fastq_files` `channel` to `fastp` to our `src/RNASeq.nf` file
+We can now include the `workflow` definition, passing the `fastq_files` `channel` to `fastp` to our `src/RNASeq.nf` file.
 
 ```Groovy
 workflow {
@@ -274,17 +274,17 @@ What is happening ?
 
 ## Nextflow `-profile`
 
-Nextflow tells you the following error: `fastp: command not found`. You don't have `fastp` installed on your computer.
+Nextflow tells you the following error: `fastp: command not found`. You haven’t `fastp` installed on your computer.
 
-Tools instalation can be a tedious process and reinstalling old version of those tools to reproduce old analyses can be very difficult.
-Containers technologies like [Docker](https://www.docker.com/) or [Singularity](https://sylabs.io/singularity/) allows to create small virtual environments where we can install a software in a given version with all it's dependencies. This environement can be saved, and share, to have access to this exact working version of the software.
+Tools installation can be a tedious process and reinstalling old version of those tools to reproduce old analyses can be very difficult.
+Containers technologies like [Docker](https://www.docker.com/) or [Singularity](https://sylabs.io/singularity/) allows to create small virtual environments where we can install software in a given version with all it’s dependencies. This environment can be saved, and share, to have access to this exact working version of the software.
 
-> Why two differents systems ?
+> Why two different systems ?
 > Docker is easy to use and can be installed on Windows / MacOS / GNU/Linux but need admin rights
-> Singularity can only be used on GNU/Linux but dont need admin rights, and can be used on shared environement
+> Singularity can only be used on GNU/Linux but don’t need admin rights, and can be used on shared environment
 
-The [LBMC/nextflow](https://gitbio.ens-lyon.fr/LBMC/nextflow) template provide you with [4 differents `-profile`s to run your pipeline](https://gitbio.ens-lyon.fr/LBMC/nextflow/-/blob/master/doc/getting_started.md#nextflow-profile).
-Profiles are defined in the [`src/nextflow.config`](./src/nextflow.config), which is the default configuration file for your pipeline (you don't have to edit this file).
+The [LBMC/nextflow](https://gitbio.ens-lyon.fr/LBMC/nextflow) template provide you with [4 different `-profile`s to run your pipeline](https://gitbio.ens-lyon.fr/LBMC/nextflow/-/blob/master/doc/getting_started.md#nextflow-profile).
+Profiles are defined in the [`src/nextflow.config`](./src/nextflow.config), which is the default configuration file for your pipeline (you don’t have to edit this file).
 
 To run the pipeline locally you can use the profile `singularity` or `docker`
 
@@ -292,12 +292,12 @@ To run the pipeline locally you can use the profile `singularity` or `docker`
 ./nextflow src/RNASeq.nf -profile singularity
 ```
 
-The `fastp` `singularity` or `docker` image is downloaded automatically and the fastq file are processed.
+The `fastp` `singularity` or `docker` image is downloaded automatically and the fastq files are processed.
 
 ## Pipeline `--` arguments
 
 We have defined the fastq file path within our `src/RNASeq.nf` file.
-But, what if we want to share our pipeline with someone who don't want to analyse the `tiny_dataset` and but other fastq.
+But what if we want to share our pipeline with someone who doesn’t want to analyze the `tiny_dataset` and but other fastq.
 We can define a variable instead of fixing the path.
 
 ```Groovy
@@ -379,7 +379,7 @@ The `index_fasta` process needs to take as input the output of your `fasta_from_
 The input of your `mapping_fastq` `process` needs to take as input and the output of your `index_fasta` `process` and the `fastp` `process`.
 
 The output of a `process` is accessible through `<process_name>.out`.
-In the cases where we have an `emit: <channel_name>` we can access the corrsponding channel with `<process_name>.out.<channel_name>`
+In the cases where we have an `emit: <channel_name>` we can access the corresponding channel with`<process_name>.out.<channel_name>`
 
 ```Groovy
 workflow {
@@ -417,7 +417,7 @@ You now have a RNASeq analysis pipeline that can run locally with Docker or Sing
 
 ## Bonus
 
-A file `report.html` is created for each run with the detail of your pipeline execution
+A file `report.html` is created for each run with the detail of your pipeline execution.
 You can use the `-resume` option to be able to save into cache the process results (the in a `work/` folder).
 
 # Run your RNASeq pipeline on the PSMN
@@ -453,7 +453,7 @@ cd ..
 
 ## Run nextflow
 
-As we don’t want nextflow to be killed in case of disconnection, we start by launching `tmux`. In case of deconnection, you can restore your session with the command `tmux a` and close one with `ctr + b + d`
+As we don’t want nextflow to be killed in case of disconnection, we start by launching `tmux`. In case of disconnection, you can restore your session with the command `tmux a` and close one with `ctr + b + d`
 
 ```sh
 tmux

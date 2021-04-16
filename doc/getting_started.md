@@ -4,7 +4,7 @@ These instructions will get you a copy of the project up and running on your loc
 
 ## Prerequisites
 
-To run nextflow on you computer you need to have `java` (>= 1.8) installed.
+To run nextflow on your computer you need to have `java` (>= 1.8) installed.
 
 ```sh
 java --version
@@ -30,7 +30,7 @@ singularity run docker://hello-world
 
 ## Installing
 
-To install nextflow on you computer simply run the following command:
+To install nextflow on your computer simply run the following command:
 
 ```sh
 git clone git@gitbio.ens-lyon.fr/LBMC/nextflow
@@ -65,9 +65,9 @@ By default le `src/nextflow.config` file define 4 different profiles
 - `-profile psmn` each process will be sent as a separate job within a `singularity` container on the PSMN
 - `-profile ccin2p3` each process will be sent as a separate job within a `singularity` container on the CCIN2P3
 
-If the container are not found locally, they are automatically downloaded befor running the process. For the PSMN and CCIN2P3, the `singularity` images are downloaded in a shared folder (`/scratch/Bio/singularity` for the PSMN)
+If the containers are not found locally, they are automatically downloaded befor running the process. For the PSMN and CCIN2P3, the `singularity` images are downloaded in a shared folder (`/scratch/Bio/singularity` for the PSMN)
 
-When running `nextflow` on the PSMN, we recommand to use `tmux` before launching the pipeline:
+When running `nextflow` on the PSMN, we recommend to use `tmux` before launching the pipeline:
 
 ```sh
 tmux
@@ -75,7 +75,7 @@ tmux
 ```
 
 Therefore, the `nextflow` process will continue to run even if you are disconnected.
-You can reatach the `tmux` session, with the command `tmux a` (and press `ctrl` `+` `b` `+` `d` to detach the attached session).
+You can re-attach the `tmux` session, with the command `tmux a` (and press `ctrl` `+` `b` `+` `d` to detach the attached session).
 
 ## Building your pipeline
 
