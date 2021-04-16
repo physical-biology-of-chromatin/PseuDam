@@ -40,7 +40,7 @@ process mapping_fastq {
   tuple val(file_id), path(reads)
 
   output:
-  tuple val(file_id), path("${pair_id}"), emit: counts
+  tuple val(file_id), path("${file_prefix}"), emit: counts
   tuple val(file_id), path("*_report.txt"), emit: report
 
   script:
