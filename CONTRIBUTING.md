@@ -203,6 +203,40 @@ You can the use tests on `read.size()` to define conditional `script` block:
 ...
 ```
 
+### Complex processes
+
+Sometime you want to do write complexe processes, for example for `fastp` we want to have predefine `fastp` process for different protocols, order of adapter trimming and reads clipping.
+We can then use the fact that `process` or named `workflow` can be interchangeably imported with th [DSL2](https://www.nextflow.io/docs/latest/dsl2.html#workflow-composition).
+
+With the following example, the user can simply include the `fastp` step without knowing that it's a named `workflow`instead of a `process`.
+By specifying the `params.fastp_protocol`, the `fastp` step will transparently switch betwen the different `fastp` `process`es.
+Here `fastp_default` or `fastp_accel_1splus`, and other protocols can be added later, pipeline will be able to handle these new protocols by simply updating from the `upstream` repository without changing their codes.
+
+```
+params.fastp_protocol = ""
+workflow fastp {
+  take:
+    fastq
+
+  main:
+  switch(params.fastp_protocol) {
+    case "accel_1splus":
+      fastp_accel_1splus(fastq)
+      fastp_accel_1splus.out.fastq.set{res_fastq}
+      fastp_accel_1splus.out.report.set{res_report}
+    break;
+    default:
+      fastp_default(fastq)
+      fastp_default.out.fastq.set{res_fastq}
+      fastp_default.out.report.set{res_report}
+    break;
+  }
+  emit:
+    fastq = res_fastq
+    report = res_report
+}
+```
+
 ## `src/.docker_modules` guide lines
 
 We are going to take the [`fastp`, `.docker_modules`](./src/.docker_module/fastp/0.20.1/) as an example.
