@@ -2,6 +2,9 @@
 
 This repository is a template and a library repository to help you build nextflow pipeline.
 You can fork this repository to build your own pipeline.
+
+## Getting the last updates
+
 To get the last commits from this repository into your fork use the following commands:
 
 For the first time:
