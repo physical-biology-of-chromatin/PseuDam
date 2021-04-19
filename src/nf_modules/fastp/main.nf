@@ -39,9 +39,9 @@ process fastp_default {
   tuple val(file_id), path(reads)
 
   output:
-    tuple val(file_id), path("*.fastq.gz"), emit: fastq
-    tuple val(file_id), path("*.html"), emit: html
-    tuple val(file_id), path("*.json"), emit: report
+    tuple val(file_id), path("*_trim.fastq.gz"), emit: fastq
+    tuple val(file_id), path("${file_prefix}.html"), emit: html
+    tuple val(file_id), path("${file_prefix}_fastp.json"), emit: report
 
   script:
   if (file_id instanceof List){
@@ -91,9 +91,9 @@ process fastp_accel_1splus {
   tuple val(file_id), path(reads)
 
   output:
-    tuple val(file_id), path("*.fastq.gz"), emit: fastq
-    tuple val(file_id), path("*.html"), emit: html
-    tuple val(file_id), path("*.json"), emit: report
+    tuple val(file_id), path("*_trim.fastq.gz"), emit: fastq
+    tuple val(file_id), path("${file_prefix}.html"), emit: html
+    tuple val(file_id), path("${file_prefix}_fastp.json"), emit: report
 
   script:
   if (file_id instanceof List){
