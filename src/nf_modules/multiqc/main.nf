@@ -2,7 +2,7 @@ version = "1.9"
 container_url = "lbmc/multiqc:${version}"
 
 params.multiqc = ""
-params.multiqc_out = ""
+params.multiqc_out = "QC/"
 process multiqc {
   container = "${container_url}"
   label "big_mem_mono_cpus"
