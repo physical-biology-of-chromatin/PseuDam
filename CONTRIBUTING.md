@@ -7,7 +7,7 @@ email, or on the [ENS-Bioinfo channel](https://matrix.to/#/#ens-bioinfo:matrix.o
 
 In git, the [action of forking](https://git-scm.com/book/en/v2/GitHub-Contributing-to-a-Project) means that you are going to make your own private copy of a repository. You can then write modifications in your project, and if they are of interest for the source repository create a merge request (here [LBMC/nextflow](https://gitbio.ens-lyon.fr/LBMC/nextflow)). Merge requests are sent to the source repository to ask the maintainers to integrate modifications.
 
-![merge request button](../img/merge_request.png)
+![merge request button](./img/merge_request.png)
 
 ## Project organization
 

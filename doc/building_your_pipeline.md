@@ -18,7 +18,7 @@ You are going to build a pipeline for you or your team. So the first step is to 
 Instead of reinventing the wheel, you can use the [LBMC/nextflow](https://gitbio.ens-lyon.fr/LBMC/nextflow) as a template.
 To easily do so, go to the [LBMC/nextflow](https://gitbio.ens-lyon.fr/LBMC/nextflow) repository and click on the [**fork**](https://gitbio.ens-lyon.fr/LBMC/nextflow/forks/new) button (you need to log-in).
 
-![fork button](img/fork.png)
+![fork button](./img/fork.png)
 
 In git, the [action of forking](https://git-scm.com/book/en/v2/GitHub-Contributing-to-a-Project) means that you are going to make your own private copy of a repository.
 This repository will keep a link with the original [LBMC/nextflow](https://gitbio.ens-lyon.fr/LBMC/nextflow) project from which you will be able to
@@ -88,7 +88,7 @@ file "sample.fasta", emit: fasta_sample
 At the end of the script, a file named `sample.fasta` is found in the root the folder where `script:` is executed and will be emitted as `fasta_sample`.
 
 Using the WebIDE of Gitlab, create a file `src/fasta_sampler.nf`
-![webide](img/webide.png)
+![webide](./img/webide.png)
 
 The first line that you need to add is
 
