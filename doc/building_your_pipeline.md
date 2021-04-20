@@ -212,6 +212,8 @@ head ${fasta} > ${fasta.simpleName}_sample.fasta
 Add this to your `src/fasta_sampler.nf` file with the WebIDE and commit it to your repository before pulling your modifications locally.
 You can run your pipeline again and check the content of the folder `results/sampling`.
 
+Congratulations you built your first, one step, nextflow pipeline !
+
 
 # Build your own RNASeq pipeline
 
@@ -229,7 +231,7 @@ nextflow.enable.dsl=2
 
 The first step of the pipeline is to remove any Illumina adaptors left in your read files and to trim your reads by quality.
 
-The [LBMC/nextflow](https://gitbio.ens-lyon.fr/LBMC/nextflow) template provide you with many tools for which you can find a predefined `process` block.
+The [LBMC/nextflow](https://gitbio.ens-lyon.fr/LBMC/nextflow) template provide you with many tools, for which you can find a predefined `process` block.
 You can find a list of these tools in the [`src/nf_modules`](./src/nf_modules) folder.
 You can also ask for a new tool by creating a [new issue for it](https://gitbio.ens-lyon.fr/LBMC/nextflow/-/issues/new) in the [LBMC/nextflow](https://gitbio.ens-lyon.fr/LBMC/nextflow) project.
 
@@ -238,11 +240,12 @@ We are going to include the [`src/nf_modules/fastp/main.nf`](./src/nf_modules/fa
 ```Groovy
 include { fastp } from "./nf_modules/fastp/main.nf"
 ```
+The `./nf_modules/fastp/main.nf` is relative to the `src/RNASeq.nf` file, this is why we don’t include the `src/` part of the path.
 
 With this line we can call the `fastp` block in our future `workflow` without having to write it !
-If we check the content of the file [`src/nf_modules/fastp/main.nf`](./src/nf_modules/fastp/main.nf), we can see that by including `fastp`, we are including a sub-`workflow` (we will come back on this object latter).
-This `sub-workflow` takes a `fastq` `channel`. We need to make one
-The `./nf_modules/fastp/main.nf` is relative to the `src/RNASeq.nf` file, this is why we don’t include the `src/` part of the path.
+If we check the content of the file [`src/nf_modules/fastp/main.nf`](./src/nf_modules/fastp/main.nf), we can see that by including `fastp`, we are including a sub-`workflow` (we will come back on this object latter). Sub-`workflow` can be used like `process`es.
+
+This `sub-workflow` takes a `fastq` `channel`. We need to make one:
 
 ```Groovy
 channel
@@ -250,8 +253,9 @@ channel
   .set { fastq_files }
 ```
 
-The `.fromFilePairs()` can create a `channel` of pair of fastq files. Therefore, the items emitted by the `fastq_files` channel are going to be pairs of fastq for paired-end data.
-The option `size: -1` allows arbitrary number of associated files. Therefore, we can use the same `channel` creation for single-end data.
+The `.fromFilePairs()` function creates a `channel` of pairs of fastq files. Therefore, the items emitted by the `fastq_files` channel are going to be pairs of fastq for paired-end data.
+
+The option `size: -1` allows for arbitrary numbers of associated files. Therefore, we can use the same `channel` creation for single-end data.
 
 We can now include the `workflow` definition, passing the `fastq_files` `channel` to `fastp` to our `src/RNASeq.nf` file.
 
@@ -274,13 +278,15 @@ What is happening ?
 Nextflow tells you the following error: `fastp: command not found`. You haven’t `fastp` installed on your computer.
 
 Tools installation can be a tedious process and reinstalling old version of those tools to reproduce old analyses can be very difficult.
-Containers technologies like [Docker](https://www.docker.com/) or [Singularity](https://sylabs.io/singularity/) allows to create small virtual environments where we can install software in a given version with all it’s dependencies. This environment can be saved, and share, to have access to this exact working version of the software.
+Containers technologies like [Docker](https://www.docker.com/) or [Singularity](https://sylabs.io/singularity/) create small virtual environments where we can install software in a given version with all it’s dependencies. This environment can be saved, and shared, to have access to this exact working version of the software.
 
 > Why two different systems ?
-> Docker is easy to use and can be installed on Windows / MacOS / GNU/Linux but need admin rights
-> Singularity can only be used on GNU/Linux but don’t need admin rights, and can be used on shared environment
 
-The [LBMC/nextflow](https://gitbio.ens-lyon.fr/LBMC/nextflow) template provide you with [4 different `-profile`s to run your pipeline](https://gitbio.ens-lyon.fr/LBMC/nextflow/-/blob/master/doc/getting_started.md#nextflow-profile).
+> Docker is easy to use and can be installed on Windows / MacOS / GNU/Linux but need admin rights.
+> Singularity can only be used on GNU/Linux but don’t need admin rights, and can be used on shared environment.
+
+The [LBMC/nextflow](https://gitbio.ens-lyon.fr/LBMC/nextflow) template provides you with [4 different `-profile`s to run your pipeline](https://gitbio.ens-lyon.fr/LBMC/nextflow/-/blob/master/doc/getting_started.md#nextflow-profile).
+
 Profiles are defined in the [`src/nextflow.config`](./src/nextflow.config), which is the default configuration file for your pipeline (you don’t have to edit this file).
 
 To run the pipeline locally you can use the profile `singularity` or `docker`
@@ -289,11 +295,11 @@ To run the pipeline locally you can use the profile `singularity` or `docker`
 ./nextflow src/RNASeq.nf -profile singularity
 ```
 
-The `fastp` `singularity` or `docker` image is downloaded automatically and the fastq files are processed.
+The `fastp`, `singularity` or `docker`, image is downloaded automatically and the fastq files are processed.
 
 ## Pipeline `--` arguments
 
-We have defined the fastq file path within our `src/RNASeq.nf` file.
+We have defined the fastq files path within our `src/RNASeq.nf` file.
 But what if we want to share our pipeline with someone who doesn’t want to analyze the `tiny_dataset` and but other fastq.
 We can define a variable instead of fixing the path.
 
@@ -305,7 +311,10 @@ channel
 ```
 
 We declare a variable that contains the path of the fastq file to look for. The advantage of using `params.fastq` is that the option `--fastq` is now a parameter of your pipeline.
-Thus, you can call your pipeline with the `--fastq` option:
+
+Thus, you can call your pipeline with the `--fastq` option.
+
+You can commit your `src/RNASeq.nf` file, `pull` your modification locally and run your pipeline with the command:
 
 ```sh
 ./nextflow src/RNASeq.nf -profile singularity --fastq "data/tiny_dataset/fastq/*_R{1,2}.fastq"
@@ -321,9 +330,9 @@ This line simply displays the value of the variable
 
 ## BEDtools
 
-We need the sequences of the transcripts that need to be quantified. We are going to extract these sequences from the reference `data/tiny_dataset/fasta/tiny_v2.fasta` with the `bed` annotation `data/tiny_dataset/annot/tiny.bed`.
+We need the sequences of the transcripts that need to be quantified. We are going to extract these sequences from the reference `data/tiny_dataset/fasta/tiny_v2.fasta` with the `bed` file annotation `data/tiny_dataset/annot/tiny.bed`.
 
-You include the `fasta_from_bed` process from the [src/nf_modules/bedtools/main.nf](https://gitbio.ens-lyon.fr/LBMC/nextflow/blob/master/src/nf_modules/bedtools/main.nf) file to your `src/RNASeq.nf` file.
+You can include the `fasta_from_bed` `process` from the [src/nf_modules/bedtools/main.nf](https://gitbio.ens-lyon.fr/LBMC/nextflow/blob/master/src/nf_modules/bedtools/main.nf) file to your `src/RNASeq.nf` file.
 
 You need to be able to input a `fasta_files` `channel` and a `bed_files` `channel`.
 
@@ -345,7 +354,7 @@ channel
 
 We introduce 2 new directives:
 - `.ifEmpty { error "Cannot find any fasta files matching: ${params.fasta}" }` to throw an error if the path of the file is not right
-- `.map { it -> [it.simpleName, it]}` to transform our `channel` to a format compatible with the [`CONTRIBUTING`](../CONTRIBUTING.md) rules
+- `.map { it -> [it.simpleName, it]}` to transform our `channel` to a format compatible with the [`CONTRIBUTING`](../CONTRIBUTING.md) rules. Item, in the `channel` have the following shape [file_id, [file]], like the ones emited by the `.fromFilePairs(..., size: -1)` function.
 
 We can add the `fastq_from_bed` step to our `workflow`
 
@@ -364,7 +373,7 @@ Commit your work and test your pipeline with the following command:
 
 ## Kallisto
 
-Kallisto run in two steps: the indexation of the reference and the quantification on this index.
+Kallisto run in two steps: the indexation of the reference and the quantification of the transcript on this index.
 
 You can include two `process`es with the following syntax:
 
@@ -372,8 +381,9 @@ You can include two `process`es with the following syntax:
 include { index_fasta; mapping_fastq } from './nf_modules/kallisto/main.nf'
 ```
 
-The `index_fasta` process needs to take as input the output of your `fasta_from_bed` `process`.
-The input of your `mapping_fastq` `process` needs to take as input and the output of your `index_fasta` `process` and the `fastp` `process`.
+The `index_fasta` process needs to take as input the output of your `fasta_from_bed` `process`, which has the shape `[fasta_id, [fasta_file]]`.
+
+The input of your `mapping_fastq` `process` needs to take as input and the output of your `index_fasta` `process` and the `fastp` `process`, of shape `[index_id, [index_file]]`, and `[fastq_id, [fastq_r1_file, fastq_r2_file]]`.
 
 The output of a `process` is accessible through `<process_name>.out`.
 In the cases where we have an `emit: <channel_name>` we can access the corresponding channel with`<process_name>.out.<channel_name>`
