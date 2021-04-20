@@ -1,6 +1,7 @@
 # Getting Started
 
 These instructions will get you a copy of the project up and running on your local machine for development and testing purposes.
+You can follow the [building your pipeline guide](./doc/building_your_pipeline.md) to learn how to build your own pipelines.
 
 ## Prerequisites
 
@@ -89,6 +90,3 @@ You can edit the `src/ccin2p3.pbs` file to personalize your `nextflow` command a
 qsub src/ccin2p3.pbs
 ```
 
-## Building your pipeline
-
-You can follow the [building your pipeline guide](./doc/building_your_pipeline.md).

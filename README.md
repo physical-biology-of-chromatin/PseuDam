@@ -25,6 +25,10 @@ These instructions will get you a copy of the project as a template when you wan
 
 [you can follow them here.](doc/getting_started.md)
 
+## Building your pipeline
+
+You can follow the [building your pipeline guide](./doc/building_your_pipeline.md) for a gentle introduction to `nextflow` and taking advantage of this template to build your pipelines.
+
 ## Contributing
 
 If you want to add more tools to this project, please read the [CONTRIBUTING.md](CONTRIBUTING.md).
