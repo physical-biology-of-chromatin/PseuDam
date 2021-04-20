@@ -1,6 +1,6 @@
 # Getting Started
 
-These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. See deployment for notes on how to deploy the project on a live system.
+These instructions will get you a copy of the project up and running on your local machine for development and testing purposes.
 
 ## Prerequisites
 
@@ -65,7 +65,10 @@ By default le `src/nextflow.config` file define 4 different profiles
 - `-profile psmn` each process will be sent as a separate job within a `singularity` container on the PSMN
 - `-profile ccin2p3` each process will be sent as a separate job within a `singularity` container on the CCIN2P3
 
-If the containers are not found locally, they are automatically downloaded befor running the process. For the PSMN and CCIN2P3, the `singularity` images are downloaded in a shared folder (`/scratch/Bio/singularity` for the PSMN)
+If the containers are not found locally, they are automatically downloaded before running the process. For the PSMN and CCIN2P3, the `singularity` images are downloaded in a shared folder (`/scratch/Bio/singularity` for the PSMN, and `/sps/lbmc/common/singularity/` for the CCIN2P3)
+
+
+### PSMN
 
 When running `nextflow` on the PSMN, we recommend to use `tmux` before launching the pipeline:
 
@@ -76,6 +79,15 @@ tmux
 
 Therefore, the `nextflow` process will continue to run even if you are disconnected.
 You can re-attach the `tmux` session, with the command `tmux a` (and press `ctrl` `+` `b` `+` `d` to detach the attached session).
+
+### CCIN2P3
+
+When runnning `nextflow` on the CCIN2P3, you cannot use `tmux`, instead you should send a *daemon* jobs which will launch the `nextflow` command.
+You can edit the `src/ccin2p3.pbs` file to personalize your `nextflow` command and send it with the command:
+
+```sh
+qsub src/ccin2p3.pbs
+```
 
 ## Building your pipeline
 
