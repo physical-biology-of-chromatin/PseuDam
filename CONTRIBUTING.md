@@ -19,7 +19,7 @@ The `LBMC/nextflow` project is structured as follows:
 
 ## Code structure
 
-The `src/` folder is where we want to save the pipeline (`.nf`) script. This folder also contains
+The `src/` folder is where we want to save the pipeline (`.nf`) scripts. This folder also contains
 - the `src/install_nextflow.sh` to install the nextflow executable at the root of the project.
 - some pipelines examples (like the one build during the nf_pratical)
 - the `src/nextflow.config` global configuration file which contains the `docker`, `singularity`, `psmn` and `ccin2p3` profiles.
@@ -252,6 +252,7 @@ The [`src/.docker_modules/<tool_name>/<version_number>`](./src/nf_modules/fastp/
 ### `Dockerfile`
 
 The [`Dockerfile`](./src/.docker_module/fastp/0.20.1/Dockerfile) shoud contains a `docker` recipe to build a image with `<tool_name>` installed in a system-wide binary folder (`/bin`, `/usr/local/bin/`, etc).
+Therefore, your scripts are easily accessible from within the container.
 
 This recipe should have:
 
