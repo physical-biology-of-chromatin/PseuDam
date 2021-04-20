@@ -23,7 +23,7 @@ To easily do so, go to the [LBMC/nextflow](https://gitbio.ens-lyon.fr/LBMC/nextf
 In git, the [action of forking](https://git-scm.com/book/en/v2/GitHub-Contributing-to-a-Project) means that you are going to make your own private copy of a repository.
 This repository will keep a link with the original [LBMC/nextflow](https://gitbio.ens-lyon.fr/LBMC/nextflow) project from which you will be able to
 
-- [get updates](https://gitbio.ens-lyon.fr/LBMC/nextflow#getting-the-last-updates) [LBMC/nextflow](https://gitbio.ens-lyon.fr/LBMC/nextflow) from the repository
+- [get updates](https://gitbio.ens-lyon.fr/LBMC/nextflow#getting-the-last-updates) `LBMC/nextflow` from the repository
 - propose update (see [contributing guide](https://gitbio.ens-lyon.fr/LBMC/nextflow/-/blob/master/CONTRIBUTING.md#forking))
 
 
@@ -40,7 +40,7 @@ The [CONTRIBUTING.md](https://gitbio.ens-lyon.fr/LBMC/nextflow/blob/master/CONTR
 The [data](https://gitbio.ens-lyon.fr/LBMC/nextflow/tree/master/data) folder will be the place where you store the raw data for your analysis.
 The [results](https://gitbio.ens-lyon.fr/LBMC/nextflow/tree/master/results) folder will be the place where you store the results of your analysis.
 
-> **The content of `data` and `results` folders should never be saved on git.**
+**The content of `data` and `results` folders should never be saved on git.**
 
 The [doc](https://gitbio.ens-lyon.fr/LBMC/nextflow/tree/master/doc) folder contains the documentation and this guide.
 
@@ -104,7 +104,7 @@ Then add the `sample_fastq` process and commit it to your repository.
 In Nexflow, `process` blocks are chained together within a `workflow` block.
 For the time being, we only have one `process` so `workflow` may look like an unnecessary complication, but keep in mind that we want to be able to write complex bioinformatic pipeline.
 
-```
+```Groovy
 workflow {
   sample_fasta(fasta_file)
 }
@@ -113,11 +113,10 @@ workflow {
 Like `process` blocks `workflow` can take some inputs: `fasta_files`
 and transmit this input to `process`es
 
-```
+```Groovy
   sample_fasta(fasta_file)
 ```
 
-The `main:` block is where we are going to call our `process`(es)
 Add the definition of the `workflow` to the `src/fasta_sampler.nf` file and commit it to your repository.
 
 ## Channels
@@ -141,9 +140,7 @@ Add the definition of the `channel`, above the `workflow` block, to the `src/fas
 After writing this first pipeline, you may want to test it. To do that, first clone your repository.
 After following the [Git basis, training course](https://gitbio.ens-lyon.fr/LBMC/hub/formations/git_basis), you should have an up-to-date `ssh` configuration to connect to the `gitbio.ens-lyon.fr` git server.
 
-You can then run the following commands to download your project on your computer:
-
-and then :
+You can run the following commands to download your project on your computer:
 
 ```sh
 git clone git@gitbio.ens-lyon.fr:<usr_name>/nextflow.git
@@ -151,9 +148,9 @@ cd nextflow
 src/install_nextflow.sh
 ```
 
-We also need data to run our pipeline:
+We also need data to test our pipeline:
 
-```
+```sh
 cd data
 git clone git@gitbio.ens-lyon.fr:LBMC/hub/tiny_dataset.git
 cd ..
@@ -168,7 +165,7 @@ We can run our pipeline with the following command:
 
 ## Getting your results
 
-Our pipeline seems to work but we don’t know where is the `sample.fasta`. To get results out of a process, we need to tell nextflow to write it somewhere (we may don’t need to get every intermediate file in our results).
+Our pipeline seems to work but we don’t know where is the `sample.fasta`. To get results out of a `process`, we need to tell nextflow to write it somewhere (we may don’t need to get every intermediate file in our results).
 
 To do that we need to add the following line before the `input:` section:
 

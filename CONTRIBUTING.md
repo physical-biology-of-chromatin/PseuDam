@@ -45,7 +45,7 @@ The [`src/nf_modules/<tool_name>`](./src/nf_modules/fastp/) should contain a [`m
 ### container informations
 
 The first two lines of [`main.nf`](./src/nf_modules/fastp/main.nf) should define two variables
-```
+```Groovy
 version = "0.20.1"
 container_url = "lbmc/fastp:${version}"
 ```
@@ -57,7 +57,7 @@ In addition to the `container` directive, each `process` should have one of the 
 - `small_mem_mono_cpus`
 - `small_mem_multi_cpus`
 
-```
+```Groovy
 process fastp {
   container = "${container_url}"
   label = "big_mem_multi_cpus"
@@ -71,7 +71,7 @@ Before each process, you should declare at least two `params.` variables:
 - A `params.<process_name>` defaulting to `""` (empty string) to allow user to add more command line option to your process without rewriting the process definition
 - A `params.<process_name>_out` defaulting to `""` (empty string) that define the `results/` subfolder where the process output should be copied if the user wants to save the process output
 
-```
+```Groovy
 params.fastp = ""
 params.fastp_out = ""
 process fastp {
@@ -102,7 +102,8 @@ You should always use `tuple` for input and output channel format with at least:
 - a `path` for the file(s) that you want to process
 
 for example:
-```
+
+```Groovy
 process fastp {
   container = "${container_url}"
   label "big_mem_multi_cpus"
@@ -127,7 +128,7 @@ So you have to keep that in mind if you want to use it to define output file nam
 
 If you want to use information within the `file_id` to name outputs in your `script` section, you can use the following snipet:
 
-```
+```Groovy
   script:
   if (file_id instanceof List){
     file_prefix = file_id[0]
@@ -140,13 +141,13 @@ and use the `file_prefix` variable.
 
 This also means that channel emitting `path` item should be transformed with at least the following map function:
 
-```
+```Groovy
 .map { it -> [it.simpleName, it]}
 ```
 
 for example
 
-```
+```Groovy
 channel
   .fromPath( params.fasta )
   .ifEmpty { error "Cannot find any fasta files matching: ${params.fasta}" }
@@ -161,13 +162,13 @@ The rationale behind taking a `file_id` and emitting the same `file_id` is to fa
 
 When oppening fastq files with `channel.fromFilePairs( params.fastq )`, item in the channel have the following shape:
 
-```
+```Groovy
 [file_id, [read_1_file, read_2_file]]
 ```
 
 To make this call more generic, we can use the `size: -1` option, and accept arbitrary number of associated fastq files:
 
-```
+```Groovy
 channel.fromFilePairs( params.fastq, size: -1 )
 ```
 
@@ -176,7 +177,7 @@ will thus give `[file_id, [read_1_file, read_2_file]]` for paired-end data and `
 
 You can the use tests on `read.size()` to define conditional `script` block:
 
-```
+```Groovy
 ...
   script:
   if (file_id instanceof List){
@@ -218,7 +219,7 @@ With the following example, the user can simply include the `fastp` step without
 By specifying the `params.fastp_protocol`, the `fastp` step will transparently switch betwen the different `fastp` `process`es.
 Here `fastp_default` or `fastp_accel_1splus`, and other protocols can be added later, pipeline will be able to handle these new protocols by simply updating from the `upstream` repository without changing their codes.
 
-```
+```Groovy
 params.fastp_protocol = ""
 workflow fastp {
   take:
@@ -264,7 +265,7 @@ This recipe should have:
 
 The [`docker_init.sh`](./src/.docker_module/fastp/0.20.1/docker_init.sh) script is a small sh script with the following content:
 
-```
+```sh
 #!/bin/sh
 docker pull lbmc/fastp:0.20.1
 docker build src/.docker_modules/fastp/0.20.1 -t 'lbmc/fastp:0.20.1'
