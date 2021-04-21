@@ -98,7 +98,7 @@ gatk --java-options "-Xmx${xmx_memory}G" SelectVariants \
 }
 
 params.high_confidence_snp_filter = "(QD < 2.0) || (FS > 60.0) || (MQ < 40.0) || (MQRankSum < -12.5) || (ReadPosRankSum < -8.0) || (SOR > 4.0)"
-params.high_confidence_snp = ""
+params.high_confidence_snp = "--filter-expression \"${params.high_confidence_snp_filter}\" --filter-name \"basic_snp_filter\""
 params.high_confidence_snp_out = ""
 process high_confidence_snp {
   container = "${container_url}"
@@ -124,16 +124,13 @@ process high_confidence_snp {
 gatk --java-options "-Xmx${xmx_memory}G" VariantFiltration \
   -R ${fasta} \
   -V ${vcf} \
-  ${params.high_confidence_snp_filter} \
-  --filter-expression "${high_confidence_snp_filter}" \
-  --filter-name "basic_snp_filter" \
+  ${params.high_confidence_snp} \
   -O ${vcf.simpleName}_filtered_snp.vcf
 """
 }
 
-high_confidence_indel_filter = "QD < 3.0 || FS > 200.0 || ReadPosRankSum < -20.0 || SOR > 10.0"
-
-params.high_confidence_indels = ""
+params.high_confidence_indel_filter = "QD < 3.0 || FS > 200.0 || ReadPosRankSum < -20.0 || SOR > 10.0"
+params.high_confidence_indels = "--filter-expression \"${params.high_confidence_indel_filter}\" --filter-name \"basic_indel_filter\""
 params.high_confidence_indels_out = ""
 process high_confidence_indels {
   container = "${container_url}"
@@ -160,8 +157,6 @@ gatk --java-options "-Xmx${xmx_memory}G" VariantFiltration \
   -R ${fasta} \
   -V ${vcf} \
   ${params.high_confidence_indels} \
-  --filter-expression "${high_confidence_indel_filter}" \
-  --filter-name "basic_indel_filter" \
   -O ${vcf.simpleName}_filtered_indel.vcf
 """
 }
@@ -393,4 +388,6 @@ gatk --java-options "-Xmx${xmx_memory}G" FastaAlternateReferenceMaker\
   -O ${vcf.simpleName}_genome.fasta
 """
 }
+
+
 
