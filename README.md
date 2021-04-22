@@ -29,6 +29,12 @@ These instructions will get you a copy of the project as a template when you wan
 
 You can follow the [building your pipeline guide](./doc/building_your_pipeline.md) for a gentle introduction to `nextflow` and taking advantage of this template to build your pipelines.
 
+## Existing Nextflow pipeline
+
+Before starting a new project, you can check if someone else didn’t already to the work !
+- [on the nextflow project page](./doc/nf_projects.md)
+- [on the nf-core project](https://nf-co.re/pipelines)
+
 ## Contributing
 
 If you want to add more tools to this project, please read the [CONTRIBUTING.md](CONTRIBUTING.md).
