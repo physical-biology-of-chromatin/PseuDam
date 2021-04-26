@@ -174,9 +174,9 @@ process split_bam {
     tuple val(file_id), path("*_reverse.bam*"), emit: bam_reverse
   script:
 """
-samtools view --@ ${Math.round(task.cpus/2)} ${params.split_bam} \
+samtools view -@ ${Math.round(task.cpus/2)} ${params.split_bam} \
   -hb -F 0x10 ${bam} > ${bam.simpleName}_forward.bam &
-samtools view --@ ${Math.round(task.cpus/2)} ${params.split_bam} \
+samtools view -@ ${Math.round(task.cpus/2)} ${params.split_bam} \
   -hb -f 0x10 ${bam} > ${bam.simpleName}_reverse.bam
 """
 }
