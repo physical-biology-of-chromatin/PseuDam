@@ -62,6 +62,6 @@ process mapping_fastq {
   mkdir ${file_prefix}
   kallisto quant -i ${index} -t ${task.cpus} --single \
   ${params.mapping_fastq} -o ${file_prefix} \
-  ${reads} &> ${file_prefix}_kallisto_mapping_report.txt
+  ${reads[0]} &> ${file_prefix}_kallisto_mapping_report.txt
   """
 }
