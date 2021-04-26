@@ -1,10 +1,15 @@
 version = "3.1.1"
 container_url = "lbmc/deeptools:${version}"
 
+params.index_bam = ""
+params.index_bam_out = ""
 process index_bam {
   container = "${container_url}"
-  label "big_mem__cpus"
+  label "big_mem_multi_cpus"
   tag "$file_id"
+  if (params.index_bam_out != "") {
+    publishDir "results/${params.index_bam_out}", mode: 'copy'
+  }
 
   input:
     tuple val(file_id), path(bam)
@@ -18,11 +23,15 @@ sambamba index -t ${task.cpus} ${bam}
 """
 }
 
+params.bam_to_bigwig = ""
+params.bam_to_bigwig_out = ""
 process bam_to_bigwig {
   container = "${container_url}"
   label "big_mem_multi_cpus"
   tag "$file_id"
-
+  if (params.bam_to_bigwig_out != "") {
+    publishDir "results/${params.bam_to_bigwig_out}", mode: 'copy'
+  }
 
   input:
     tuple val(file_id), path(bam), path(idx)
@@ -37,10 +46,15 @@ bamCoverage -p ${task.cpus} --ignoreDuplicates -b ${bam} \
 """
 }
 
+params.compute_matrix = ""
+params.compute_matrix_out = ""
 process compute_matrix {
   container = "${container_url}"
   label "big_mem_multi_cpus"
   tag "${bed_file_id}"
+  if (params.compute_matrix_out != "") {
+    publishDir "results/${params.compute_matrix_out}", mode: 'copy'
+  }
 
   input:
     tuple val(file_id), path(bw)
@@ -60,10 +74,15 @@ computeMatrix scale-regions -S ${bw} \
 """
 }
 
+params.compute_matrix = ""
+params.compute_matrix_out = ""
 process plot_profile {
   container = "${container_url}"
   label "big_mem_mono_cpus"
   tag "$file_id"
+  if (params.compute_matrix_out != "") {
+    publishDir "results/${params.compute_matrix_out}", mode: 'copy'
+  }
 
   input:
     tuple val(file_id), path(matrix)
