@@ -15,7 +15,7 @@ process index_bam {
     tuple val(file_id), path(bam)
 
   output:
-    tuple val(file_id), path("*.bam*"), emit: bam
+    tuple val(file_id), path("${bam}"), path("*.bam*"), emit: bam_idx
 
   script:
 """
@@ -74,8 +74,8 @@ computeMatrix scale-regions -S ${bw} \
 """
 }
 
-params.compute_matrix = ""
-params.compute_matrix_out = ""
+params.plot_profile = ""
+params.plot_profile_out = ""
 process plot_profile {
   container = "${container_url}"
   label "big_mem_mono_cpus"
