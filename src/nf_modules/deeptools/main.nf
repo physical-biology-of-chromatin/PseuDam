@@ -1,4 +1,4 @@
-version = "3.1.1"
+version = "3.5.0"
 container_url = "lbmc/deeptools:${version}"
 
 params.index_bam = ""
