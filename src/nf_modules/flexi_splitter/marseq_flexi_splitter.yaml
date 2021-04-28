@@ -1,0 +1,41 @@
+PLATE:
+  coords:
+    reads: 0
+    start: 1
+    stop: 4
+    header: False
+  samples:
+    - name : Plate1
+      seq: GACT
+    - name : Plate2
+      seq: CATG
+    - name : Plate3
+      seq: CCAA
+    - name : Plate4
+      seq: CTGT
+    - name : Plate5
+      seq: GTAG
+    - name : Plate6
+      seq: TGAT
+    - name : Plate7
+      seq: ATCA
+    - name : Plate8
+      seq: TAGA
+
+conditions:
+    - Plate1 :
+      Plate1
+    - Plate2 :
+      Plate2
+    - Plate3 :
+      Plate3
+    - Plate4 :
+      Plate4
+    - Plate5 :
+      Plate5
+    - Plate6 :
+      Plate6
+    - Plate7 :
+      Plate7
+    - Plate8 :
+      Plate8
