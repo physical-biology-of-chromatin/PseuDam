@@ -156,7 +156,7 @@ process kb_default {
     -g ${transcript_to_gene} \
     ${whitelist_param} \
     -x 10XV3
-    ${params.mapping_fastq} \
+    ${params.count} \
     -o ${file_prefix} \
     ${reads[0]} ${reads[1]} &> ${file_prefix}_kb_mapping_report.txt
   """
@@ -203,8 +203,8 @@ process kb_marseq {
     -i ${index} \
     -g ${transcript_to_gene} \
     ${whitelist_param} \
+    ${params.count} \
     -x 1,0,6:1,6,14:1,14,0
-    ${params.mapping_fastq} \
     -o ${file_prefix} \
     ${reads[0]} ${reads[1]} &> ${file_prefix}_kb_mapping_report.txt
   """
