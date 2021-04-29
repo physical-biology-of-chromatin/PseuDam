@@ -66,7 +66,7 @@ bwa_mem_R = "@RG\\tID:${library}\\tSM:${library}\\tLB:lib_${library}\\tPL:illumi
 bwa mem -t ${task.cpus} \
 ${params.mapping_fastq} \
 -R '${bwa_mem_R}' \
-${index} ${reads[0]} ${reads[1]} 2> \
+${index.baseName} ${reads[0]} ${reads[1]} 2> \
   ${file_prefix}_bwa_report.txt | \
   samtools view -@ ${task.cpus} -Sb - > ${file_prefix}.bam
 """
@@ -75,7 +75,7 @@ ${index} ${reads[0]} ${reads[1]} 2> \
 bwa mem -t ${task.cpus} \
 ${params.mapping_fastq} \
 -R '${bwa_mem_R}' \
-${index} ${reads} 2> \
+${index.baseName} ${reads} 2> \
   ${file_prefix}_bwa_report.txt | \
   samtools view -@ ${task.cpus} -Sb - > ${file_prefix}.bam
 """
