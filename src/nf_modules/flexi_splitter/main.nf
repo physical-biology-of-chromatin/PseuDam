@@ -27,10 +27,6 @@ process split {
   } else {
     file_prefix = file_id
   }
-  def whitelist_param = ""
-  if (whitelist_id != "NO CONFIG"){
-    whitelist_param = "-w ${white_list}"
-  }
 
   if (reads.size() == 2)
   """
