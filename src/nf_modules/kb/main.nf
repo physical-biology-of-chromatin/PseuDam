@@ -1,13 +1,60 @@
 version = "0.26.0"
 container_url = "lbmc/kb:${version}"
 
-params.kb_protocol = "10x_v3"
-
 params.index_fasta = ""
 params.index_fasta_out = ""
-process index_fasta {
+
+workflow index_fasta {
+  take:
+    fasta
+    cdna
+    gtf
+    transcript_to_gene
+
+  main:
+    transcript_to_gene 
+      .ifEmpty(["NO T2G", ""])
+      .set{ transcript_to_gene_optional }
+    tr2g(gtf, transcript_to_gene_optional)
+    index_default(fasta, cdna, gtf, tr2g.out.t2g)
+
+  emit:
+    index = index_default.out.index
+    t2g = index_default.out.t2g
+    report = index_default.out.report
+}
+
+process tr2g {
+  // create transcript to gene table from gtf if no transcript to gene file is provided
   container = "${container_url}"
-  label "big_mem_multi_cpus"
+  label "big_mem_mono_cpus"
+  tag "$file_id"
+  if (params.index_fasta_out != "") {
+    publishDir "results/${params.index_fasta_out}", mode: 'copy'
+  }
+
+  input:
+    tuple val(file_id), path(gtf)
+    tuple val(t2g_id), file(transcript_to_gene)
+
+  output:
+    tuple val(file_id), path("t2g.txt"), emit: t2g
+
+  script:
+
+  if (t2g_id == "NO T2G") 
+  """
+  t2g.py --gtf ${gtf}
+  """
+  else
+  """
+  mv ${transcript_to_gene} t2g.txt
+  """
+}
+
+process index_default {
+  container = "${container_url}"
+  label "big_mem_mono_cpus"
   tag "$file_id"
   if (params.index_fasta_out != "") {
     publishDir "results/${params.index_fasta_out}", mode: 'copy'
@@ -15,6 +62,7 @@ process index_fasta {
 
   input:
     tuple val(file_id), path(fasta)
+    tuple val(cdna_id), path(cdna)
     tuple val(gtf_id), path(gtf)
     tuple val(t2g_id), path(transcript_to_gene)
 
@@ -29,10 +77,14 @@ kb ref \
   -i ${fasta.simpleName}.idx \
   -g ${transcript_to_gene} \
   ${params.index_fasta} \
-  -f1 ${fasta} ${gtf} > ${fasta.simpleName}_kb_index_report.txt
+  -f1 ${cdna} ${fasta} ${gtf} > ${fasta.simpleName}_kb_index_report.txt
 """
 }
 
+
+include { split } from "./../flexi_splitter/main.nf"
+
+params.kb_protocol = "10x_v3"
 params.count = ""
 params.count_out = ""
 workflow count {
@@ -41,6 +93,7 @@ workflow count {
     fastq
     transcript_to_gene
     whitelist
+    config
 
   main:
   whitelist
@@ -48,16 +101,18 @@ workflow count {
     .set{ whitelist_optional }
   switch(params.kb_protocol) {
     case "marsseq":
-      kb_marseq(index, fastq, transcript_to_gene, whitelist_optional)
+      split(fastq, config.collect())
+      kb_marseq(index.collect(), split.out.fastq.view(), transcript_to_gene, whitelist_optional)
       kb_marseq.out.counts.set{res_counts}
       kb_marseq.out.report.set{res_report}
     break;
     default:
-      kb_default(index, fastq, transcript_to_gene, whitelist_optional)
+      kb_default(index.collect(), fastq, transcript_to_gene, whitelist_optional)
       kb_default.out.counts.set{res_counts}
       kb_default.out.report.set{res_report}
     break;
   }
+
   emit:
     counts = res_counts
     report = res_report
@@ -67,8 +122,8 @@ process kb_default {
   container = "${container_url}"
   label "big_mem_multi_cpus"
   tag "$file_prefix"
-  if (params.kb_out != "") {
-    publishDir "results/${params.kb_out}", mode: 'copy'
+  if (params.count_out != "") {
+    publishDir "results/${params.count_out}", mode: 'copy'
   }
 
   input:
@@ -89,7 +144,7 @@ process kb_default {
   }
   def whitelist_param = ""
   if (whitelist_id != "NO WHITELIST"){
-    whitelist_param = "-w ${white_list}"
+    whitelist_param = "-w ${whitelist}"
   }
 
   if (reads.size() == 2)
@@ -115,8 +170,8 @@ process kb_marseq {
   container = "${container_url}"
   label "big_mem_multi_cpus"
   tag "$file_prefix"
-  if (params.kb_out != "") {
-    publishDir "results/${params.kb_out}", mode: 'copy'
+  if (params.count_out != "") {
+    publishDir "results/${params.count_out}", mode: 'copy'
   }
 
   input:
