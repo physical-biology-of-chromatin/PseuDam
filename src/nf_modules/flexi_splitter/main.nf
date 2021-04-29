@@ -30,10 +30,10 @@ process split {
 
   if (reads.size() == 2)
   """
-  flexi_splitter ${params.split} -f ${reads[0]} ${reads[1]} -c ${config} -o split
+  flexi_splitter ${params.split} -n 2 -f ${reads[0]} ${reads[1]} -o split -c ${config}
   """
   else
   """
-  flexi_splitter ${params.split} -f ${reads[0]} -c ${config} -o split
+  flexi_splitter ${params.split} -n 1 -f ${reads[0]} -o split -c ${config}
   """
 }

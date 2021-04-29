@@ -137,6 +137,7 @@ process kb_default {
   tuple val(file_id), path("*_report.txt"), emit: report
 
   script:
+  def kb_memory = "${task.memory}" - ~/GB/
   if (file_id instanceof List){
     file_prefix = file_id[0]
   } else {
@@ -151,7 +152,7 @@ process kb_default {
   """
   mkdir ${file_prefix}
   kb count  -t ${task.cpus} \
-    -m ${task.memory} \
+    -m ${kb_memory} \
     -i ${index} \
     -g ${transcript_to_gene} \
     ${whitelist_param} \
@@ -185,7 +186,7 @@ process kb_marseq {
   tuple val(file_id), path("*_report.txt"), emit: report
 
   script:
-  memory = "${task.memory}" - ~/\s*GB/
+  def kb_memory = "${task.memory}" - ~/GB/
   if (file_id instanceof List){
     file_prefix = file_id[0]
   } else {
@@ -200,7 +201,7 @@ process kb_marseq {
   """
   mkdir ${file_prefix}
   kb count  -t ${task.cpus} \
-    -m ${memory} \
+    -m ${kb_memory} \
     -i ${index} \
     -g ${transcript_to_gene} \
     ${whitelist_param} \
