@@ -18,7 +18,7 @@ workflow count {
     emase(bam2ec.out.bin, bam2ec.out.tsv.collect(), tr2g.out.t2g.collect())
 
   emit:
-    count: emase.count
+    count: emase.out.count
 }
 
 process emase {
