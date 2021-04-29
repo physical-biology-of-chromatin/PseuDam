@@ -14,8 +14,8 @@ workflow count {
 
   main:
     tr2g(gtf, channel.of(["NO T2G", ""]))
-    bam2ec(bam, gtf)
-    emase(bam2ec.out.bin, bam2ec.out.tsv, tr2g.out.t2g)
+    bam2ec(bam, gtf.collect())
+    emase(bam2ec.out.bin, bam2ec.out.tsv.collect(), tr2g.out.t2g.collect())
 
   emit:
     count: emase.count
