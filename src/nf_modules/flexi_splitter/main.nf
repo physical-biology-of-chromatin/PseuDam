@@ -19,7 +19,7 @@ process split {
   tuple val(config_id), path(config)
 
   output:
-  tuple val(file_id), path("*.fastq*"), emit: fastq
+  tuple val(file_id), path("*"), emit: fastq
 
   script:
   if (file_id instanceof List){
