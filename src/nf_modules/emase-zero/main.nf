@@ -2,19 +2,20 @@ version = "0.3.1"
 container_url = "lbmc/emase-zero:${version}"
 
 include { tr2g } from "./../kb/main.nf"
+include { bam2ec } from "./../alntools/main.nf"
 
 
 params.count = "-m 2"
 params.count_out = ""
 workflow count {
   take:
-    bin
-    transcript_length
+    bam
     gtf
 
   main:
     tr2g(gtf, channel.of(["NO T2G", ""]))
-    emase(bin, transcript_length, tr2g.out.t2g)
+    bam2ec(bam, gtf)
+    emase(bam2ec.out.bin, bam2ec.out.tsv, tr2g.out.t2g)
 
   emit:
     count: emase.count
