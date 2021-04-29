@@ -22,10 +22,10 @@ process bam2ec {
   script:
 """
 awk -F"\t" '
-$3=="exon" 
+\$3=="exon" 
     {
-        ID=substr($9, length($9)-16, 15); 
-        L[ID]+=$5-$4+1
+        ID=substr(\$9, length(\$9)-16, 15); 
+        L[ID]+=\$5-\$4+1
     } 
 END{
     for(i in L)
