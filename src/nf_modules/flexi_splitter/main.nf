@@ -47,10 +47,6 @@ process split_file {
   """
   flexi_splitter ${params.split} -n 2 -f ${reads[0]},${reads[1]} -o split -c ${config}
   rm -Rf split/unassigned
-  find split -type "f" | \
-    sed -E "s|(.*/split/(.*)/(.*))|\1 \2_\3|g" |
-    awk '{"mv "\$1" "\$2"}'
-  rm -Rf split
   mkdir -p results/
   find split -type "f" | \
     sed -E "s|(.*/split/(.*)/(.*))|\1 \2_\3|g" |
