@@ -50,7 +50,7 @@ process split_file {
   mkdir -p results/
   find split -type "f" | \
     sed -E "s|(.*/split/(.*)/(.*))|\1 \2_\3|g" |
-    awk '{"mv "\$1" results/"\$2"}'
+    awk '{"mv "\$1" results/"\$2}'
   rm -Rf split
   """
   else
@@ -60,7 +60,7 @@ process split_file {
   mkdir -p results/
   find split -type "f" | \
     sed -E "s|(.*/split/(.*)/(.*))|\1 \2_\3|g" |
-    awk '{"mv "\$1" results/"\$2"}'
+    awk '{"mv "\$1" results/"\$2}'
   rm -Rf split
   """
 }
