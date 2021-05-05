@@ -11,11 +11,15 @@ workflow count {
   take:
     bam
     gtf
+    transcript_to_gene
 
   main:
-    tr2g(gtf, channel.of(["NO T2G", ""]))
-    bam2ec(bam, gtf.collect())
-    emase(bam2ec.out.bin, bam2ec.out.tsv.collect(), tr2g.out.t2g.collect())
+    transcript_to_gene 
+      .ifEmpty(["NO T2G", ""])
+      .set{ transcript_to_gene_optional }
+    tr2g(gtf, transcript_to_gene_optional)
+    bam2ec(bam, gtf)
+    emase(bam2ec.out.bin, bam2ec.out.tsv, tr2g.out.t2g)
 
   emit:
     count = emase.out.count
