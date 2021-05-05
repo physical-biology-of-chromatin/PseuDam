@@ -4,6 +4,7 @@ MAINTAINER Laurent Modolo
 ENV ALNTOOLS_VERSION=dd96682
 ENV PACKAGES git \
     ca-certificates \
+    gawk \
     procps
 
 RUN apt-get update \
