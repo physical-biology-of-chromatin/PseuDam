@@ -101,13 +101,13 @@ workflow count {
     .set{ whitelist_optional }
   switch(params.kb_protocol) {
     case "marsseq":
-      split(fastq, config.collect())
-      kb_marseq(index.collect(), split.out.fastq.view(), transcript_to_gene, whitelist_optional)
+      split(fastq, config)
+      kb_marseq(index, split.out.fastq.view(), transcript_to_gene, whitelist_optional)
       kb_marseq.out.counts.set{res_counts}
       kb_marseq.out.report.set{res_report}
     break;
     default:
-      kb_default(index.collect(), fastq, transcript_to_gene, whitelist_optional)
+      kb_default(index, fastq, transcript_to_gene, whitelist_optional)
       kb_default.out.counts.set{res_counts}
       kb_default.out.report.set{res_report}
     break;
@@ -194,7 +194,7 @@ process kb_marseq {
   }
   def whitelist_param = ""
   if (whitelist_id != "NO WHITELIST"){
-    whitelist_param = "-w ${white_list}"
+    whitelist_param = "-w ${whitelist}"
   }
 
   if (reads.size() == 2)
