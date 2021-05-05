@@ -102,7 +102,7 @@ workflow count {
   switch(params.kb_protocol) {
     case "marsseq":
       split(fastq, config)
-      kb_marseq(index, split.out.fastq.view(), transcript_to_gene, whitelist_optional)
+      kb_marseq(index.collect(), split.out.fastq.view(), transcript_to_gene, whitelist_optional)
       kb_marseq.out.counts.set{res_counts}
       kb_marseq.out.report.set{res_report}
     break;
