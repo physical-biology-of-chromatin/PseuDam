@@ -21,16 +21,16 @@ process bam2ec {
 
   script:
 """
-awk -F"[\t;]" '
+awk -F"[\\t;]" '
 \$3=="exon" {
         ID=gensub(/transcript_id \"(.*)\"/, "\\1", "g", \$11); 
         LEN[ID]+=\$5-\$4+1;
     } 
 END{
     for(i in LEN)
-        {print i"\t"LEN[i]}
+        {print i"\\t"LEN[i]}
     }
 ' ${gtf} > ${gtf.simpleName}_transcripts_lengths.tsv
-alntools bam2ec ${params.bam2sec} -t ${gtf.simpleName}_transcripts_lengths.tsv -c 8 ${bam} ${bam.simpleName}.bin
+alntools bam2ec ${params.bam2ec} -t ${gtf.simpleName}_transcripts_lengths.tsv -c 8 ${bam} ${bam.simpleName}.bin
 """
 }
