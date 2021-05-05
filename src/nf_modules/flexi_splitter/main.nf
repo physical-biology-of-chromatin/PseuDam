@@ -34,7 +34,7 @@ process split_file {
   tuple val(config_id), path(config)
 
   output:
-  tuple val(file_id), path("split/*/*"), emit: fastq
+  tuple val(file_id), path("results/*"), emit: fastq
 
   script:
   if (file_id instanceof List){
@@ -50,7 +50,7 @@ process split_file {
   mkdir -p results/
   find split -type "f" | \
     sed -E "s|(.*/split/(.*)/(.*))|\1 \2_\3|g" |
-    awk '{"mv "\$1" results/"\$2}'
+    awk '{system("mv "\$1" results/"\$2)}'
   rm -Rf split
   """
   else
@@ -60,7 +60,7 @@ process split_file {
   mkdir -p results/
   find split -type "f" | \
     sed -E "s|(.*/split/(.*)/(.*))|\1 \2_\3|g" |
-    awk '{"mv "\$1" results/"\$2}'
+    awk '{system("mv "\$1" results/"\$2)}'
   rm -Rf split
   """
 }
