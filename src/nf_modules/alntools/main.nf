@@ -1,4 +1,4 @@
-version = "dd69682"
+version = "dd96682"
 container_url = "lbmc/alntools:${version}"
 
 params.bam2ec = ""
