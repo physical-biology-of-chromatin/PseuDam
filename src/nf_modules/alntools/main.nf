@@ -12,7 +12,7 @@ process bam2ec {
   }
 
   input:
-    tuple val(file_id), path(bam)
+    tuple val(file_id), path(bam), path(bam_idx)
     tuple val(gtf_id), path(gtf)
 
   output:
