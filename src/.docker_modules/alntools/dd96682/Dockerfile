@@ -16,6 +16,7 @@ RUN apt-get update \
     && python setup.py install \
     && cd .. \
     && rm -R alntools \
+    && pip install six \
     && apt-get autoremove --purge -y git ca-certificates
 
 CMD ["bash"] 
