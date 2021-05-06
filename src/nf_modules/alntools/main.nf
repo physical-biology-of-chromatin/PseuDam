@@ -31,6 +31,6 @@ END{
         {print i"\\t"LEN[i]}
     }
 ' ${gtf} > ${gtf.simpleName}_transcripts_lengths.tsv
-alntools bam2ec ${params.bam2ec} -t ${gtf.simpleName}_transcripts_lengths.tsv -c 8 ${bam} ${bam.simpleName}.bin
+alntools bam2ec ${params.bam2ec} -t ${gtf.simpleName}_transcripts_lengths.tsv ${bam} ${bam.simpleName}.bin
 """
 }
