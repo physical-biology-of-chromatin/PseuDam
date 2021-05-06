@@ -49,9 +49,8 @@ process split_file {
   rm -Rf split/unassigned
   mkdir -p results/
   find split -type "f" | \
-    sed -E "s|(.*/split/(.*)/(.*))|\1 \2_\3|g" |
+    sed -E "s|(.*/split/(.*)/(.*))|\\1 \\2_\\3|g" |
     awk '{system("mv "\$1" results/"\$2)}'
-  rm -Rf split
   """
   else
   """
@@ -61,6 +60,5 @@ process split_file {
   find split -type "f" | \
     sed -E "s|(.*/split/(.*)/(.*))|\1 \2_\3|g" |
     awk '{system("mv "\$1" results/"\$2)}'
-  rm -Rf split
   """
 }
