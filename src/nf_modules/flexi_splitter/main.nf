@@ -22,7 +22,7 @@ process split_fastq {
   // src/nf_modules/flexi_splitter/marseq_flexi_splitter.yaml
   container = "${container_url}"
   label "big_mem_mono_cpus"
-  tag "$file_prefix"
+  tag "$file_id"
   if (params.split_out != "") {
     publishDir "results/${params.split_out}", mode: 'copy'
   }
