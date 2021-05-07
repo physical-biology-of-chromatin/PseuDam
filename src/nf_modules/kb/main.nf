@@ -102,7 +102,7 @@ workflow count {
   switch(params.kb_protocol) {
     case "marsseq":
       split(fastq, config)
-      kb_marseq(index.collect(), split.out.fastq.view(), transcript_to_gene, whitelist_optional)
+      kb_marseq(index.collect(), split.out.fastq, transcript_to_gene, whitelist_optional)
       kb_marseq.out.counts.set{res_counts}
       kb_marseq.out.report.set{res_report}
     break;
@@ -209,5 +209,18 @@ process kb_marseq {
     -x 1,0,6:1,6,14:1,14,0
     -o ${file_prefix} \
     ${reads[0]} ${reads[1]} &> ${file_prefix}_kb_mapping_report.txt
+  """
+  else
+  """
+  mkdir ${file_prefix}
+  kb count  -t ${task.cpus} \
+    -m ${kb_memory} \
+    -i ${index} \
+    -g ${transcript_to_gene} \
+    ${whitelist_param} \
+    ${params.count} \
+    -x 1,0,6:1,6,14:1,14,0
+    -o ${file_prefix} \
+    ${reads} &> ${file_prefix}_kb_mapping_report.txt
   """
 }
