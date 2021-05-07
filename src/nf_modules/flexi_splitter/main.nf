@@ -10,16 +10,14 @@ workflow split {
     reads
     config
   main:
-    split_file(reads, config)
-    split_file.out.fastq.view()
-
-    
+    split_fastq(reads, config)
+    group_fastq(split_fastq.out.fastq_folder)
 
   emit:
-    fastq = split_file.out.fastq
+    fastq = group_fastq.out.fastq
 }
 
-process split_file {
+process split_fastq {
   // You can get an example of config file here:
   // src/nf_modules/flexi_splitter/marseq_flexi_splitter.yaml
   container = "${container_url}"
@@ -34,7 +32,7 @@ process split_file {
   tuple val(config_id), path(config)
 
   output:
-  tuple val(file_id), path("results/*"), emit: fastq
+  tuple val(file_id), path("split"), emit: fastq_folder
 
   script:
   if (file_id instanceof List){
@@ -46,19 +44,33 @@ process split_file {
   if (reads.size() == 2)
   """
   flexi_splitter ${params.split} -n 2 -f ${reads[0]},${reads[1]} -o split -c ${config}
-  rm -Rf split/unassigned
-  mkdir -p results/
-  find split -type "f" | \
-    sed -E "s|(.*/split/(.*)/(.*))|\\1 \\2_\\3|g" |
-    awk '{system("mv "\$1" results/"\$2)}'
   """
   else
   """
   flexi_splitter ${params.split} -n 1 -f ${reads[0]} -o split -c ${config}
-  rm -Rf split/unassigned
-  mkdir -p results/
-  find split -type "f" | \
-    sed -E "s|(.*/split/(.*)/(.*))|\\1 \\2_\\3|g" |
-    awk '{system("mv "\$1" results/"\$2)}'
   """
+}
+
+process group_fastq {
+  container = "${container_url}"
+  label "big_mem_mono_cpus"
+  tag "$file_prefix"
+  if (params.split_out != "") {
+    publishDir "results/${params.split_out}", mode: 'copy'
+  }
+
+  input:
+  tuple val(file_id), path(reads_folder)
+
+  output:
+  tuple val(file_id), path("results/*"), emit: fastq
+
+  script:
+"""
+mkdir -p results/
+find split/ -type "f" | \
+  grep -v "unassigned" | \
+  sed -E "s|(split/(.*)/(.*))|\\1 \\2_\\3|g" |
+  awk '{system("mv "\$1" results/"\$2)}'
+"""
 }
