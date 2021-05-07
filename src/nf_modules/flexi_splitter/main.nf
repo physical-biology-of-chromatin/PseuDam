@@ -12,9 +12,15 @@ workflow split {
   main:
     split_fastq(reads, config)
     group_fastq(split_fastq.out.fastq_folder)
+    group_fastq.out.fastq
+      .map{ it -> it[1] }
+      .flatten()
+      .collate(2)
+      .map{ it -> [it[0].simpleName - ~/_{0,1}R[12]/, it]}
+      .set{ splited_fastq }
 
   emit:
-    fastq = group_fastq.out.fastq
+    fastq = splited_fastq
 }
 
 process split_fastq {
@@ -54,7 +60,7 @@ process split_fastq {
 process group_fastq {
   container = "${container_url}"
   label "big_mem_mono_cpus"
-  tag "$file_prefix"
+  tag "$file_id"
   if (params.split_out != "") {
     publishDir "results/${params.split_out}", mode: 'copy'
   }
