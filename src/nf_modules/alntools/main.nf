@@ -21,6 +21,8 @@ process bam2ec {
 
   script:
 """
+cp ${bam} file_bam.bam
+cp ${bam_idx} file_bam.bam.bai
 awk -F"[\\t;]" '
 \$3=="exon" {
         ID=gensub(/transcript_id \\"(.*)\\"/, "\\\\1", "g", \$11); 
@@ -31,6 +33,6 @@ END{
         {print i"\\t"LEN[i]}
     }
 ' ${gtf} > ${gtf.simpleName}_transcripts_lengths.tsv
-alntools bam2ec ${params.bam2ec} -t ${gtf.simpleName}_transcripts_lengths.tsv ${bam} ${bam.simpleName}.bin
+alntools bam2ec ${params.bam2ec} -t ${gtf.simpleName}_transcripts_lengths.tsv file_bam.bam ${bam.simpleName}.bin
 """
 }
