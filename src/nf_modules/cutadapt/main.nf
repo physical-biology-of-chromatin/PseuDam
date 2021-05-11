@@ -17,7 +17,7 @@ process adaptor_removal {
   tuple val(file_id), path(reads)
 
   output:
-  tuple val(file_id), path("*_cut_R{1,2}.fastq.gz"), emit: fastq
+  tuple val(file_id), path("*_cut_*"), emit: fastq
   path "*_report.txt", emit: report
 
   script:
@@ -29,14 +29,14 @@ process adaptor_removal {
   if (reads.size() == 2)
   """
   cutadapt ${params.adaptor_removal} \
-  -o ${file_id}_cut_R1.fastq.gz -p ${file_id}_cut_R2.fastq.gz \
-  ${reads[0]} ${reads[1]} > ${file_id}_report.txt
+  -o ${file_prefix}_cut_R1.fastq.gz -p ${file_prefix}_cut_R2.fastq.gz \
+  ${reads[0]} ${reads[1]} > ${file_prefix}_report.txt
   """
   else
   """
   cutadapt ${params.adaptor_removal} \
-  -o ${file_id}_cut.fastq.gz \
-  ${reads} > ${file_id}_report.txt
+  -o ${file_prefix}_cut.fastq.gz \
+  ${reads} > ${file_prefix}_report.txt
   """
 }
 
@@ -55,7 +55,7 @@ process trimming {
   tuple val(file_id), path(reads)
 
   output:
-  tuple val(file_id), path("*_trim_R{1,2}.fastq.gz"), emit:fastq
+  tuple val(file_id), path("*_trim_*"), emit:fastq
   path "*_report.txt", emit: report
 
   script:
@@ -67,13 +67,13 @@ process trimming {
   if (reads.size() == 2)
   """
   cutadapt ${params.trimming} \
-  -o ${file_id}_trim_R1.fastq.gz -p ${file_id}_trim_R2.fastq.gz \
-  ${reads[0]} ${reads[1]} > ${file_id}_report.txt
+  -o ${file_prefix}_trim_R1.fastq.gz -p ${file_prefix}_trim_R2.fastq.gz \
+  ${reads[0]} ${reads[1]} > ${file_prefix}_report.txt
   """
   else
   """
   cutadapt ${params.trimming} \
-  -o ${file_id}_trim.fastq.gz \
-  ${reads} > ${file_id}_report.txt
+  -o ${file_prefix}_trim.fastq.gz \
+  ${reads} > ${file_prefix}_report.txt
   """
 }
