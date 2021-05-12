@@ -20,4 +20,4 @@ if __name__ == "__main__":
   with open("t2g.txt", "w") as t2g:
     for gene in db.all_features():
       for transcript in db.children(gene, featuretype='transcript', order_by='start'):
-        t2g.write(str(gene["gene_id"][0]) + "\t" + str(transcript["transcript_id"][0]) + "\n")
+        t2g.write(str(transcript["transcript_id"][0]) + "\t" + str(gene["gene_id"][0]) + "\n")
