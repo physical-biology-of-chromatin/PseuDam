@@ -44,7 +44,10 @@ process tr2g {
 
   if (t2g_id == "NO T2G") 
   """
-  t2g.py --gtf ${gtf}
+  t2g.py --gtf ${gtf} && \
+  mv t2g.txt t2g_to_fix.txt && \
+  sed -E 's/\\.[0-9]+//g' t2g_to_fix.txt | \
+    awk '{print(\$1 "\\t" \$2)}' > t2g.txt
   """
   else
   """
@@ -102,12 +105,12 @@ workflow count {
   switch(params.kb_protocol) {
     case "marsseq":
       split(fastq, config)
-      kb_marseq(index.collect(), split.out.fastq, transcript_to_gene, whitelist_optional)
+      kb_marseq(index.collect(), split.out.fastq, transcript_to_gene.collect(), whitelist_optional.collect())
       kb_marseq.out.counts.set{res_counts}
       kb_marseq.out.report.set{res_report}
     break;
     default:
-      kb_default(index, fastq, transcript_to_gene, whitelist_optional)
+      kb_default(index.collect(), fastq, transcript_to_gene.collect(), whitelist_optional.collect())
       kb_default.out.counts.set{res_counts}
       kb_default.out.report.set{res_report}
     break;
@@ -155,11 +158,11 @@ process kb_default {
     -m ${kb_memory} \
     -i ${index} \
     -g ${transcript_to_gene} \
-    ${whitelist_param} \
-    -x 10XV3
-    ${params.count} \
     -o ${file_prefix} \
-    ${reads[0]} ${reads[1]} &> ${file_prefix}_kb_mapping_report.txt
+    ${whitelist_param} \
+    -x 10XV3 \
+    ${params.count} \
+    ${reads[0]} ${reads[1]} > ${file_prefix}_kb_mapping_report.txt
   """
 }
 
@@ -204,11 +207,11 @@ process kb_marseq {
     -m ${kb_memory} \
     -i ${index} \
     -g ${transcript_to_gene} \
+    -o ${file_prefix} \
     ${whitelist_param} \
     ${params.count} \
-    -x 1,0,6:1,6,14:1,14,0
-    -o ${file_prefix} \
-    ${reads[0]} ${reads[1]} &> ${file_prefix}_kb_mapping_report.txt
+    -x 1,0,6:1,6,14:1,14,0 \
+    ${reads[0]} ${reads[1]} > ${file_prefix}_kb_mapping_report.txt
   """
   else
   """
@@ -217,10 +220,10 @@ process kb_marseq {
     -m ${kb_memory} \
     -i ${index} \
     -g ${transcript_to_gene} \
+    -o ${file_prefix} \
     ${whitelist_param} \
     ${params.count} \
-    -x 1,0,6:1,6,14:1,14,0
-    -o ${file_prefix} \
-    ${reads} &> ${file_prefix}_kb_mapping_report.txt
+    -x 1,0,6:1,6,14:1,14,0 \
+    ${reads} > ${file_prefix}_kb_mapping_report.txt
   """
 }
