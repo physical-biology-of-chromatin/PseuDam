@@ -56,10 +56,16 @@ process mapping_fastq {
         index_id = ( index_file =~ /(.*)\.1\.bt2/)[0][1]
     }
   }
-  if (file_id instanceof List){
-    file_prefix = file_id[0]
-  } else {
-    file_prefix = file_id
+  switch(file_id) {
+    case {it instanceof List}:
+      file_prefix = file_id[0]
+    break
+    case {it instanceof Map}:
+      file_prefix = file_id.values()[0]
+    break
+    default:
+      file_id
+    break
   }
 
   if (reads.size() == 2)

@@ -125,15 +125,22 @@ process fastp {
 Here `file_id` can be anything from a simple identifier to a list of several variables.
 In which case the first item of the List should be usable as a file prefix.
 So you have to keep that in mind if you want to use it to define output file names (you can test for that with `file_id instanceof List`).
+In some case, the `file_id` may be a Map to have a cleaner access to the `file_id` content by explicit keywords.
 
 If you want to use information within the `file_id` to name outputs in your `script` section, you can use the following snipet:
 
 ```Groovy
   script:
-  if (file_id instanceof List){
-    file_prefix = file_id[0]
-  } else {
-    file_prefix = file_id
+    switch(file_id) {
+    case {it instanceof List}:
+      file_prefix = file_id[0]
+    break
+    case {it instanceof Map}:
+      file_prefix = file_id.values()[0]
+    break
+    default:
+      file_id
+    break
   }
 ```
 
