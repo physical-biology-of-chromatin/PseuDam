@@ -16,7 +16,7 @@ if __name__ == "__main__":
                       help="gtf file", metavar="FILE")
   args = parser.parse_args()
 
-  db = gffutils.create_db(args.gtf, dbfn = ":memory:", force = True, merge_strategy="merge", disable_infer_transcripts=False, disable_infer_genes=False)
+  db = gffutils.create_db(args.gtf, dbfn = ":memory:", force = True, merge_strategy="merge", disable_infer_transcripts=True, disable_infer_genes=True)
   with open("t2g.txt", "w") as t2g:
     for gene in db.all_features():
       for transcript in db.children(gene, featuretype='transcript', order_by='start'):
