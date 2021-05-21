@@ -25,6 +25,6 @@ process gffread {
     file_prefix = file_id
   }
   """
-  gffread ${gtf} -g ${fasta} -x -o ${file_prefix}.fasta
+  gffread ${gtf} -g ${fasta} -M -x ${file_prefix}.fasta
   """
 }
