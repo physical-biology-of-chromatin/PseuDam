@@ -25,6 +25,7 @@ process gffread {
     file_prefix = file_id
   }
   """
-  gffread ${gtf} -g ${fasta} -M -x ${file_prefix}.fasta
+  gffread ${gtf} -g ${fasta} -M -x dup_${file_prefix}.fasta
+  awk 'BEGIN {i = 1;} { if (\$1 ~ /^>/) { tmp = h[i]; h[i] = \$1; } else if (!a[\$1]) { s[i] = \$1; a[\$1] = "1"; i++; } else { h[i] = tmp; } } END { for (j = 1; j < i; j++) { print h[j]; print s[j]; } }' < dup_${file_prefix}.fasta > ${file_prefix}.fasta
   """
 }
