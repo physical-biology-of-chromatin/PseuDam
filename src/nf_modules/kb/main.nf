@@ -9,13 +9,9 @@ workflow index_fasta {
     fasta
     cdna
     gtf
-    transcript_to_gene
 
   main:
-    transcript_to_gene 
-      .ifEmpty(["NO T2G", ""])
-      .set{ transcript_to_gene_optional }
-    tr2g(gtf, transcript_to_gene_optional)
+    tr2g(gtf)
     index_default(fasta, cdna, gtf, tr2g.out.t2g)
 
   emit:
@@ -35,23 +31,13 @@ process tr2g {
 
   input:
     tuple val(file_id), path(gtf)
-    tuple val(t2g_id), file(transcript_to_gene)
 
   output:
     tuple val(file_id), path("t2g.txt"), emit: t2g
 
   script:
-
-  if (t2g_id == "NO T2G") 
   """
-  t2g.py --gtf ${gtf} && \
-  mv t2g.txt t2g_to_fix.txt && \
-  sed -E 's/\\.[0-9]+//g' t2g_to_fix.txt | \
-    awk '{print(\$1 "\\t" \$2)}' > t2g.txt
-  """
-  else
-  """
-  mv ${transcript_to_gene} t2g.txt
+  t2g.py --gtf ${gtf}
   """
 }
 
@@ -210,7 +196,7 @@ process kb_marseq {
     -o ${file_prefix} \
     ${whitelist_param} \
     ${params.count} \
-    -x 1,0,6:1,6,14:1,14,0 \
+    -x 1,0,6:1,6,14:0,0,0 \
     ${reads[0]} ${reads[1]} > ${file_prefix}_kb_mapping_report.txt
   """
   else
@@ -223,7 +209,7 @@ process kb_marseq {
     -o ${file_prefix} \
     ${whitelist_param} \
     ${params.count} \
-    -x 1,0,6:1,6,14:1,14,0 \
+    -x 1,0,6:1,6,14:0,0,0 \
     ${reads} > ${file_prefix}_kb_mapping_report.txt
   """
 }
