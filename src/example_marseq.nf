@@ -4,6 +4,7 @@ nextflow.enable.dsl=2
 Testing pipeline for marseq scRNASeq analysis
 */
 
+include { adaptor_removal} from "./nf_modules/cutadapt/main.nf"
 include { index_fasta; count } from "./nf_modules/kb/main.nf" addParams(
   kb_protocol: "marsseq",
   count_out: "quantification/"
@@ -57,6 +58,7 @@ channel
   .set { config_files }
 
 workflow {
+  adaptor_removal(fastq_files)
   index_fasta(fasta_files, cdna_files, gtf_files)
-  count(index_fasta.out.index, fastq_files, index_fasta.out.t2g, whitelist_files, config_files)
+  count(index_fasta.out.index, adaptor_removal.out.fastq, index_fasta.out.t2g, whitelist_files, config_files)
 }
