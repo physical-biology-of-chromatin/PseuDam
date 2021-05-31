@@ -12,13 +12,10 @@ workflow count {
   take:
     bam_idx
     fasta
-    transcript_to_gene
+    gtf
 
   main:
-    transcript_to_gene 
-      .ifEmpty(["NO T2G", ""])
-      .set{ transcript_to_gene_optional }
-    tr2g(gtf, transcript_to_gene_optional)
+    tr2g(gtf)
     fasta_to_transcripts_lengths(fasta)
     bam2ec(bam_idx, fasta_to_transcripts_lengths.out.tsv.collect())
     emase(bam2ec.out.bin, bam2ec.out.tsv, tr2g.out.t2g)
