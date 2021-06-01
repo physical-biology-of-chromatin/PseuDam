@@ -1,6 +1,271 @@
 version = "4.2.0.0"
 container_url = "broadinstitute/gatk:${version}"
 
+include {
+  index_fasta as samtools_index_fasta;
+} from './nf_modules/samtools/main.nf'
+include {
+  index_fasta as picard_index_fasta;
+  index_bam as picard_index_bam;
+  mark_duplicate;
+} from './nf_modules/picard/main.nf'
+
+workflow germline_cohort_data_variant_calling {
+  take:
+    bam
+    fasta
+  main:
+    // data preparation
+    mark_duplicate(bam)
+    picard_index_bam(mark_duplicate.out.bam)
+    mark_duplicate.out.bam
+      .join(picard_index_bam.out.index)
+      set(bam_idx)
+    picard_index_fasta(fasta)
+    samtools_index_fasta(fasta)
+    fasta
+      .join(picard_index_fasta.out.index)
+      .join(samtools_index_fasta.out.index)
+      .set(fasta_idx)
+    
+    // variant calling
+    call_variants_per_sample(
+      bam_idx,
+      fasta_idx
+    )
+    call_variants_all_sample(
+      call_variants_all_sample.out.gvcf,
+      fasta_idx
+    )
+  emit:
+    vcf: call_variants_all_sample.out.vcf
+}
+
+/*******************************************************************/
+workflow base_quality_recalibrator{
+  take:
+    bam_idx
+    fasta_idx
+    vcf
+
+  main:
+    index_vcf(vcf)
+    compute_base_recalibration(
+      bam_idx,
+      fasta_idx,
+      index_vcf.out.vcf_idx
+    ) 
+    apply_base_recalibration(
+      bam_idx,
+      fasta_idx,
+      compute_base_recalibration.out.table
+    )
+    emit:
+    bam: apply_base_recalibration.out.bam
+}
+
+process index_vcf {
+  container = "${container_url}"
+  label "big_mem_mono_cpus"
+  tag "$file_id"
+  input:
+    tuple val(file_id), path(vcf)
+  output:
+    tuple val(file_id), path("${vcf}"), path("*"), emit: vcf_idx
+
+  script:
+  xmx_memory = "${task.memory}" - ~/\s*GB/
+  if (file_id instanceof List){
+    file_prefix = file_id[0]
+  } else {
+    file_prefix = file_id
+  }
+"""
+gatk --java-options "-Xmx${xmx_memory}G" IndexFeatureFile \
+  -I ${vcf}
+"""
+}
+
+process compute_base_recalibration {
+  container = "${container_url}"
+  label "big_mem_mono_cpus"
+  tag "$file_id"
+  input:
+    tuple val(file_id), path(bam), path(bam_idx)
+    tuple val(ref_id), path(fasta), path(fai), path(dict)
+    tuple val(vcf_id), path(vcf), path(vcf_idx)
+  output:
+    tuple val(file_id), path("${bam.simpleName}.table"), emit: table
+
+  script:
+  xmx_memory = "${task.memory}" - ~/\s*GB/
+  if (file_id instanceof List){
+    file_prefix = file_id[0]
+  } else {
+    file_prefix = file_id
+  }
+  def vcf_cmd = ""
+  if (vcf instanceof List){
+    for (vcf_file in vcf){
+      vcf_cmd += "--known-sites ${vcf_file} "
+    }
+  } else {
+    vcf_cmd = "--known-sites ${vcf} "
+  }
+"""
+ gatk --java-options "-Xmx${xmx_memory}G" BaseRecalibrator \
+   -I ${bam} \
+   -R ${fasta} \
+   ${vcf_cmd} \
+   -O ${bam.simpleName}.table
+"""
+}
+
+process apply_base_recalibration {
+  container = "${container_url}"
+  label "big_mem_mono_cpus"
+  tag "$file_id"
+  input:
+    tuple val(file_id), path(bam), path(bam_idx)
+    tuple val(ref_id), path(fasta), path(fai), path(dict)
+    tuple val(table_id), path(table)
+  output:
+    tuple val(file_id), path("${bam.simpleName}_recalibrate.bam"), emit: bam
+
+  script:
+  xmx_memory = "${task.memory}" - ~/\s*GB/
+  if (file_id instanceof List){
+    file_prefix = file_id[0]
+  } else {
+    file_prefix = file_id
+  }
+"""
+ gatk --java-options "-Xmx${xmx_memory}G" ApplyBQSR \
+   -R ${fasta} \
+   -I ${bam} \
+   --bqsr-recal-file ${table} \
+   -O ${bam.simpleName}_recalibrate.bam
+"""
+}
+
+/*******************************************************************/
+
+process call_variants_per_sample {
+  container = "${container_url}"
+  label "big_mem_mono_cpus"
+  tag "$file_id"
+  input:
+    tuple val(file_id), path(bam), path(bam_idx)
+    tuple val(ref_id), path(fasta), path(fai), path(dict)
+  output:
+    tuple val(file_id), path("${bam.simpleName}.gvcf.gz"), emit: gvcf
+
+  script:
+  xmx_memory = "${task.memory}" - ~/\s*GB/
+  if (file_id instanceof List){
+    file_prefix = file_id[0]
+  } else {
+    file_prefix = file_id
+  }
+"""
+ gatk --java-options "-Xmx${xmx_memory}G" HaplotypeCaller  \
+   -R ${fata} \
+   -I ${bam} \
+   -O ${bam.simpleName}.gvcf.gz \
+   -ERC GVCF \
+   -G Standard \
+   -G AS_Standard
+"""
+}
+
+/*******************************************************************/
+
+workflow call_variants_all_sample {
+  take:
+    gvcf
+    fasta_idx
+
+  main:
+    consolidate_gvcf(
+      gvcf.groupTuple()
+    )
+    genomic_db_call(
+      consolidate_gvcf.out.gdb,
+      fasta_idx
+    )
+  emit:
+    vcf: genomic_db_call.out.vcf
+}
+
+process consolidate_gvcf {
+  container = "${container_url}"
+  label "big_mem_mono_cpus"
+  tag "$file_id"
+  input:
+    tuple val(file_id), path(gvcf)
+  output:
+    tuple val(file_id), path("${file_prefix}.db"), emit: gdb
+
+  script:
+  xmx_memory = "${task.memory}" - ~/\s*GB/
+  if (file_id instanceof List){
+    file_prefix = file_id[0]
+  } else {
+    file_prefix = file_id
+  }
+  def gvcf_cmd = ""
+  if (gvcf instanceof List){
+    for (gvcf_file in gvcf){
+      gvcf_cmd += "--V ${gvcf_file} "
+    }
+  } else {
+    gvcf_cmd = "--V ${gvcf} "
+  }
+"""
+mkdir tmp
+gatk --java-options "-Xmx${xmx_memory}G" GenomicsDBImport \
+    ${gvcf_cmd} \
+    --genomicsdb-workspace-path ${file_prefix}.db \
+    --tmp-dir=./tmp \
+"""
+}
+
+process genomic_db_call {
+  container = "${container_url}"
+  label "big_mem_mono_cpus"
+  tag "$file_id"
+  input:
+    tuple val(file_id), path(db)
+    tuple val(ref_id), path(fasta), path(fai), path(dict)
+  output:
+    tuple val(file_id), path("${db.simple_name}.vcf.gz"), emit: vcf
+
+  script:
+  xmx_memory = "${task.memory}" - ~/\s*GB/
+  if (file_id instanceof List){
+    file_prefix = file_id[0]
+  } else {
+    file_prefix = file_id
+  }
+  def gvcf_cmd = ""
+  if (gvcf instanceof List){
+    for (gvcf_file in gvcf){
+      gvcf_cmd += "--V ${gvcf_file} "
+    }
+  } else {
+    gvcf_cmd = "--V ${gvcf} "
+  }
+"""
+mkdir tmp
+gatk --java-options "-Xmx${xmx_memory}G" GenotypeGVCFs \
+   -R ${fasta} \
+   -V gendb://${db} \
+   -O ${db.simpleName}.vcf.gz \
+   --tmp-dir ./tmp
+"""
+}
+
+/*******************************************************************/
 params.variant_calling = ""
 params.variant_calling_out = ""
 process variant_calling {
