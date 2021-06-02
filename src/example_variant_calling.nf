@@ -24,6 +24,6 @@ channel
   .set { fasta_files }
 
 workflow {
-  mapping(fasta, fastq_files)
-  germline_cohort_data_variant_calling(mapping.out.bam, fasta)
+  mapping(fasta_files, fastq_files)
+  germline_cohort_data_variant_calling(mapping.out.bam, fasta_files)
 }
