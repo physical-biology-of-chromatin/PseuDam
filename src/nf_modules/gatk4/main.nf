@@ -3,12 +3,12 @@ container_url = "broadinstitute/gatk:${version}"
 
 include {
   index_fasta as samtools_index_fasta;
-} from './nf_modules/samtools/main.nf'
+} from './../nf_modules/samtools/main.nf'
 include {
   index_fasta as picard_index_fasta;
   index_bam as picard_index_bam;
   mark_duplicate;
-} from './nf_modules/picard/main.nf'
+} from './../nf_modules/picard/main.nf'
 
 params.variant_calling_out = ""
 workflow germline_cohort_data_variant_calling {
