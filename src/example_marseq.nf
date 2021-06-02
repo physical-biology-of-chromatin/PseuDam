@@ -24,11 +24,12 @@ params.whitelist = "data/expected_whitelist.txt"
 params.config = "data/marseq_flexi_splitter.yaml"
 params.workflow_type = "classic"
 
-log.info "fastq files: ${params.fastq}"
-log.info "fasta file : ${params.fasta}"
-log.info "gtf file : ${params.gtf}"
-log.info "transcript_to_gene file : ${params.transcript_to_gene}"
-log.info "whitelist file : ${params.whitelist}"
+log.info "fastq files (--fastq): ${params.fastq}"
+log.info "fasta file (--fasta): ${params.fasta}"
+log.info "gtf file (--gtf): ${params.gtf}"
+log.info "transcript_to_gene file (--transcript_to_gene): ${params.transcript_to_gene}"
+log.info "whitelist file (--whitelist): ${params.whitelist}"
+log.info "config file (--config): ${params.config}"
 
 channel
   .fromFilePairs( params.fastq, size: -1)
