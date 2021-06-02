@@ -10,6 +10,7 @@ include {
   mark_duplicate;
 } from './nf_modules/picard/main.nf'
 
+params.variant_calling_out = ""
 workflow germline_cohort_data_variant_calling {
   take:
     bam
@@ -234,6 +235,9 @@ process genomic_db_call {
   container = "${container_url}"
   label "big_mem_mono_cpus"
   tag "$file_id"
+  if (params.variant_calling_out != "") {
+    publishDir "results/${params.variant_calling_out}", mode: 'copy'
+  }
   input:
     tuple val(file_id), path(db)
     tuple val(ref_id), path(fasta), path(fai), path(dict)
