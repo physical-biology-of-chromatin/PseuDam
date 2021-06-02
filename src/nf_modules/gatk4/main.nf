@@ -39,7 +39,7 @@ workflow germline_cohort_data_variant_calling {
       fasta_idx
     )
   emit:
-    vcf: call_variants_all_sample.out.vcf
+    vcf = call_variants_all_sample.out.vcf
 }
 
 /*******************************************************************/
@@ -62,7 +62,7 @@ workflow base_quality_recalibrator{
       compute_base_recalibration.out.table
     )
     emit:
-    bam: apply_base_recalibration.out.bam
+    bam = apply_base_recalibration.out.bam
 }
 
 process index_vcf {
@@ -195,7 +195,7 @@ workflow call_variants_all_sample {
       fasta_idx
     )
   emit:
-    vcf: genomic_db_call.out.vcf
+    vcf = genomic_db_call.out.vcf
 }
 
 process consolidate_gvcf {

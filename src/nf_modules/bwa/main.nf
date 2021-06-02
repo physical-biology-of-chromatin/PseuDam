@@ -10,8 +10,8 @@ workflow mapping {
     index_fasta(fasta)
     mapping_fastq(index_fasta.out.index.collect(), fastq)
   emit:
-    bam: mapping_fastq.out.bam
-    report: mapping_fastq.out.report
+    bam = mapping_fastq.out.bam
+    report = mapping_fastq.out.report
 }
 
 
