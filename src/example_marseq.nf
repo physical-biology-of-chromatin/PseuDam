@@ -5,18 +5,24 @@ Testing pipeline for marseq scRNASeq analysis
 */
 
 include { adaptor_removal} from "./nf_modules/cutadapt/main.nf"
-include { index_fasta; count } from "./nf_modules/kb/main.nf" addParams(
+include {
+  index_fasta;
+  count;
+  index_fasta_velocity;
+  count_velocity
+} from "./nf_modules/kb/main.nf" addParams(
   kb_protocol: "marsseq",
-  count_out: "quantification/"
+  count_out: "quantification/",
+  count_velocity_out: "quantification_velocity/"
 )
 
 params.fasta = "http://ftp.ensembl.org/pub/release-94/fasta/gallus_gallus/dna/Gallus_gallus.Gallus_gallus-5.0.dna.toplevel.fa.gz"
-params.cdna = "http://ftp.ensembl.org/pub/release-94/fasta/gallus_gallus/cdna/Gallus_gallus.Gallus_gallus-5.0.cdna.all.fa.gz"
 params.fastq = "data/CF42_45/*/*R{1,2}.fastq.gz"
 params.gtf = "http://ftp.ensembl.org/pub/release-94/gtf/gallus_gallus/Gallus_gallus.Gallus_gallus-5.0.94.gtf.gz"
 params.transcript_to_gene = ""
 params.whitelist = "data/expected_whitelist.txt"
 params.config = "data/marseq_flexi_splitter.yaml"
+params.workflow_type = "classic"
 
 log.info "fastq files: ${params.fastq}"
 log.info "fasta file : ${params.fasta}"
@@ -32,11 +38,6 @@ channel
   .ifEmpty { error "Cannot find any fasta files matching: ${params.fasta}" }
   .map { it -> [it.simpleName, it]}
   .set { fasta_files }
-channel
-  .fromPath( params.cdna )
-  .ifEmpty { error "Cannot find any fasta files matching: ${params.cdna}" }
-  .map { it -> [it.simpleName, it]}
-  .set { cdna_files }
 channel
   .fromPath( params.gtf )
   .ifEmpty { error "Cannot find any gtf files matching: ${params.gtf}" }
@@ -59,6 +60,11 @@ channel
 
 workflow {
   adaptor_removal(fastq_files)
-  index_fasta(fasta_files, cdna_files, gtf_files)
-  count(index_fasta.out.index, adaptor_removal.out.fastq, index_fasta.out.t2g, whitelist_files, config_files)
+  if (params.workflow_type == "classic") {
+    index_fasta(fasta_files, gtf_files)
+    count(index_fasta.out.index, adaptor_removal.out.fastq, index_fasta.out.t2g, whitelist_files, config_files)
+  } else {
+    index_fasta_velocity(fasta_files, gtf_files)
+    count_velocity(index_fasta_velocity.out.index, adaptor_removal.out.fastq, index_fasta_velocity.out.t2g, whitelist_files, config_files)
+  }
 }
