@@ -9,7 +9,7 @@ include {
 } from "./nf_modules/bwa/main.nf"
 
 include {
-  variant_calling_out;
+  germline_cohort_data_variant_calling;
 } from "./nf_modules/gatk4/main.nf" addParams(
   variant_calling_out: "vcf/",
 )
