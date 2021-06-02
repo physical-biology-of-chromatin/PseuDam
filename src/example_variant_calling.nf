@@ -9,7 +9,7 @@ include {
 } from "./nf_modules/bwa/main.nf"
 
 include {
-  mapping;
+  variant_calling_out;
 } from "./nf_modules/gatk4/main.nf" addParams(
   variant_calling_out: "vcf/",
 )
