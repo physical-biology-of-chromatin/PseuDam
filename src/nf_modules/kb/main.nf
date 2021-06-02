@@ -7,12 +7,11 @@ params.index_fasta_out = ""
 workflow index_fasta {
   take:
     fasta
-    cdna
     gtf
 
   main:
     tr2g(gtf)
-    index_default(fasta, cdna, gtf, tr2g.out.t2g)
+    index_default(fasta, gtf, tr2g.out.t2g)
 
   emit:
     index = index_default.out.index
@@ -51,7 +50,6 @@ process index_default {
 
   input:
     tuple val(file_id), path(fasta)
-    tuple val(cdna_id), path(cdna)
     tuple val(gtf_id), path(gtf)
     tuple val(t2g_id), path(transcript_to_gene)
 
@@ -66,7 +64,7 @@ kb ref \
   -i ${fasta.simpleName}.idx \
   -g ${transcript_to_gene} \
   ${params.index_fasta} \
-  -f1 ${cdna} ${fasta} ${gtf} > ${fasta.simpleName}_kb_index_report.txt
+  -f1 cdna.fa ${fasta} ${gtf} > ${fasta.simpleName}_kb_index_report.txt
 """
 }
 
@@ -207,6 +205,200 @@ process kb_marseq {
     -i ${index} \
     -g ${transcript_to_gene} \
     -o ${file_prefix} \
+    ${whitelist_param} \
+    ${params.count} \
+    -x 1,0,6:1,6,14:0,0,0 \
+    ${reads} > ${file_prefix}_kb_mapping_report.txt
+  """
+}
+
+// ************************** velocity workflow **************************
+
+workflow index_fasta_velocity {
+  take:
+    fasta
+    gtf
+
+  main:
+    tr2g(gtf)
+    index_fasta_velocity_default(fasta, gtf, tr2g.out.t2g)
+
+  emit:
+    index = index_fasta_velocity_default.out.index
+    t2g = index_fasta_velocity_default.out.t2g
+    report = index_fasta_velocity_default.out.report
+}
+
+process index_fasta_velocity_default {
+  container = "${container_url}"
+  label "big_mem_mono_cpus"
+  tag "$file_id"
+  if (params.index_fasta_out != "") {
+    publishDir "results/${params.index_fasta_out}", mode: 'copy'
+  }
+
+  input:
+    tuple val(file_id), path(fasta)
+    tuple val(gtf_id), path(gtf)
+    tuple val(t2g_id), path(transcript_to_gene)
+
+  output:
+    tuple val(file_id), path("*.idx"), emit: index
+    tuple val(t2g_id), path("${transcript_to_gene}"), path("cdna_t2c.txt"), path("intron_t2c.txt"), emit: t2g
+    tuple val(file_id), path("*_report.txt"), emit: report
+
+  script:
+"""
+kb ref \
+  -i ${fasta.simpleName}.idx \
+  -g ${transcript_to_gene} \
+  ${params.index_fasta} \
+  -f1 cdna.fa -f2 intron.fa -c1 cdna_t2c.txt -c2 intron_t2c.txt --workflow lamanno \
+  ${fasta} ${gtf} > ${fasta.simpleName}_kb_index_report.txt
+"""
+}
+
+params.count_velocity = ""
+params.count_velocity_out = ""
+workflow count_velocity {
+  take:
+    index
+    fastq
+    transcript_to_gene
+    whitelist
+    config
+
+  main:
+  whitelist
+    .ifEmpty(["NO WHITELIST", 0])
+    .set{ whitelist_optional }
+  switch(params.kb_protocol) {
+    case "marsseq":
+      split(fastq, config)
+      velocity_marseq(index.collect(), split.out.fastq, transcript_to_gene.collect(), whitelist_optional.collect())
+      velocity_marseq.out.counts.set{res_counts}
+      velocity_marseq.out.report.set{res_report}
+    break;
+    default:
+      velocity_default(index.collect(), fastq, transcript_to_gene.collect(), whitelist_optional.collect())
+      velocity_default.out.counts.set{res_counts}
+      velocity_default.out.report.set{res_report}
+    break;
+  }
+
+  emit:
+    counts = res_counts
+    report = res_report
+}
+
+process velocity_default {
+  container = "${container_url}"
+  label "big_mem_multi_cpus"
+  tag "$file_prefix"
+  if (params.count_velocity_out != "") {
+    publishDir "results/${params.count_velocity_out}", mode: 'copy'
+  }
+
+  input:
+  tuple val(index_id), path(index)
+  tuple val(file_id), path(reads)
+  tuple val(t2g_id), path(transcript_to_gene), path(cdna_t2g), path(intron_t2g)
+  tuple val(whitelist_id), path(whitelist)
+
+  output:
+  tuple val(file_id), path("${file_prefix}"), emit: counts
+  tuple val(file_id), path("*_report.txt"), emit: report
+
+  script:
+  def kb_memory = "${task.memory}" - ~/GB/
+  if (file_id instanceof List){
+    file_prefix = file_id[0]
+  } else {
+    file_prefix = file_id
+  }
+  def whitelist_param = ""
+  if (whitelist_id != "NO WHITELIST"){
+    whitelist_param = "-w ${whitelist}"
+  }
+
+  if (reads.size() == 2)
+  """
+  mkdir ${file_prefix}
+    -m ${kb_memory} \
+    -i ${index} \
+    -g ${transcript_to_gene} \
+    -o ${file_prefix} \
+    -c1 ${cdna_t2g} \
+    -c2 ${intron_t2g} \
+    --lamanno \
+    ${whitelist_param} \
+    -x 10XV3 \
+    ${params.count} \
+    ${reads[0]} ${reads[1]} > ${file_prefix}_kb_mapping_report.txt
+  """
+}
+
+process velocity_marseq {
+  // With the MARS-Seq protocol, we have:
+  // on the read 1: 4 nt of bc plate
+  // on the read 2: 6 nt of bc cell, and 8 nt of UMI
+  // this process expect that the bc plate is removed from the read 1
+  container = "${container_url}"
+  label "big_mem_multi_cpus"
+  tag "$file_prefix"
+  if (params.count_velocity_out != "") {
+    publishDir "results/${params.count_velocity_out}", mode: 'copy'
+  }
+
+  input:
+  tuple val(index_id), path(index)
+  tuple val(file_id), path(reads)
+  tuple val(t2g_id), path(transcript_to_gene), path(cdna_t2g), path(intron_t2g)
+  tuple val(whitelist_id), path(whitelist)
+
+  output:
+  tuple val(file_id), path("${file_prefix}"), emit: counts
+  tuple val(file_id), path("*_report.txt"), emit: report
+
+  script:
+  def kb_memory = "${task.memory}" - ~/GB/
+  if (file_id instanceof List){
+    file_prefix = file_id[0]
+  } else {
+    file_prefix = file_id
+  }
+  def whitelist_param = ""
+  if (whitelist_id != "NO WHITELIST"){
+    whitelist_param = "-w ${whitelist}"
+  }
+
+  if (reads.size() == 2)
+  """
+  mkdir ${file_prefix}
+  kb count  -t ${task.cpus} \
+    -m ${kb_memory} \
+    -i ${index} \
+    -g ${transcript_to_gene} \
+    -o ${file_prefix} \
+    -c1 ${cdna_t2g} \
+    -c2 ${intron_t2g} \
+    --lamanno \
+    ${whitelist_param} \
+    ${params.count} \
+    -x 1,0,6:1,6,14:0,0,0 \
+    ${reads[0]} ${reads[1]} > ${file_prefix}_kb_mapping_report.txt
+  """
+  else
+  """
+  mkdir ${file_prefix}
+  kb count  -t ${task.cpus} \
+    -m ${kb_memory} \
+    -i ${index} \
+    -g ${transcript_to_gene} \
+    -o ${file_prefix} \
+    -c1 ${cdna_t2g} \
+    -c2 ${intron_t2g} \
+    --lamanno \
     ${whitelist_param} \
     ${params.count} \
     -x 1,0,6:1,6,14:0,0,0 \
