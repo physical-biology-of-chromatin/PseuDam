@@ -1,3 +1,25 @@
+// multiqc generate nice html report combining lots of differents bioinformatics
+// tools report.
+// 
+// EXAMPLE:
+
+/*
+include { multiqc } 
+  from './nf_modules/multiqc/main'
+  addParams(
+    multiqc_out: "QC/"
+  )
+
+multiqc(
+  report_a
+  .mix(
+    report_b,
+    report_c,
+    report_d
+  )
+)
+*/
+
 version = "1.9"
 container_url = "lbmc/multiqc:${version}"
 
