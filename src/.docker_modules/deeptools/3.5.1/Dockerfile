@@ -11,5 +11,6 @@ RUN apt-get update -qq \
         libcurl4-gnutls-dev \
         libssl-dev \
         libncurses5-dev \
+        libcurl3 \
         procps
 RUN pip3 install deeptools==${DEEPTOOLS_VERSION}
