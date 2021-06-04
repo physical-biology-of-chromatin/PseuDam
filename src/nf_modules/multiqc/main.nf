@@ -36,6 +36,7 @@ workflow multiqc {
         it
       }
     }
+    .flatten()
     .unique()
     .set { report_cleaned }
     multiqc_default(report_cleaned.collect())
