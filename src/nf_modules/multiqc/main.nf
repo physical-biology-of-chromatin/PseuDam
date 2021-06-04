@@ -16,7 +16,7 @@ multiqc(
     report_b,
     report_c,
     report_d
-  )
+  ).collect()
 )
 */
 
@@ -44,7 +44,7 @@ workflow multiqc {
   report = multiqc_default.out.report
 }
 
-process multiqc {
+process multiqc_default {
   container = "${container_url}"
   label "big_mem_mono_cpus"
   if (params.multiqc_out != "") {
