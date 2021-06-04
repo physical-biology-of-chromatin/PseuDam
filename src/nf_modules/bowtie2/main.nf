@@ -64,7 +64,7 @@ process mapping_fastq {
       file_prefix = file_id.values()[0]
     break
     default:
-      file_id
+      file_prefix = file_id
     break
   }
 
