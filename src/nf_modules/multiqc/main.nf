@@ -3,6 +3,25 @@ container_url = "lbmc/multiqc:${version}"
 
 params.multiqc = ""
 params.multiqc_out = "QC/"
+workflow multiqc {
+  take:
+    report
+  main:
+    report.map{
+      if (it instanceof List){
+        it[1]
+      } else {
+        it
+      }
+    }
+    .unique()
+    .set { report_cleaned }
+    multiqc_default(report_cleaned.collect())
+
+  emit:
+  report = multiqc_default.out.report
+}
+
 process multiqc {
   container = "${container_url}"
   label "big_mem_mono_cpus"
