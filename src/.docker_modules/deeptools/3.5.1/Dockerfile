@@ -1,4 +1,4 @@
-FROM python:3.9-slim
+FROM python:3.8-slim
 MAINTAINER Lauret Modolo
 
 ENV DEEPTOOLS_VERSION=3.5.1
@@ -11,6 +11,7 @@ RUN apt-get update -qq \
         libcurl4-gnutls-dev \
         libssl-dev \
         libncurses5-dev \
-        libcurl3 \
+        libcurl4 \
+        libc6 \
         procps
-RUN pip3 install deeptools==${DEEPTOOLS_VERSION}
+RUN pip3 install pysam deeptools==${DEEPTOOLS_VERSION}
