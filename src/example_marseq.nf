@@ -62,10 +62,26 @@ channel
 workflow {
   adaptor_removal(fastq_files)
   if (params.workflow_type == "classic") {
-    index_fasta(fasta_files, gtf_files)
-    count(index_fasta.out.index, adaptor_removal.out.fastq, index_fasta.out.t2g, whitelist_files, config_files)
+    index_fasta(
+      fasta_files,
+      gtf_files
+    )
+    count(
+      index_fasta.out.index,
+      adaptor_removal.out.fastq,
+      index_fasta.out.t2g, whitelist_files,config_files
+    )
   } else {
-    index_fasta_velocity(fasta_files, gtf_files)
-    count_velocity(index_fasta_velocity.out.index, adaptor_removal.out.fastq, index_fasta_velocity.out.t2g, whitelist_files, config_files)
+    index_fasta_velocity(
+      fasta_files,
+      gtf_files
+    )
+    count_velocity(
+      index_fasta_velocity.out.index,
+      adaptor_removal.out.fastq,
+      index_fasta_velocity.out.t2g,
+      whitelist_files,
+      config_files
+    )
   }
 }
