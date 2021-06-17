@@ -21,21 +21,21 @@ workflow germline_cohort_data_variant_calling {
     picard_index_bam(mark_duplicate.out.bam)
     mark_duplicate.out.bam
       .join(picard_index_bam.out.index)
-      set(bam_idx)
+      .set{ bam_idx }
     picard_index_fasta(fasta)
     samtools_index_fasta(fasta)
     fasta
       .join(picard_index_fasta.out.index)
       .join(samtools_index_fasta.out.index)
-      .set(fasta_idx)
+      .set{ fasta_idx }
     
     // variant calling
     call_variants_per_sample(
       bam_idx,
-      fasta_idx
+      fasta_idx.collect()
     )
     call_variants_all_sample(
-      call_variants_all_sample.out.gvcf,
+      call_variants_per_sample.out.gvcf,
       fasta_idx
     )
   emit:
@@ -170,12 +170,10 @@ process call_variants_per_sample {
   }
 """
  gatk --java-options "-Xmx${xmx_memory}G" HaplotypeCaller  \
-   -R ${fata} \
+   -R ${fasta} \
    -I ${bam} \
    -O ${bam.simpleName}.gvcf.gz \
-   -ERC GVCF \
-   -G Standard \
-   -G AS_Standard
+   -ERC GVCF
 """
 }
 
@@ -187,15 +185,72 @@ workflow call_variants_all_sample {
     fasta_idx
 
   main:
+    index_gvcf(gvcf)
+    validate_gvcf(
+      index_gvcf.out.gvcf_idx,
+      fasta_idx.collect()
+    )
     consolidate_gvcf(
-      gvcf.groupTuple()
+      validate_gvcf.out.gvcf
+      .map {
+        it -> ["library", it[1], it[2]]
+      }
+      .groupTuple(),
+      fasta_idx.collect()
     )
     genomic_db_call(
-      consolidate_gvcf.out.gdb,
-      fasta_idx
+      consolidate_gvcf.out.gvcf_idx,
+      fasta_idx.collect()
     )
   emit:
     vcf = genomic_db_call.out.vcf
+}
+
+process index_gvcf {
+  container = "${container_url}"
+  label "big_mem_mono_cpus"
+  tag "$file_id"
+  input:
+    tuple val(file_id), path(gvcf)
+  output:
+    tuple val(file_id), path("${gvcf}"), path("${gvcf}.tbi"), emit: gvcf_idx
+    tuple val(file_id), path("${gvcf.simpleName}_IndexFeatureFile_report.txt"), emit: report
+
+  script:
+  xmx_memory = "${task.memory}" - ~/\s*GB/
+  if (file_id instanceof List){
+    file_prefix = file_id[0]
+  } else {
+    file_prefix = file_id
+  }
+"""
+gatk --java-options "-Xmx${xmx_memory}G" IndexFeatureFile \
+      -I ${gvcf} 2> ${gvcf.simpleName}_IndexFeatureFile_report.txt
+"""
+}
+
+process validate_gvcf {
+  container = "${container_url}"
+  label "big_mem_mono_cpus"
+  tag "$file_id"
+  input:
+    tuple val(file_id), path(gvcf), path(gvcf_idx)
+    tuple val(ref_id), path(fasta), path(fai), path(dict)
+  output:
+    tuple val(file_id), path("${gvcf}"), path("${gvcf_idx}"), emit: gvcf
+
+  script:
+  xmx_memory = "${task.memory}" - ~/\s*GB/
+  if (file_id instanceof List){
+    file_prefix = file_id[0]
+  } else {
+    file_prefix = file_id
+  }
+"""
+gatk --java-options "-Xmx${xmx_memory}G" ValidateVariants \
+   -V ${gvcf} \
+   -R ${fasta} -gvcf
+"""
 }
 
 process consolidate_gvcf {
@@ -203,9 +258,11 @@ process consolidate_gvcf {
   label "big_mem_mono_cpus"
   tag "$file_id"
   input:
-    tuple val(file_id), path(gvcf)
+    tuple val(file_id), path(gvcf), path(gvcf_idx)
+    tuple val(ref_id), path(fasta), path(fai), path(dict)
   output:
-    tuple val(file_id), path("${file_prefix}.db"), emit: gdb
+    tuple val(file_id), path("${file_prefix}.gvcf"), path("${file_prefix}.gvcf.idx"), emit: gvcf_idx
+    tuple val(file_id), path("${file_prefix}_CombineGVCFs_report.txt"), emit: report
 
   script:
   xmx_memory = "${task.memory}" - ~/\s*GB/
@@ -217,17 +274,19 @@ process consolidate_gvcf {
   def gvcf_cmd = ""
   if (gvcf instanceof List){
     for (gvcf_file in gvcf){
-      gvcf_cmd += "--V ${gvcf_file} "
+      gvcf_cmd += "-V ${gvcf_file} "
     }
   } else {
-    gvcf_cmd = "--V ${gvcf} "
+    gvcf_cmd = "-V ${gvcf} "
   }
 """
 mkdir tmp
-gatk --java-options "-Xmx${xmx_memory}G" GenomicsDBImport \
+gatk --java-options "-Xmx${xmx_memory}G" CombineGVCFs \
     ${gvcf_cmd} \
-    --genomicsdb-workspace-path ${file_prefix}.db \
-    --tmp-dir=./tmp \
+    -R ${fasta} \
+    -O ${file_prefix}.gvcf 2> ${file_prefix}_CombineGVCFs_report.txt
+gatk --java-options "-Xmx${xmx_memory}G" IndexFeatureFile \
+      -I ${file_prefix}.gvcf 2> ${file_prefix}_IndexFeatureFile_report.txt
 """
 }
 
@@ -239,10 +298,10 @@ process genomic_db_call {
     publishDir "results/${params.variant_calling_out}", mode: 'copy'
   }
   input:
-    tuple val(file_id), path(db)
+    tuple val(file_id), path(gvcf), path(gvcf_idx)
     tuple val(ref_id), path(fasta), path(fai), path(dict)
   output:
-    tuple val(file_id), path("${db.simple_name}.vcf.gz"), emit: vcf
+    tuple val(file_id), path("${gvcf.simpleName}.vcf.gz"), emit: vcf
 
   script:
   xmx_memory = "${task.memory}" - ~/\s*GB/
@@ -263,15 +322,14 @@ process genomic_db_call {
 mkdir tmp
 gatk --java-options "-Xmx${xmx_memory}G" GenotypeGVCFs \
    -R ${fasta} \
-   -V gendb://${db} \
-   -O ${db.simpleName}.vcf.gz \
+   -V ${gvcf} \
+   -O ${gvcf.simpleName}.vcf.gz \
    --tmp-dir ./tmp
 """
 }
 
 /*******************************************************************/
 params.variant_calling = ""
-params.variant_calling_out = ""
 process variant_calling {
   container = "${container_url}"
   label "big_mem_mono_cpus"
