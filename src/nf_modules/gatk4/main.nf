@@ -192,9 +192,6 @@ workflow call_variants_all_sample {
     )
     consolidate_gvcf(
       validate_gvcf.out.gvcf
-      .map {
-        it -> ["library", it[1], it[2]]
-      }
       .groupTuple(),
       fasta_idx.collect()
     )
