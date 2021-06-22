@@ -1,6 +1,22 @@
 version = "4.2.0.0"
 container_url = "broadinstitute/gatk:${version}"
 
+def get_file_prefix(file_id) {
+  if (file_id instanceof List){
+    file_prefix = file_id[0]
+  } else if (file_id instanceof Map) {
+      library = file_id[0]
+      file_prefix = file_id[0]
+      if (file_id.containsKey('library')) {
+        library = file_id.library
+        file_prefix = file_id.id
+      }
+  } else {
+    file_prefix = file_id
+  }
+  return file_prefix
+}
+
 include {
   index_fasta as samtools_index_fasta;
 } from './../samtools/main.nf'
@@ -76,11 +92,7 @@ process index_vcf {
 
   script:
   xmx_memory = "${task.memory}" - ~/\s*GB/
-  if (file_id instanceof List){
-    file_prefix = file_id[0]
-  } else {
-    file_prefix = file_id
-  }
+  file_prefix = get_file_prefix(file_id)
 """
 gatk --java-options "-Xmx${xmx_memory}G" IndexFeatureFile \
   -I ${vcf}
@@ -100,11 +112,7 @@ process compute_base_recalibration {
 
   script:
   xmx_memory = "${task.memory}" - ~/\s*GB/
-  if (file_id instanceof List){
-    file_prefix = file_id[0]
-  } else {
-    file_prefix = file_id
-  }
+  file_prefix = get_file_prefix(file_id)
   def vcf_cmd = ""
   if (vcf instanceof List){
     for (vcf_file in vcf){
@@ -135,11 +143,7 @@ process apply_base_recalibration {
 
   script:
   xmx_memory = "${task.memory}" - ~/\s*GB/
-  if (file_id instanceof List){
-    file_prefix = file_id[0]
-  } else {
-    file_prefix = file_id
-  }
+  file_prefix = get_file_prefix(file_id)
 """
  gatk --java-options "-Xmx${xmx_memory}G" ApplyBQSR \
    -R ${fasta} \
@@ -163,11 +167,7 @@ process call_variants_per_sample {
 
   script:
   xmx_memory = "${task.memory}" - ~/\s*GB/
-  if (file_id instanceof List){
-    file_prefix = file_id[0]
-  } else {
-    file_prefix = file_id
-  }
+  file_prefix = get_file_prefix(file_id)
 """
  gatk --java-options "-Xmx${xmx_memory}G" HaplotypeCaller  \
    -R ${fasta} \
@@ -215,11 +215,7 @@ process index_gvcf {
 
   script:
   xmx_memory = "${task.memory}" - ~/\s*GB/
-  if (file_id instanceof List){
-    file_prefix = file_id[0]
-  } else {
-    file_prefix = file_id
-  }
+  file_prefix = get_file_prefix(file_id)
 """
 gatk --java-options "-Xmx${xmx_memory}G" IndexFeatureFile \
       -I ${gvcf} 2> ${gvcf.simpleName}_IndexFeatureFile_report.txt
@@ -238,11 +234,7 @@ process validate_gvcf {
 
   script:
   xmx_memory = "${task.memory}" - ~/\s*GB/
-  if (file_id instanceof List){
-    file_prefix = file_id[0]
-  } else {
-    file_prefix = file_id
-  }
+  file_prefix = get_file_prefix(file_id)
 """
 gatk --java-options "-Xmx${xmx_memory}G" ValidateVariants \
    -V ${gvcf} \
@@ -263,11 +255,7 @@ process consolidate_gvcf {
 
   script:
   xmx_memory = "${task.memory}" - ~/\s*GB/
-  if (file_id instanceof List){
-    file_prefix = file_id[0]
-  } else {
-    file_prefix = file_id
-  }
+  file_prefix = get_file_prefix(file_id)
   def gvcf_cmd = ""
   if (gvcf instanceof List){
     for (gvcf_file in gvcf){
@@ -302,11 +290,7 @@ process genomic_db_call {
 
   script:
   xmx_memory = "${task.memory}" - ~/\s*GB/
-  if (file_id instanceof List){
-    file_prefix = file_id[0]
-  } else {
-    file_prefix = file_id
-  }
+  file_prefix = get_file_prefix(file_id)
   def gvcf_cmd = ""
   if (gvcf instanceof List){
     for (gvcf_file in gvcf){
@@ -343,11 +327,7 @@ process variant_calling {
 
   script:
   xmx_memory = "${task.memory}" - ~/\s*GB/
-  if (file_id instanceof List){
-    file_prefix = file_id[0]
-  } else {
-    file_prefix = file_id
-  }
+  file_prefix = get_file_prefix(file_id)
 """
 gatk --java-options "-Xmx${xmx_memory}G" HaplotypeCaller \
   ${params.variant_calling} \
@@ -374,11 +354,7 @@ process filter_snp {
     tuple val(file_id), path("*_snp.vcf"), emit: vcf
   script:
   xmx_memory = "${task.memory}" - ~/\s*GB/
-  if (file_id instanceof List){
-    file_prefix = file_id[0]
-  } else {
-    file_prefix = file_id
-  }
+  file_prefix = get_file_prefix(file_id)
 """
 gatk --java-options "-Xmx${xmx_memory}G" SelectVariants \
   ${params.filter_snp} \
@@ -406,11 +382,7 @@ process filter_indels {
     tuple val(file_id), path("*_indel.vcf"), emit: vcf
   script:
   xmx_memory = "${task.memory}" - ~/\s*GB/
-  if (file_id instanceof List){
-    file_prefix = file_id[0]
-  } else {
-    file_prefix = file_id
-  }
+  file_prefix = get_file_prefix(file_id)
 """
 gatk --java-options "-Xmx${xmx_memory}G" SelectVariants \
   ${params.filter_indels} \
@@ -439,11 +411,7 @@ process high_confidence_snp {
     tuple val(file_id), path("*_snp.vcf"), emit: vcf
   script:
   xmx_memory = "${task.memory}" - ~/\s*GB/
-  if (file_id instanceof List){
-    file_prefix = file_id[0]
-  } else {
-    file_prefix = file_id
-  }
+  file_prefix = get_file_prefix(file_id)
 """
 gatk --java-options "-Xmx${xmx_memory}G" VariantFiltration \
   -R ${fasta} \
@@ -471,11 +439,7 @@ process high_confidence_indels {
     tuple val(file_id), path("*_indel.vcf"), emit: vcf
   script:
   xmx_memory = "${task.memory}" - ~/\s*GB/
-  if (file_id instanceof List){
-    file_prefix = file_id[0]
-  } else {
-    file_prefix = file_id
-  }
+  file_prefix = get_file_prefix(file_id)
 """
 gatk --java-options "-Xmx${xmx_memory}G" VariantFiltration \
   -R ${fasta} \
@@ -502,11 +466,7 @@ process recalibrate_snp_table {
     tuple val(file_id), path("recal_data_table"), emit: recal_table
   script:
   xmx_memory = "${task.memory}" - ~/\s*GB/
-  if (file_id instanceof List){
-    file_prefix = file_id[0]
-  } else {
-    file_prefix = file_id
-  }
+  file_prefix = get_file_prefix(file_id)
 """
 gatk --java-options "-Xmx${xmx_memory}G" IndexFeatureFile \
   -I ${snp_file}
@@ -539,11 +499,7 @@ process recalibrate_snp {
     tuple val(file_id), path("*.bam"), emit: bam
   script:
   xmx_memory = "${task.memory}" - ~/\s*GB/
-  if (file_id instanceof List){
-    file_prefix = file_id[0]
-  } else {
-    file_prefix = file_id
-  }
+  file_prefix = get_file_prefix(file_id)
 """
 gatk --java-options "-Xmx${xmx_memory}G" ApplyBQSR \
   ${params.recalibrate_snp} \
@@ -571,11 +527,7 @@ process haplotype_caller {
     tuple val(file_id), path("*.gvcf"), emit: gvcf
   script:
   xmx_memory = "${task.memory}" - ~/\s*GB/
-  if (file_id instanceof List){
-    file_prefix = file_id[0]
-  } else {
-    file_prefix = file_id
-  }
+  file_prefix = get_file_prefix(file_id)
 """
 gatk --java-options "-Xmx${xmx_memory}G" HaplotypeCaller \
   ${params.haplotype_caller} \
@@ -603,11 +555,7 @@ process gvcf_genotyping {
     tuple val(file_id), path("*.vcf.gz"), emit: vcf
   script:
   xmx_memory = "${task.memory}" - ~/\s*GB/
-  if (file_id instanceof List){
-    file_prefix = file_id[0]
-  } else {
-    file_prefix = file_id
-  }
+  file_prefix = get_file_prefix(file_id)
 """
 gatk --java-options "-Xmx${xmx_memory}G" GenotypeGVCFs \
   ${params.gvcf_genotyping} \
@@ -634,11 +582,7 @@ process select_variants_snp {
     tuple val(file_id), path("*_joint_snp.vcf"), emit: vcf
   script:
   xmx_memory = "${task.memory}" - ~/\s*GB/
-  if (file_id instanceof List){
-    file_prefix = file_id[0]
-  } else {
-    file_prefix = file_id
-  }
+  file_prefix = get_file_prefix(file_id)
 """
 gatk --java-options "-Xmx${xmx_memory}GG" SelectVariants \
   ${params.select_variants_snp} \
@@ -666,11 +610,7 @@ process select_variants_indels {
     tuple val(file_id), path("*_joint_indel.vcf"), emit: vcf
   script:
   xmx_memory = "${task.memory}" - ~/\s*GB/
-  if (file_id instanceof List){
-    file_prefix = file_id[0]
-  } else {
-    file_prefix = file_id
-  }
+  file_prefix = get_file_prefix(file_id)
 """
 gatk --java-options "-Xmx${xmx_memory}G" SelectVariants \
   ${params.select_variants_indels} \
@@ -699,11 +639,7 @@ process personalized_genome {
 
   script:
   xmx_memory = "${task.memory}" - ~/\s*GB/
-  if (file_id instanceof List){
-    file_prefix = file_id[0]
-  } else {
-    file_prefix = file_id
-  }
+  file_prefix = get_file_prefix(file_id)
 """
 gatk --java-options "-Xmx${xmx_memory}G" FastaAlternateReferenceMaker\
   ${params.personalized_genome} \
