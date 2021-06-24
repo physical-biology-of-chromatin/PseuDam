@@ -147,6 +147,7 @@ process kb_default {
     -x 10XV3 \
     ${params.count} \
     ${reads[0]} ${reads[1]} > ${file_prefix}_kb_mapping_report.txt
+  cp ${transcript_to_gene} ${file_prefix}/
   """
 }
 
@@ -196,6 +197,7 @@ process kb_marseq {
     ${params.count} \
     -x 1,0,6:1,6,14:0,0,0 \
     ${reads[0]} ${reads[1]} > ${file_prefix}_kb_mapping_report.txt
+  cp ${transcript_to_gene} ${file_prefix}/
   """
   else
   """
@@ -209,6 +211,7 @@ process kb_marseq {
     ${params.count} \
     -x 1,0,6:1,6,14:0,0,0 \
     ${reads} > ${file_prefix}_kb_mapping_report.txt
+  cp ${transcript_to_gene} ${file_prefix}/
   """
 }
 
@@ -335,6 +338,9 @@ process velocity_default {
     -x 10XV3 \
     ${params.count} \
     ${reads[0]} ${reads[1]} > ${file_prefix}_kb_mapping_report.txt
+  cp ${transcript_to_gene} ${file_prefix}/
+  cp ${cdna_t2g} ${file_prefix}/
+  cp ${intron_t2g} ${file_prefix}/
   """
 }
 
@@ -387,6 +393,9 @@ process velocity_marseq {
     ${params.count} \
     -x 1,0,6:1,6,14:0,0,0 \
     ${reads[0]} ${reads[1]} > ${file_prefix}_kb_mapping_report.txt
+  cp ${transcript_to_gene} ${file_prefix}/
+  cp ${cdna_t2g} ${file_prefix}/
+  cp ${intron_t2g} ${file_prefix}/
   """
   else
   """
@@ -403,5 +412,8 @@ process velocity_marseq {
     ${params.count} \
     -x 1,0,6:1,6,14:0,0,0 \
     ${reads} > ${file_prefix}_kb_mapping_report.txt
+  cp ${transcript_to_gene} ${file_prefix}/
+  cp ${cdna_t2g} ${file_prefix}/
+  cp ${intron_t2g} ${file_prefix}/
   """
 }
