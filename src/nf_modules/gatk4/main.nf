@@ -154,13 +154,13 @@ process apply_base_recalibration {
 }
 
 /*******************************************************************/
-
+params.variant_calling_gvcf_out = ""
 process call_variants_per_sample {
   container = "${container_url}"
   label "big_mem_mono_cpus"
   tag "$file_id"
-  if (params.variant_calling_out != "") {
-    publishDir "results/${params.variant_calling_out}", mode: 'copy'
+  if (params.variant_calling_gvcf_out != "") {
+    publishDir "results/${params.variant_calling_gvcf_out}", mode: 'copy'
   }
 
   input:
