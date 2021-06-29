@@ -327,6 +327,7 @@ process velocity_default {
   if (reads.size() == 2)
   """
   mkdir ${file_prefix}
+  kb count  -t ${task.cpus} \
     -m ${kb_memory} \
     -i ${index} \
     -g ${transcript_to_gene} \
