@@ -19,6 +19,6 @@ process fasta_to_transcripts_lengths {
 
   script:
 """
-bioawk -c fastx '{print \$name length(\$seq)}' ${fasta} > ${fasta.simpleName}_transcripts_lengths.tsv
+bioawk -c fastx '{print(\$name" "length(\$seq))}' ${fasta} > ${fasta.simpleName}_transcripts_lengths.tsv
 """
 }
