@@ -334,7 +334,7 @@ process velocity_default {
     -o ${file_prefix} \
     -c1 ${cdna_t2g} \
     -c2 ${intron_t2g} \
-    --lamanno \
+    --workflow lamanno \
     ${whitelist_param} \
     -x 10XV3 \
     ${params.count} \
@@ -389,7 +389,7 @@ process velocity_marseq {
     -o ${file_prefix} \
     -c1 ${cdna_t2g} \
     -c2 ${intron_t2g} \
-    --lamanno \
+    --workflow lamanno \
     ${whitelist_param} \
     ${params.count} \
     -x 1,0,6:1,6,14:0,0,0 \
@@ -408,7 +408,7 @@ process velocity_marseq {
     -o ${file_prefix} \
     -c1 ${cdna_t2g} \
     -c2 ${intron_t2g} \
-    --lamanno \
+    --workflow lamanno \
     ${whitelist_param} \
     ${params.count} \
     -x 1,0,6:1,6,14:0,0,0 \
