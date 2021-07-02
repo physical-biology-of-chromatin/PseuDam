@@ -9,7 +9,7 @@ To get the last commits from this repository into your fork use the following co
 
 For the first time:
 ```sh
-git remote add upstream git@gitbio.ens-lyon.fr::pipelines/nextflow.git
+git remote add upstream git@gitbio.ens-lyon.fr:pipelines/nextflow.git
 git pull upstream master
 ```
 

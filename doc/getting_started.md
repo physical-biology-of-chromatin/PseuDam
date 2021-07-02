@@ -34,7 +34,7 @@ singularity run docker://hello-world
 To install nextflow on your computer simply run the following command:
 
 ```sh
-git clone git@gitbio.ens-lyon.fr/LBMC/nextflow
+git clone git@gitbio.ens-lyon.fr:LBMC/nextflow.git
 cd nextflow/
 src/install_nextflow.sh
 ```
