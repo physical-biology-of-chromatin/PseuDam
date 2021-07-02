@@ -145,6 +145,7 @@ process kb_default {
     -o ${file_prefix} \
     ${whitelist_param} \
     -x 10XV3 \
+    --h5ad \
     ${params.count} \
     ${reads[0]} ${reads[1]} > ${file_prefix}_kb_mapping_report.txt
   cp ${transcript_to_gene} ${file_prefix}/
@@ -195,6 +196,7 @@ process kb_marseq {
     -o ${file_prefix} \
     ${whitelist_param} \
     ${params.count} \
+    --h5ad \
     -x 1,0,6:1,6,14:0,0,0 \
     ${reads[0]} ${reads[1]} > ${file_prefix}_kb_mapping_report.txt
   cp ${transcript_to_gene} ${file_prefix}/
@@ -210,6 +212,7 @@ process kb_marseq {
     ${whitelist_param} \
     ${params.count} \
     -x 1,0,6:1,6,14:0,0,0 \
+    --h5ad \
     ${reads} > ${file_prefix}_kb_mapping_report.txt
   cp ${transcript_to_gene} ${file_prefix}/
   """
@@ -337,6 +340,7 @@ process velocity_default {
     --workflow lamanno \
     ${whitelist_param} \
     -x 10XV3 \
+    --h5ad \
     ${params.count} \
     ${reads[0]} ${reads[1]} > ${file_prefix}_kb_mapping_report.txt
   cp ${transcript_to_gene} ${file_prefix}/
@@ -390,6 +394,7 @@ process velocity_marseq {
     -c1 ${cdna_t2g} \
     -c2 ${intron_t2g} \
     --workflow lamanno \
+     --h5ad \
     ${whitelist_param} \
     ${params.count} \
     -x 1,0,6:1,6,14:0,0,0 \
@@ -418,3 +423,4 @@ process velocity_marseq {
   cp ${intron_t2g} ${file_prefix}/
   """
 }
+
