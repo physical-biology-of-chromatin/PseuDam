@@ -88,7 +88,7 @@ workflow count {
     .set{ whitelist_optional }
   switch(params.kb_protocol) {
     case "marsseq":
-      split(fastq, config)
+      split(fastq, config.collect())
       kb_marseq(index.collect(), split.out.fastq, transcript_to_gene.collect(), whitelist_optional.collect())
       kb_marseq.out.counts.set{res_counts}
       kb_marseq.out.report.set{res_report}
@@ -280,7 +280,7 @@ workflow count_velocity {
     .set{ whitelist_optional }
   switch(params.kb_protocol) {
     case "marsseq":
-      split(fastq, config)
+      split(fastq, config.collect())
       velocity_marseq(index.collect(), split.out.fastq, transcript_to_gene.collect(), whitelist_optional.collect())
       velocity_marseq.out.counts.set{res_counts}
       velocity_marseq.out.report.set{res_report}
