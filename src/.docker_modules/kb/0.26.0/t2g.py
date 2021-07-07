@@ -26,8 +26,8 @@ if __name__ == "__main__":
         dbfn=":memory:",
         force=True,
         merge_strategy="merge",
-        disable_infer_transcripts=True,
-        disable_infer_genes=True
+        disable_infer_transcripts=False,
+        disable_infer_genes=False
     )
     with open("t2g.txt", "w") as t2g:
         for gene in db.all_features():
