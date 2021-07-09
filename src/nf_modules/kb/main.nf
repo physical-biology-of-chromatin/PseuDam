@@ -1,4 +1,4 @@
-version = "0.26.0"
+version = "0.26.3"
 container_url = "lbmc/kb:${version}"
 
 params.index_fasta = ""
