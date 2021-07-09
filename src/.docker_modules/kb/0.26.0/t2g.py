@@ -3,6 +3,7 @@ import os
 import gffutils
 import argparse
 
+
 def validate_file(f):
     if not os.path.exists(f):
         # Argparse uses the ArgumentTypeError to give a rejection message like:
@@ -32,10 +33,15 @@ if __name__ == "__main__":
     with open("t2g.txt", "w") as t2g:
         for gene in db.all_features():
             for transcript in db.children(
-              gene, featuretype='transcript', order_by='start'):
+              gene, featuretype='transcript', order_by='start'
+            ):
+                t2g_line = str(transcript["transcript_id"][0]) + \
+                    "\t" + \
+                    str(gene["gene_id"][0])
+                t2g_line = t2g_line.split("\t")
                 t2g.write(
-                    str(transcript["transcript_id"][0]) +
+                    str(t2g_line[0].split(".")[0]) +
                     "\t" +
-                    str(gene["gene_id"][0]) +
+                    str(t2g_line[1].split(".")[0]) +
                     "\n"
                 )
