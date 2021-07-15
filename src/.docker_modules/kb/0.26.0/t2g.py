@@ -1,6 +1,7 @@
 #!/usr/local/bin/python
 import os
-import gffutils
+import re
+import gzip
 import argparse
 
 
@@ -12,6 +13,43 @@ def validate_file(f):
     return f
 
 
+def t2g_line(transcript, gene):
+    return str(transcript + "\t" + str(gene) + "\n")
+
+
+def build_gene_re():
+    return re.compile(".*gene_id\s+\"(\S+)\";.*")
+
+
+def build_transcript_re():
+    return re.compile(".*transcript_id\s+\"(\S+)\";.*")
+
+
+def get_gene(line, gene_re):
+    return gene_re.match(line)
+
+
+def get_transcript(line, transcript_re):
+    return transcript_re.match(line)
+
+
+def gtf_line(line, transcript_re, gene_re):
+    transcript_id = get_transcript(line, transcript_re)
+    gene_id = get_gene(line, gene_re)
+    return {'transcript_id': transcript_id, 'gene_id': gene_id}
+
+
+def write_t2g_line(t2g, line, transcript_re, gene_re):
+    results = gtf_line(line, transcript_re, gene_re)
+    if results['transcript_id']:
+        t2g.write(
+            t2g_line(
+                results['transcript_id'].group(1),
+                results['gene_id'].group(1)
+            )
+        )
+
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
         description="create transcript to genes file from a gtf file."
@@ -21,27 +59,10 @@ if __name__ == "__main__":
         help="gtf file", metavar="FILE"
     )
     args = parser.parse_args()
+    gene_re = build_gene_re()
+    transcript_re = build_transcript_re()
 
-    db = gffutils.create_db(
-        args.gtf,
-        dbfn=":memory:",
-        force=True,
-        merge_strategy="merge",
-        disable_infer_transcripts=False,
-        disable_infer_genes=False
-    )
-    with open("t2g.txt", "w") as t2g:
-        for gene in db.all_features():
-            for transcript in db.children(
-              gene, featuretype='transcript', order_by='start'
-            ):
-                t2g_line = str(transcript["transcript_id"][0]) + \
-                    "\t" + \
-                    str(gene["gene_id"][0])
-                t2g_line = t2g_line.split("\t")
-                t2g.write(
-                    str(t2g_line[0].split(".")[0]) +
-                    "\t" +
-                    str(t2g_line[1].split(".")[0]) +
-                    "\n"
-                )
+    with gzip.open(args.gtf, "rb") as gtf:
+        with open("t2g_dup.txt", "w") as t2g:
+            for line in gtf:
+                write_t2g_line(t2g, str(line), transcript_re, gene_re)
