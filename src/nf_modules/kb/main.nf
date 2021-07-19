@@ -37,8 +37,8 @@ process tr2g {
   script:
   """
   t2g.py --gtf ${gtf}
-  sort -u t2g_dup.txt > t2g.txt
-  rm t2g_dup.txt
+  sort -k1u t2g_dup.txt > t2g.txt
+  cp t2g.txt t2g.txt.back
   """
 }
 
