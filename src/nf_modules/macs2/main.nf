@@ -30,6 +30,7 @@ macs2 callpeak \
   --call-summits \
   --control ${bam_control} \
   --keep-dup all \
+  --qvalue 0.99 \
   --name ${bam_ip.simpleName} 2> \
   ${bam_ip.simpleName}_macs2_report.txt
 
@@ -68,6 +69,7 @@ awk '{print \$1"\t"\$2"\t"\$3"\t.\t+\t"\$4}' ${bg_control} > \
 macs2 callpeak \
   ${params.peak_calling_bg} \
   --treatment ${bg_ip.simpleName}.bed \
+  --qvalue 0.99 \
   --call-summits \
   --control ${bg_control.simpleName}.bed \
   --keep-dup all \
