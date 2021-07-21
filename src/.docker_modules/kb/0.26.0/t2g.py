@@ -14,7 +14,7 @@ def validate_file(f):
 
 
 def t2g_line(transcript, gene):
-    return str(transcript + "\t" + str(gene) + "\n")
+    return str(transcript) + "\t" + str(gene) + "\n"
 
 
 def build_gene_re():
