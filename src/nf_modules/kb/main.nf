@@ -37,7 +37,7 @@ process tr2g {
   script:
   """
   t2g.py --gtf ${gtf}
-  sort -k1u t2g_dup.txt > t2g.txt
+  sort -k1 -u t2g_dup.txt > t2g.txt
   cp t2g.txt t2g.txt.back
   """
 }
@@ -150,7 +150,11 @@ process kb_default {
     --h5ad \
     ${params.count} \
     ${reads[0]} ${reads[1]} > ${file_prefix}_kb_mapping_report.txt
+  awk -v OFS='\t' '{print(\$1, \$2)}' ${transcript_to_gene} | \
+    sed -E "s|([A-Z]+[0-9]+)\.\S+\s([A-Z]+[0-9]+)\.\S+|\1\t\2|" > \
+    clean_${transcript_to_gene}
   cp ${transcript_to_gene} ${file_prefix}/
+  cp clean_${transcript_to_gene} ${file_prefix}/
   """
 }
 
@@ -201,7 +205,11 @@ process kb_marseq {
     --h5ad \
     -x 1,0,6:1,6,14:0,0,0 \
     ${reads[0]} ${reads[1]} > ${file_prefix}_kb_mapping_report.txt
+  awk -v OFS='\t' '{print(\$1, \$2)}' ${transcript_to_gene} | \
+    sed -E "s|([A-Z]+[0-9]+)\.\S+\s([A-Z]+[0-9]+)\.\S+|\1\t\2|" > \
+    clean_${transcript_to_gene}
   cp ${transcript_to_gene} ${file_prefix}/
+  cp clean_${transcript_to_gene} ${file_prefix}/
   """
   else
   """
@@ -216,7 +224,11 @@ process kb_marseq {
     -x 1,0,6:1,6,14:0,0,0 \
     --h5ad \
     ${reads} > ${file_prefix}_kb_mapping_report.txt
+  awk -v OFS='\t' '{print(\$1, \$2)}' ${transcript_to_gene} | \
+    sed -E "s|([A-Z]+[0-9]+)\.\S+\s([A-Z]+[0-9]+)\.\S+|\1\t\2|" > \
+    clean_${transcript_to_gene}
   cp ${transcript_to_gene} ${file_prefix}/
+  cp clean_${transcript_to_gene} ${file_prefix}/
   """
 }
 
@@ -345,7 +357,11 @@ process velocity_default {
     --h5ad \
     ${params.count} \
     ${reads[0]} ${reads[1]} > ${file_prefix}_kb_mapping_report.txt
+  awk -v OFS='\t' '{print(\$1, \$2)}' ${transcript_to_gene} | \
+    sed -E "s|([A-Z]+[0-9]+)\.\S+\s([A-Z]+[0-9]+)\.\S+|\1\t\2|" > \
+    clean_${transcript_to_gene}
   cp ${transcript_to_gene} ${file_prefix}/
+  cp clean_${transcript_to_gene} ${file_prefix}/
   cp ${cdna_t2g} ${file_prefix}/
   cp ${intron_t2g} ${file_prefix}/
   """
@@ -401,7 +417,11 @@ process velocity_marseq {
     ${params.count} \
     -x 1,0,6:1,6,14:0,0,0 \
     ${reads[0]} ${reads[1]} > ${file_prefix}_kb_mapping_report.txt
+  awk -v OFS='\t' '{print(\$1, \$2)}' ${transcript_to_gene} | \
+    sed -E "s|([A-Z]+[0-9]+)\.\S+\s([A-Z]+[0-9]+)\.\S+|\1\t\2|" > \
+    clean_${transcript_to_gene}
   cp ${transcript_to_gene} ${file_prefix}/
+  cp clean_${transcript_to_gene} ${file_prefix}/
   cp ${cdna_t2g} ${file_prefix}/
   cp ${intron_t2g} ${file_prefix}/
   """
@@ -420,7 +440,11 @@ process velocity_marseq {
     ${params.count} \
     -x 1,0,6:1,6,14:0,0,0 \
     ${reads} > ${file_prefix}_kb_mapping_report.txt
+  awk -v OFS='\t' '{print(\$1, \$2)}' ${transcript_to_gene} | \
+    sed -E "s|([A-Z]+[0-9]+)\.\S+\s([A-Z]+[0-9]+)\.\S+|\1\t\2|" > \
+    clean_${transcript_to_gene}
   cp ${transcript_to_gene} ${file_prefix}/
+  cp clean_${transcript_to_gene} ${file_prefix}/
   cp ${cdna_t2g} ${file_prefix}/
   cp ${intron_t2g} ${file_prefix}/
   """
