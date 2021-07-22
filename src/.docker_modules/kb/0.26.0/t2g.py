@@ -62,7 +62,14 @@ if __name__ == "__main__":
     gene_re = build_gene_re()
     transcript_re = build_transcript_re()
 
-    with gzip.open(args.gtf, "rb") as gtf:
-        with open("t2g_dup.txt", "w") as t2g:
-            for line in gtf:
-                write_t2g_line(t2g, str(line), transcript_re, gene_re)
+    try:
+        with gzip.open(args.gtf, "rb") as gtf:
+            with open("t2g_dup.txt", "w") as t2g:
+                for line in gtf:
+                    write_t2g_line(t2g, str(line), transcript_re, gene_re)
+    except gzip.BadGzipFile:
+        with open(args.gtf, "r") as gtf:
+            with open("t2g_dup.txt", "w") as t2g:
+                for line in gtf:
+                    write_t2g_line(t2g, str(line), transcript_re, gene_re)
+

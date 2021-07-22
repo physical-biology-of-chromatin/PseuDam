@@ -1,6 +1,7 @@
 #!/usr/local/bin/python
 import os
 import re
+import gzip
 import argparse
 
 
@@ -30,7 +31,7 @@ def get_t2g_line(line, t2g_re):
 
 
 def write_t2g_line(t2g, line, t2g_re):
-    results = t2g_line(line, t2g_re)
+    results = get_t2g_line(line, t2g_re)
     if results['transcript_id']:
         t2g.write(
             t2g_line(
@@ -51,7 +52,13 @@ if __name__ == "__main__":
     args = parser.parse_args()
     t2g_re = build_t2g_re()
 
-    with open(args.t2g, "r") as gtf:
-        with open("fix_t2g.txt", "w") as t2g:
-            for line in gtf:
-                write_t2g_line(t2g, str(line), t2g_re)
+    try:
+        with gzip.open(args.t2g, "rb") as gtf:
+            with open("fix_t2g.txt", "w") as t2g:
+                for line in gtf:
+                    write_t2g_line(t2g, str(line), t2g_re)
+    except gzip.BadGzipFile:
+        with open(args.t2g, "r") as gtf:
+            with open("fix_t2g.txt", "w") as t2g:
+                for line in gtf:
+                    write_t2g_line(t2g, str(line), t2g_re)
