@@ -18,12 +18,18 @@ process bam2ec {
   output:
     tuple val(file_id), path("${bam.simpleName}.bin"), emit: bin
     tuple val(gtf_id), path("${transcripts_lengths}"), emit: tsv
+    tuple val(file_id), path("${bam.simpleName}_bam2ec_report.txt"), emit: report
 
   script:
 """
-cp ${bam} file_bam.bam
-cp ${bam_idx} file_bam.bam.bai
-alntools bam2ec ${params.bam2ec} -t ${transcripts_lengths} file_bam.bam ${bam.simpleName}.bin
+mkdir tmp
+alntools bam2ec \
+  -c 1 ${params.bam2ec} \
+  -d ./tmp \
+  -t ${transcripts_lengths} \
+  -v \
+  ${bam} ${bam.simpleName}.bin &> \
+  ${bam.simpleName}_bam2ec_report.txt
 """
 }
 
