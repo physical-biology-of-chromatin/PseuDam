@@ -16,7 +16,6 @@ process index_fasta {
 
   output:
     tuple val(file_id), path("${fasta}"), path("*.mmi*"), emit: index
-    path "*_report.txt", emit: report
 
   script:
   memory = "${task.memory}" - ~/\s*GB/
@@ -41,7 +40,6 @@ process mapping_fastq {
 
   output:
   tuple val(file_id), path("*.bam"), emit: bam
-  path "*_report.txt", emit: report
 
   script:
   if (file_id instanceof List){
@@ -50,7 +48,7 @@ process mapping_fastq {
     file_prefix = file_id
   }
   memory = "${task.memory}" - ~/\s*GB/
-  memory = memory / (task.cpus + 1.0)
+  memory = memory.toInteger() / (task.cpus + 1.0)
   if (reads.size() == 2)
   """
   minimap2 ${params.mapping_fastq} -t ${task.cpus} -K ${memory} ${fasta} ${reads[0]} ${reads[1]} |
