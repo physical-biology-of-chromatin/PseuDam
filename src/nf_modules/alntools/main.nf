@@ -17,7 +17,7 @@ process bam2ec {
 
   output:
     tuple val(file_id), path("${bam.simpleName}.bin"), emit: bin
-    tuple val(gtf_id), path("${transcripts_lengths}"), emit: tsv
+    tuple val(transcripts_lengths_id), path("${transcripts_lengths}"), emit: tsv
     tuple val(file_id), path("${bam.simpleName}_bam2ec_report.txt"), emit: report
 
   script:
