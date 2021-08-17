@@ -19,6 +19,7 @@ def get_file_prefix(file_id) {
 
 include {
   index_fasta as samtools_index_fasta;
+  index_bam;
 } from './../samtools/main.nf'
 include {
   index_fasta as picard_index_fasta;
@@ -34,8 +35,9 @@ workflow germline_cohort_data_variant_calling {
   main:
     // data preparation
     mark_duplicate(bam)
+    index_bam(mark_duplicate.out.bam)
     picard_index_bam(mark_duplicate.out.bam)
-    mark_duplicate.out.bam
+    index_bam.out.bam_idx
       .join(picard_index_bam.out.index)
       .set{ bam_idx }
     picard_index_fasta(fasta)
@@ -104,7 +106,7 @@ process compute_base_recalibration {
   label "big_mem_mono_cpus"
   tag "$file_id"
   input:
-    tuple val(file_id), path(bam), path(bam_idx)
+    tuple val(file_id), path(bam), path(bam_idx), path(bam_idx_bis)
     tuple val(ref_id), path(fasta), path(fai), path(dict)
     tuple val(vcf_id), path(vcf), path(vcf_idx)
   output:
@@ -135,7 +137,7 @@ process apply_base_recalibration {
   label "big_mem_mono_cpus"
   tag "$file_id"
   input:
-    tuple val(file_id), path(bam), path(bam_idx)
+    tuple val(file_id), path(bam), path(bam_idx), path(bam_idx_bis)
     tuple val(ref_id), path(fasta), path(fai), path(dict)
     tuple val(table_id), path(table)
   output:
@@ -164,7 +166,7 @@ process call_variants_per_sample {
   }
 
   input:
-    tuple val(file_id), path(bam), path(bam_idx)
+    tuple val(file_id), path(bam), path(bam_idx), path(bam_idx_bis)
     tuple val(ref_id), path(fasta), path(fai), path(dict)
   output:
     tuple val(file_id), path("${bam.simpleName}.gvcf.gz"), emit: gvcf
@@ -464,7 +466,7 @@ process recalibrate_snp_table {
   }
 
   input:
-    tuple val(file_id), path(snp_file), path(indel_file), path(bam), path(bam_idx)
+    tuple val(file_id), path(snp_file), path(indel_file), path(bam), path(bam_idx), path(bam_idx_bis)
     tuple val(ref_id), path(fasta), path(fai), path(dict)
   output:
     tuple val(file_id), path("recal_data_table"), emit: recal_table
