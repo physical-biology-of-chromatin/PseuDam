@@ -43,9 +43,9 @@ process emase {
   script:
 """
 emase-zero ${params.count} \
-  -b ${bin} \
   -o ${bin.simpleName}.quantified \
   -l ${transcript_length} \
-  -g ${transcript_to_gene}
+  -g ${transcript_to_gene} \
+  ${bin}
 """
 }
