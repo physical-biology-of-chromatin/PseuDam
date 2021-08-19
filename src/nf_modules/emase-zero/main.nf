@@ -1,7 +1,7 @@
 version = "0.3.1"
 container_url = "lbmc/emase-zero:${version}"
 
-include { tr2g } from "./../kb/main.nf"
+include { g2tr } from "./../kb/main.nf"
 include { bam2ec } from "./../alntools/main.nf"
 include { fasta_to_transcripts_lengths } from "./../bioawk/main.nf"
 
@@ -15,10 +15,10 @@ workflow count {
     gtf
 
   main:
-    tr2g(gtf)
+    g2tr(gtf)
     fasta_to_transcripts_lengths(fasta)
     bam2ec(bam_idx, fasta_to_transcripts_lengths.out.tsv)
-    emase(bam2ec.out.bin, bam2ec.out.tsv, tr2g.out.t2g)
+    emase(bam2ec.out.bin, bam2ec.out.tsv, tr2g.out.g2t)
 
   emit:
     count = emase.out.count
@@ -35,7 +35,7 @@ process emase {
   input:
     tuple val(file_id), path(bin)
     tuple val(transcript_length_id), path(transcript_length)
-    tuple val(transcript_to_gene_id), path(transcript_to_gene)
+    tuple val(gene_to_transcript_id), path(gene_to_transcript)
 
   output:
     tuple val(file_id), path("${bin.simpleName}.quantified"), emit: count
@@ -45,7 +45,7 @@ process emase {
 emase-zero ${params.count} \
   -o ${bin.simpleName}.quantified \
   -l ${transcript_length} \
-  -g ${transcript_to_gene} \
+  -g ${gene_to_transcript} \
   ${bin}
 """
 }
