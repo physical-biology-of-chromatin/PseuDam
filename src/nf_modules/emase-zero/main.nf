@@ -18,7 +18,7 @@ workflow count {
     g2tr(gtf)
     fasta_to_transcripts_lengths(fasta)
     bam2ec(bam_idx, fasta_to_transcripts_lengths.out.tsv)
-    emase(bam2ec.out.bin, bam2ec.out.tsv, g2tr.out.g2t)
+    emase(bam2ec.out.bin, fasta, bam2ec.out.tsv, g2tr.out.g2t)
 
   emit:
     count = emase.out.count
@@ -34,6 +34,7 @@ process emase {
 
   input:
     tuple val(file_id), path(bin)
+    tuple val(fasta_id), path(fasta)
     tuple val(transcript_length_id), path(transcript_length)
     tuple val(gene_to_transcript_id), path(gene_to_transcript)
 
@@ -42,10 +43,12 @@ process emase {
 
   script:
 """
+grep ">" ${fasta} | sed 's/>//' > tr_list.txt
+grep -Fw -f tr_list ${gene_to_transcript} > gene_to_transcript.txt
 emase-zero ${params.count} \
   -o ${bin.simpleName}.quantified \
   -l ${transcript_length} \
-  -g ${gene_to_transcript} \
+  -g gene_to_transcript.txt \
   ${bin}
 """
 }
