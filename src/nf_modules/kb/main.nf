@@ -38,7 +38,29 @@ process tr2g {
   """
   t2g.py --gtf ${gtf}
   sort -k1 -u t2g_dup.txt > t2g.txt
-  cp t2g.txt t2g.txt.back
+  """
+}
+
+process g2tr {
+  // create gene to transcript table from gtf if no transcript to gene file is provided
+  container = "${container_url}"
+  label "big_mem_mono_cpus"
+  tag "$file_id"
+  if (params.index_fasta_out != "") {
+    publishDir "results/${params.index_fasta_out}", mode: 'copy'
+  }
+
+  input:
+    tuple val(file_id), path(gtf)
+
+  output:
+    tuple val(file_id), path("g2t.txt"), emit: g2t
+
+  script:
+  """
+  t2g.py --gtf ${gtf}
+  sort -k1 -u t2g_dup.txt > t2g.txt
+  awk 'BEGIN{OFS="\\t"}{print \$2, \$1}' t2g.txt > g2t.txt
   """
 }
 
