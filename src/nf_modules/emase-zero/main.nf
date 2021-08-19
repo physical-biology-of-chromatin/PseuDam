@@ -18,7 +18,7 @@ workflow count {
     g2tr(gtf)
     fasta_to_transcripts_lengths(fasta)
     bam2ec(bam_idx, fasta_to_transcripts_lengths.out.tsv)
-    emase(bam2ec.out.bin, bam2ec.out.tsv, tr2g.out.g2t)
+    emase(bam2ec.out.bin, bam2ec.out.tsv, g2tr.out.g2t)
 
   emit:
     count = emase.out.count
