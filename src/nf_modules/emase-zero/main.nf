@@ -29,7 +29,7 @@ process emase {
   label "big_mem_mono_cpus"
   tag "$file_id"
   if (params.count_out != "") {
-    publishDir "results/counts/${params.count_out}", mode: 'copy'
+    publishDir "results/${params.count_out}", mode: 'copy'
   }
 
   input:
