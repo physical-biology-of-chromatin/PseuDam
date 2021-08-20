@@ -29,7 +29,7 @@ process emase {
   label "big_mem_mono_cpus"
   tag "$file_id"
   if (params.count_out != "") {
-    publishDir "results/${params.count_out}", mode: 'copy'
+    publishDir "results/counts/${params.count_out}", mode: 'copy'
   }
 
   input:
@@ -39,7 +39,8 @@ process emase {
     tuple val(gene_to_transcript_id), path(gene_to_transcript)
 
   output:
-    tuple val(file_id), path("${bin.simpleName}.quantified"), emit: count
+    tuple val(file_id), path("${bin.simpleName}.quantified*"), emit: count
+    path "*_report.txt", emit: report
 
   script:
 """
@@ -49,6 +50,11 @@ emase-zero ${params.count} \
   -o ${bin.simpleName}.quantified \
   -l ${transcript_length} \
   -g gene_to_transcript.txt \
-  ${bin}
+  ${bin} 2> ${file_prefix}_emase-zero_repport.txt
+
+if grep -q "ERROR" ${file_prefix}_emase-zero_repport.txt; then
+  exit 1
+fi
+
 """
 }
