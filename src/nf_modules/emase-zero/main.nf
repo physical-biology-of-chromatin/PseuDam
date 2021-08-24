@@ -50,9 +50,9 @@ emase-zero ${params.count} \
   -o ${bin.simpleName}.quantified \
   -l ${transcript_length} \
   -g gene_to_transcript.txt \
-  ${bin} 2> ${file_id}_emase-zero_repport.txt
+  ${bin} 2> ${file_id}_emase-zero_report.txt
 
-if grep -q "ERROR" ${file_id}_emase-zero_repport.txt; then
+if grep -q "ERROR" ${file_id}_emase-zero_report.txt; then
   exit 1
 fi
 
