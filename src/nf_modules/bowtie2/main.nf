@@ -15,17 +15,17 @@ process index_fasta {
     tuple val(file_id), path(fasta)
 
   output:
-    tuple val(file_id), path("*.index*"), emit: index
+    tuple val(file_id), path("*.bt2"), emit: index
     tuple val(file_id), path("*_report.txt"), emit: report
 
   script:
 """
 bowtie2-build --threads ${task.cpus} \
   ${fasta} \
-  ${fasta.baseName}.index &> \
-  ${fasta.baseName}_bowtie2_index_report.txt
+  ${fasta.simpleName} &> \
+  ${fasta.simpleName}_bowtie2_index_report.txt
 
-if grep -q "Error" ${fasta.baseName}_bowtie2_index_report.txt; then
+if grep -q "Error" ${fasta.simpleName}_bowtie2_index_report.txt; then
   exit 1
 fi
 """
