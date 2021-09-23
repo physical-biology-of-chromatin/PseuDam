@@ -139,7 +139,7 @@ If you want to use information within the `file_id` to name outputs in your `scr
       file_prefix = file_id.values()[0]
     break
     default:
-      file_id
+      file_prefix = file_id
     break
   }
 ```
