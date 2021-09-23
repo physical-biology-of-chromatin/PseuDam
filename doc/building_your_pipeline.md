@@ -360,7 +360,7 @@ We can add the `fastq_from_bed` step to our `workflow`
 
 ```Groovy
 workflow {
-  fastp(fastq_file)
+  fastp(fastq_files)
   fasta_from_bed(fasta_files, bed_files)
 }
 ```
@@ -437,7 +437,7 @@ login@allo-psmn
 Then once connected to `allo-psmn`, you can connect to `e5-2667v4comp1`:
 
 ```sh
-login@e5-2667v4comp1
+login@m6142comp2
 ```
 
 ## Set your environment
