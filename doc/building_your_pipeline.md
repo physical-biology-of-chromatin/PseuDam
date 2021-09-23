@@ -360,7 +360,7 @@ We can add the `fastq_from_bed` step to our `workflow`
 
 ```Groovy
 workflow {
-  fastp(fasta_file)
+  fastp(fastq_file)
   fasta_from_bed(fasta_files, bed_files)
 }
 ```
