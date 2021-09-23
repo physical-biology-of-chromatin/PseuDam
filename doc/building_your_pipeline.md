@@ -57,10 +57,10 @@ Here is an example of **process**:
 ```Groovy
 process sample_fasta {
   input:
-  file fasta
+  path fasta
 
   output:
-  file "sample.fasta", emit: fasta_sample
+  path "sample.fasta", emit: fasta_sample
 
   script:
 """
@@ -69,20 +69,20 @@ head ${fasta} > sample.fasta
 }
 ```
 
-We have the process `sample_fasta` that takes fasta `file` input and as output a fasta `file`. The `process` task itself is defined in the `script:` block and within `"""`.
+We have the process `sample_fasta` that takes fasta `path` input and as output a fasta `path`. The `process` task itself is defined in the `script:` block and within `"""`.
 
 ```Groovy
 input:
-file fasta
+path fasta
 ```
 
-When we zoom on the `input:` block, we see that we define a variable `fasta` of type `file`.
+When we zoom on the `input:` block, we see that we define a variable `fasta` of type `path`.
 This means that the `sample_fasta` `process` is going to get a flux of fasta file(s).
 Nextflow is going to write a file named as the content of the variable `fasta` in the root of the folder where `script:` is executed.
 
 ```Groovy
 output:
-file "sample.fasta", emit: fasta_sample
+path "sample.fasta", emit: fasta_sample
 ```
 
 At the end of the script, a file named `sample.fasta` is found in the root the folder where `script:` is executed and will be emitted as `fasta_sample`.
@@ -201,7 +201,7 @@ Every `fasta_sampler` process write a `sample.fasta` file. We need to make the n
 
 ```Groovy
 output:
-file "*_sample.fasta", emit: fasta_sample
+path "*_sample.fasta", emit: fasta_sample
 
   script:
 """
