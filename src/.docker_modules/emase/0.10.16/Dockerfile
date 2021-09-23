@@ -1,27 +1,13 @@
-FROM python:2.7
+FROM conda/miniconda2
 MAINTAINER Laurent Modolo
 
 ENV EMASE_VERSION=0.10.16
+RUN conda init \
+&& conda config --add channels r \
+&& conda config --add channels bioconda \
+&& conda create -y -n emase jupyter
+SHELL ["conda", "run", "-n", "emase", "/bin/bash", "-c"]
+RUN conda install -y -c kbchoi emase \
+&& echo "conda activate emase" >> /root/.bashrc
 
-RUN 
-apt-get update \
-    && apt-get install -y python-h5py libhdf5-dev \
-    && pip install tables \
-    && pip install scipy \
-    && pip install pysam \
-    && pip install numpy==1.8.2 \
-    && pip install numexpr==2.3.1 \
-    && pip install cython>=0.13 \
-    && pip install tables==3.1.0 \
-    && pip install emase==${EMASE_VERSION}
-
-pip install numpy==1.8.2
-pip install numexpr==2.3.1 
-pip install scipy==0.13.3 
-pip install pysam>=0.6 
-pip install cython>=0.13 
-pip install tables
-pip install biopython>=1.63
-
-CMD ["bash"]
-
+ENV PATH /usr/local/envs/emase/bin:/usr/local/condabin:$PATH
