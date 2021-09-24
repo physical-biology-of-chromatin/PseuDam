@@ -9,5 +9,6 @@ RUN conda init \
 SHELL ["conda", "run", "-n", "emase", "/bin/bash", "-c"]
 RUN conda install -y -c kbchoi emase \
 && echo "conda activate emase" >> /root/.bashrc
+RUN apt update && apt install -y procps
 
 ENV PATH /usr/local/envs/emase/bin:/usr/local/condabin:$PATH
