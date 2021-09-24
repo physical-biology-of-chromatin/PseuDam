@@ -12,11 +12,10 @@ process diploid_genome {
   }
 
   input:
-    tuple val(genome_a), path(fasta_a)
-    tuple val(genome_b), path(fasta_b)
+    tuple val(genome_a), path(fasta_a), val(genome_b), path(fasta_b)
 
   output:
-    tuple val(file_id), path(".fa"), emit: index
+    tuple val(file_id), path(".fa"), emit: fasta
 
   script:
 """
