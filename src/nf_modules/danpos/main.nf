@@ -1,6 +1,11 @@
 version = "v2.2.2_cv3"
 container_url = "biocontainers/danpos:${version}"
 
+include {
+  bigwig_to_wig as bigwig_to_wig_ip;
+  bigwig_to_wig_ip as bigwig_to_wig_wce 
+} from "./../ucsc/main.nf"
+
 params.dpos = "--smooth_width 0 -n N "
 params.dpos_out = ""
 
@@ -46,6 +51,20 @@ danpos.py dpos -m ${m}
   -o ${file_prefix} \
   ${bam_ip}
 """
+}
+
+workflow dpos_bg {
+  take:
+    fastq
+    bg_ip
+    bg_wce
+  main:
+    bigwig_to_wig_ip(bg_ip)
+    bigwig_to_wig_wce(bg_wce)
+    dpos_wig(fastq, bigwig_to_wig_ip.out.wig, bigwig_to_wig_wce.out.wig)
+  emit:
+  wig = dpos_wig.out.wig
+  folder = dpos_wig.out.folder
 }
 
 process dpos_wig {
@@ -185,6 +204,20 @@ danpos.py dpeak -m ${m}
 """
 }
 
+workflow dpeak_bg {
+  take:
+    fastq
+    bg_ip
+    bg_wce
+  main:
+    bigwig_to_wig_ip(bg_ip)
+    bigwig_to_wig_wce(bg_wce)
+    dpeak_wig(fastq, bigwig_to_wig_ip.out.wig, bigwig_to_wig_wce.out.wig)
+  emit:
+  wig = dpeak_wig.out.wig
+  folder = dpeak_wig.out.folder
+}
+
 process dpeak_wig {
   container = "${container_url}"
   label "big_mem_mono_cpus"
@@ -228,6 +261,29 @@ danpos.py dpeak -m ${m}
   ${wig_ip}
 """
 }
+
+workflow dpeak_bgvsbg {
+  take:
+    fastq
+    bg_ip_a
+    bg_wce_a
+    bg_ip_b
+    bg_wce_b
+  main:
+    bigwig_to_wig_ip(bg_ip)
+    bigwig_to_wig_wce(bg_wce)
+    dpeak_wigvswig(
+      fastq,
+      bigwig_to_wig_ip(bg_ip_a).out.wig,
+      bigwig_to_wig_wce(bg_wce_a).out.wig,
+      bigwig_to_wig_ip(bg_ip_b).out.wig,
+      bigwig_to_wig_wce(bg_wce_b).out.wig
+    )
+  emit:
+  wig = dpeak_wig.out.wig
+  folder = dpeak_wig.out.folder
+}
+
 
 process dpeak_wigvswig {
   container = "${container_url}"
