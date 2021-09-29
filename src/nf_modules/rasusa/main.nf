@@ -30,7 +30,7 @@ workflow sample_fastq {
 
 process sub_sample_fastq {
   container = "${container_url}"
-  label "small_mem_multi_cpus"
+  label "small_mem_mono_cpus"
   tag "$file_id"
   if (params.index_fasta_out != "") {
     publishDir "results/${params.sample_fastq_out}", mode: 'copy'
