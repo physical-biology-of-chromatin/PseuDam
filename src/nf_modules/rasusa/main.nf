@@ -4,7 +4,7 @@ container_url = "lbmc/rasusa:${version}"
 include { index_fasta } from "./../samtools/main.nf"
 
 params.sample_fastq = ""
-params.sample_fastq_coverage = "1.0"
+params.sample_fastq_coverage = ""
 params.sample_fastq_size = ""
 params.sample_fastq_out = ""
 workflow sample_fastq {
@@ -13,11 +13,18 @@ workflow sample_fastq {
   fasta
 
   main:
-  index_fasta(fasta)
-  sub_sample_fastq(fastq, index_fasta.out.index)
+  if (params.sample_fastq_coverage == "" && params.sample_fastq_size == ""){
+    fastq
+      .set{ final_fastq }
+  } else {
+    index_fasta(fasta)
+    sub_sample_fastq(fastq, index_fasta.out.index)
+    sub_sample_fastq.out.fastq
+      .set{ final_fastq }
+  }
 
   emit:
-  fastq = sub_sample_fastq.out.fastq
+  fastq = final_fastq
 
 }
 
