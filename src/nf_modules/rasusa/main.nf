@@ -1,5 +1,5 @@
 version = "0.6.0"
-container_url = "quay.io/mbhall88/rasusa:${version}"
+container_url = "lbmc/rasusa:${version}"
 
 include { index_fasta } from "./../samtools/main.nf"
 
@@ -26,7 +26,7 @@ process sub_sample_fastq {
   label "small_mem_multi_cpus"
   tag "$file_id"
   if (params.index_fasta_out != "") {
-    publishDir "results/${params.sample_fastq}", mode: 'copy'
+    publishDir "results/${params.sample_fastq_out}", mode: 'copy'
   }
 
   input:
@@ -66,7 +66,7 @@ rasusa \
   else
 """
 rasusa \
-  -i ${fastq} ${fastq} \
+  -i ${fastq} \
   -g ${idx} \
   ${sample_option} \
   -o sub_${fastq.simpleName}.fastq.gz

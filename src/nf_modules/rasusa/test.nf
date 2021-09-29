@@ -5,12 +5,12 @@ nextflow.enable.dsl=2
 ./nextflow src/nf_modules/rasusa/test.nf -c src/nextflow.config -profile docker --fasta "data/tiny_dataset/fasta/tiny_v2.fasta" --fastq "data/tiny_dataset/fastq/tiny_R1.fastq" --size "1Mb"
 */
 
-include { sample_fastq } from "./main.nf" addParams(sample_fastq_coverage: params.coverage, sample_fastq_size: "")
-
 params.fastq = "data/fastq/*R{1,2}*"
 params.fasta = "data/fasta/*.fasta"
 params.coverage = "2.0"
 params.size = ""
+
+include { sample_fastq } from "./main.nf" addParams(sample_fastq_coverage: params.coverage, sample_fastq_size: params.size, sample_fastq_out: "sample/")
 
 channel
   .fromFilePairs( params.fastq, size: -1)
