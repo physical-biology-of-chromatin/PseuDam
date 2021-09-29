@@ -31,3 +31,26 @@ sort -T ./ -k1,1 -k2,2n ${bg} > \
 """
 }
 
+params.bigwig_to_wig = ""
+params.bigwig_to_wig_out = ""
+process bigwig_to_wig {
+  container = "${container_url}"
+  label "big_mem_mono_cpus"
+  tag "${file_id}"
+  if (params.bigwig_to_wig_out != "") {
+    publishDir "results/${params.bigwig_to_wig_out}", mode: 'copy'
+  }
+
+  input:
+  tuple val(file_id) path(bg)
+
+  output:
+  tuple val(file_id), path("*.wig"), emit: wig
+
+  script:
+"""
+bigWigToWig ${params.bigwig_to_wig} - \
+  ${bg} \
+  ${bg.simpleName}.wig
+"""
+}
