@@ -45,7 +45,9 @@ process emase {
   script:
 """
 grep ">" ${fasta} | sed 's/>//' > tr_list.txt
-grep -Fw -f tr_list.txt ${gene_to_transcript} > gene_to_transcript.txt
+grep -Fw -f tr_list.txt ${gene_to_transcript} | \
+  sed -E 's/(.+gn[0-9]+)(.+)(_.+)/\\1\\3\\2\\3/g' > \
+  gene_to_transcript.txt
 emase-zero ${params.count} \
   -o ${bin.simpleName}.quantified \
   -l ${transcript_length} \
