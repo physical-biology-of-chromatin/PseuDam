@@ -52,6 +52,6 @@ emase-zero ${params.count} \
   -o ${bin.simpleName}.quantified \
   -l ${transcript_length} \
   -g gene_to_transcript.txt \
-  ${bin} 2>&1 > ${file_id}_emase-zero_report.txt
+  ${bin} &> ${file_id}_emase-zero_report.txt
 """
 }
