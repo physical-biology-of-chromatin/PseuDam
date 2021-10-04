@@ -2,8 +2,7 @@ version = "v2.2.2_cv3"
 container_url = "biocontainers/danpos:${version}"
 
 include {
-  bigwig_to_wig as bigwig_to_wig_ip;
-  bigwig_to_wig_ip as bigwig_to_wig_wce 
+  bigwig_to_wig
 } from "./../ucsc/main.nf"
 
 params.dpos = "--smooth_width 0 -n N "
@@ -59,9 +58,7 @@ workflow dpos_bg {
     bg_ip
     bg_wce
   main:
-    bigwig_to_wig_ip(bg_ip)
-    bigwig_to_wig_wce(bg_wce)
-    dpos_wig(fastq, bigwig_to_wig_ip.out.wig, bigwig_to_wig_wce.out.wig)
+    dpos_wig(fastq, bigwig_to_wig(bg_ip), bigwig_to_wig(bg_wce))
   emit:
   wig = dpos_wig.out.wig
   folder = dpos_wig.out.folder
@@ -210,9 +207,7 @@ workflow dpeak_bg {
     bg_ip
     bg_wce
   main:
-    bigwig_to_wig_ip(bg_ip)
-    bigwig_to_wig_wce(bg_wce)
-    dpeak_wig(fastq, bigwig_to_wig_ip.out.wig, bigwig_to_wig_wce.out.wig)
+    dpeak_wig(fastq, bigwig_to_wig(bg_ip), bigwig_to_wig(bg_wce))
   emit:
   wig = dpeak_wig.out.wig
   folder = dpeak_wig.out.folder
@@ -270,14 +265,12 @@ workflow dpeak_bgvsbg {
     bg_ip_b
     bg_wce_b
   main:
-    bigwig_to_wig_ip(bg_ip)
-    bigwig_to_wig_wce(bg_wce)
     dpeak_wigvswig(
       fastq,
-      bigwig_to_wig_ip(bg_ip_a).out.wig,
-      bigwig_to_wig_wce(bg_wce_a).out.wig,
-      bigwig_to_wig_ip(bg_ip_b).out.wig,
-      bigwig_to_wig_wce(bg_wce_b).out.wig
+      bigwig_to_wig(bg_ip_a),
+      bigwig_to_wig(bg_wce_a),
+      bigwig_to_wig(bg_ip_b),
+      bigwig_to_wig(bg_wce_b)
     )
   emit:
   wig = dpeak_wig.out.wig
