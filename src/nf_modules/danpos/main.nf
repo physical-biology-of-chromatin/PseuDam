@@ -52,13 +52,13 @@ danpos.py dpos -m ${m}
 """
 }
 
-workflow dpos_bg {
+workflow dpos_bw {
   take:
     fastq
-    bg_ip
-    bg_wce
+    bz_ip
+    bw_wce
   main:
-    dpos_wig(fastq, bigwig_to_wig(bg_ip), bigwig_to_wig(bg_wce))
+    dpos_wig(fastq, bigwig_to_wig(bw_ip), bigwig_to_wig(bw_wce))
   emit:
   wig = dpos_wig.out.wig
   folder = dpos_wig.out.folder
@@ -201,17 +201,18 @@ danpos.py dpeak -m ${m}
 """
 }
 
-workflow dpeak_bg {
+workflow dpeak_bw {
   take:
     fastq
-    bg_ip
-    bg_wce
+    bw_ip
+    bw_wce
   main:
-    dpeak_wig(fastq, bigwig_to_wig(bg_ip), bigwig_to_wig(bg_wce))
+    dpeak_wig(fastq, bigwig_to_wig(bw_ip), bigwig_to_wig(bw_wce))
   emit:
   wig = dpeak_wig.out.wig
   folder = dpeak_wig.out.folder
 }
+
 
 process dpeak_wig {
   container = "${container_url}"
@@ -257,20 +258,20 @@ danpos.py dpeak -m ${m}
 """
 }
 
-workflow dpeak_bgvsbg {
+workflow dpeak_bwvsbw {
   take:
     fastq
-    bg_ip_a
-    bg_wce_a
-    bg_ip_b
-    bg_wce_b
+    bw_ip_a
+    bw_wce_a
+    bw_ip_b
+    bw_wce_b
   main:
     dpeak_wigvswig(
       fastq,
-      bigwig_to_wig(bg_ip_a),
-      bigwig_to_wig(bg_wce_a),
-      bigwig_to_wig(bg_ip_b),
-      bigwig_to_wig(bg_wce_b)
+      bigwig_to_wig(bw_ip_a),
+      bigwig_to_wig(bw_wce_a),
+      bigwig_to_wig(bw_ip_b),
+      bigwig_to_wig(bw_wce_b)
     )
   emit:
   wig = dpeak_wig.out.wig
