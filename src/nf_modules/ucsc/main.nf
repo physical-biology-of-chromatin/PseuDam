@@ -49,7 +49,7 @@ process bigwig_to_wig {
 
   script:
 """
-bigWigToWig ${params.bigwig_to_wig} - \
+bigWigToWig ${params.bigwig_to_wig} \
   ${bg} \
   ${bg.simpleName}.wig
 """
@@ -73,10 +73,10 @@ process bigwig2_to_wig2 {
 
   script:
 """
-bigWigToWig ${params.bigwig_to_wig} - \
+bigWigToWig ${params.bigwig_to_wig} \
   ${bw_a} \
   ${bw_a.simpleName}.wig
-bigWigToWig ${params.bigwig_to_wig} - \
+bigWigToWig ${params.bigwig_to_wig} \
   ${bw_b} \
   ${bw_b.simpleName}.wig
 """
