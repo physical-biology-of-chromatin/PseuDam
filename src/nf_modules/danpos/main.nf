@@ -43,7 +43,7 @@ process dpos_bam {
     m = 1
   }
 """
-danpos.py dpos -m ${m}
+danpos.py dpos -m ${m} \
   ${params.dpos} \
   -b ${bam_wce} \
   -o ${file_prefix} \
@@ -97,7 +97,7 @@ process dpos_wig {
     m = 1
   }
 """
-danpos.py dpos -m ${m}
+danpos.py dpos -m ${m} \
   ${params.dpos} \
   -b ${wig_wce} \
   -o ${file_prefix} \
@@ -157,7 +157,7 @@ process dpos_wigvswig {
     m = 1
   }
 """
-danpos.py dpos -m ${m}
+danpos.py dpos -m ${m} \
   ${params.dpos} \
   -b ${wig_ip_a}:${wig_wce_a},${wig_ip_b}:${wig_wce_b} \
   -o ${file_prefix} \
@@ -203,7 +203,7 @@ process dpeak_bam {
     m = 1
   }
 """
-danpos.py dpeak -m ${m}
+danpos.py dpeak -m ${m} \
   ${params.dpeak} \
   -b ${bam_wce} \
   -o ${file_prefix} \
@@ -258,7 +258,7 @@ process dpeak_wig {
     m = 1
   }
 """
-danpos.py dpeak -m ${m}
+danpos.py dpeak -m ${m} \
   ${params.dpeak} \
   -b ${wig_wce} \
   -o ${file_prefix} \
@@ -319,7 +319,7 @@ process dpeak_wigvswig {
     m = 1
   }
 """
-danpos.py dpeak -m ${m}
+danpos.py dpeak -m ${m} \
   ${params.dpeak} \
   -b ${wig_ip_a}:${wig_wce_a},${wig_ip_b}:${wig_wce_b} \
   -o ${file_prefix} \
