@@ -17,7 +17,7 @@ process dpos_bam {
   }
 
   input:
-    tuple val(file_id), path(fastq)
+    tuple val(fastq_id), path(fastq)
     tuple val(file_id), path(bam_ip), path(bam_wce)
 
   output:
@@ -71,7 +71,7 @@ process dpos_wig {
   }
 
   input:
-    tuple val(file_id), path(fastq)
+    tuple val(fastq_id), path(fastq)
     tuple val(file_id), path(wig_ip), path(wig_wce)
 
   output:
@@ -130,25 +130,25 @@ process dpos_wigvswig {
   }
 
   input:
-    tuple val(file_id), path(fastq)
-    tuple val(file_id), path(wig_ip_a), path(wig_wce_a)
-    tuple val(file_id), path(wig_ip_b), path(wig_wce_b)
+    tuple val(fastq_id), path(fastq)
+    tuple val(file_id_a), path(wig_ip_a), path(wig_wce_a)
+    tuple val(file_id_b), path(wig_ip_b), path(wig_wce_b)
 
   output:
-  tuple file_id, "${file_prefix}/pooled/*.wig" into wig
-  tuple val(file_id), path("${file_prefix}"), emit: folder
+  tuple file_id_a, "${file_prefix}/pooled/*.wig" into wig
+  tuple val(file_id_a), path("${file_prefix}"), emit: folder
 
   script:
 
-  switch(file_id) {
+  switch(file_id_a) {
     case {it instanceof List}:
-      file_prefix = file_id[0]
+      file_prefix = file_id_a[0]
     break
     case {it instanceof Map}:
-      file_prefix = file_id.values()[0]
+      file_prefix = file_id_a.values()[0]
     break
     default:
-      file_prefix = file_id
+      file_prefix = file_id_a
     break
   }
 
@@ -177,7 +177,7 @@ process dpeak_bam {
   }
 
   input:
-    tuple val(file_id), path(fastq)
+    tuple val(fastq_id), path(fastq)
     tuple val(file_id), path(bam_ip), path(bam_wce)
 
   output:
@@ -232,7 +232,7 @@ process dpeak_wig {
   }
 
   input:
-    tuple val(file_id), path(fastq)
+    tuple val(fastq_id), path(fastq)
     tuple val(file_id), path(wig_ip), path(wig_wce)
 
   output:
@@ -292,25 +292,25 @@ process dpeak_wigvswig {
   }
 
   input:
-    tuple val(file_id), path(fastq)
-    tuple val(file_id), path(wig_ip_a), path(wig_wce_a)
-    tuple val(file_id), path(wig_ip_b), path(wig_wce_b)
+    tuple val(fastq_id), path(fastq)
+    tuple val(file_id_a), path(wig_ip_a), path(wig_wce_a)
+    tuple val(file_id_b), path(wig_ip_b), path(wig_wce_b)
 
   output:
-  tuple file_id, "${file_prefix}/pooled/*.wig" into wig
-  tuple val(file_id), path("${file_prefix}"), emit: folder
+  tuple file_id_a, "${file_prefix}/pooled/*.wig" into wig
+  tuple val(file_id_a), path("${file_prefix}"), emit: folder
 
   script:
 
-  switch(file_id) {
+  switch(file_id_a) {
     case {it instanceof List}:
-      file_prefix = file_id[0]
+      file_prefix = file_id_a[0]
     break
     case {it instanceof Map}:
-      file_prefix = file_id.values()[0]
+      file_prefix = file_id_a.values()[0]
     break
     default:
-      file_prefix = file_id
+      file_prefix = file_id_a
     break
   }
 
