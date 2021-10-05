@@ -38,7 +38,7 @@ process sub_sample_fastq {
 
   input:
     tuple val(file_id), path(fastq)
-    tuple val(file_id), path(idx)
+    tuple val(index_id), path(idx)
 
   output:
     tuple val(file_id), path("sub_*.fastq.gz"), emit: fastq
