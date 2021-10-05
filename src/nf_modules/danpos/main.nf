@@ -2,7 +2,7 @@ version = "v2.2.2_cv3"
 container_url = "biocontainers/danpos:${version}"
 
 include {
-  bigwig_to_wig
+  bigwig2_to_wig2
 } from "./../ucsc/main.nf"
 
 params.dpos = "--smooth_width 0 -n N "
@@ -18,8 +18,7 @@ process dpos_bam {
 
   input:
     tuple val(file_id), path(fastq)
-    tuple val(file_id), path(bam_ip)
-    tuple val(file_id), path(bam_wce)
+    tuple val(file_id), path(bam_ip), path(bam_wce)
 
   output:
     tuple file_id, "${file_prefix}/pooled/*.wig" into wig
@@ -55,10 +54,9 @@ danpos.py dpos -m ${m}
 workflow dpos_bw {
   take:
     fastq
-    bw_ip
-    bw_wce
+    bw
   main:
-    dpos_wig(fastq, bigwig_to_wig(bw_ip), bigwig_to_wig(bw_wce))
+    dpos_wig(fastq, bigwig2_to_wig2(bw))
   emit:
   wig = dpos_wig.out.wig
   folder = dpos_wig.out.folder
@@ -74,8 +72,7 @@ process dpos_wig {
 
   input:
     tuple val(file_id), path(fastq)
-    tuple val(file_id), path(wig_ip)
-    tuple val(file_id), path(wig_wce)
+    tuple val(file_id), path(wig_ip), path(wig_wce)
 
   output:
   tuple file_id, "${file_prefix}/pooled/*.wig" into wig
@@ -108,6 +105,22 @@ danpos.py dpos -m ${m}
 """
 }
 
+workflow dwig_bwvsbw {
+  take:
+    fastq
+    bw_a
+    bw_b
+  main:
+    dpos_wigvswig(
+      fastq,
+      bigwig2_to_wig2(bw_a),
+      bigwig2_to_wig2(bw_b),
+    )
+  emit:
+  wig = dpeak_wig.out.wig
+  folder = dpeak_wig.out.folder
+}
+
 process dpos_wigvswig {
   container = "${container_url}"
   label "big_mem_mono_cpus"
@@ -118,10 +131,8 @@ process dpos_wigvswig {
 
   input:
     tuple val(file_id), path(fastq)
-    tuple val(file_id), path(wig_ip_a)
-    tuple val(file_id), path(wig_wce_a)
-    tuple val(file_id), path(wig_ip_b)
-    tuple val(file_id), path(wig_wce_b)
+    tuple val(file_id), path(wig_ip_a), path(wig_wce_a)
+    tuple val(file_id), path(wig_ip_b), path(wig_wce_b)
 
   output:
   tuple file_id, "${file_prefix}/pooled/*.wig" into wig
@@ -167,8 +178,7 @@ process dpeak_bam {
 
   input:
     tuple val(file_id), path(fastq)
-    tuple val(file_id), path(bam_ip)
-    tuple val(file_id), path(bam_wce)
+    tuple val(file_id), path(bam_ip), path(bam_wce)
 
   output:
     tuple file_id, "${file_prefix}/pooled/*.wig" into wig
@@ -204,10 +214,9 @@ danpos.py dpeak -m ${m}
 workflow dpeak_bw {
   take:
     fastq
-    bw_ip
-    bw_wce
+    bw
   main:
-    dpeak_wig(fastq, bigwig_to_wig(bw_ip), bigwig_to_wig(bw_wce))
+    dpeak_wig(fastq, bigwig2_to_wig2(bw))
   emit:
   wig = dpeak_wig.out.wig
   folder = dpeak_wig.out.folder
@@ -224,8 +233,7 @@ process dpeak_wig {
 
   input:
     tuple val(file_id), path(fastq)
-    tuple val(file_id), path(wig_ip)
-    tuple val(file_id), path(wig_wce)
+    tuple val(file_id), path(wig_ip), path(wig_wce)
 
   output:
   tuple file_id, "${file_prefix}/pooled/*.wig" into wig
@@ -261,17 +269,13 @@ danpos.py dpeak -m ${m}
 workflow dpeak_bwvsbw {
   take:
     fastq
-    bw_ip_a
-    bw_wce_a
-    bw_ip_b
-    bw_wce_b
+    bw_a
+    bw_b
   main:
     dpeak_wigvswig(
       fastq,
-      bigwig_to_wig(bw_ip_a),
-      bigwig_to_wig(bw_wce_a),
-      bigwig_to_wig(bw_ip_b),
-      bigwig_to_wig(bw_wce_b)
+      bigwig2_to_wig2(bw_a),
+      bigwig2_to_wig2(bw_b),
     )
   emit:
   wig = dpeak_wig.out.wig
@@ -289,10 +293,8 @@ process dpeak_wigvswig {
 
   input:
     tuple val(file_id), path(fastq)
-    tuple val(file_id), path(wig_ip_a)
-    tuple val(file_id), path(wig_wce_a)
-    tuple val(file_id), path(wig_ip_b)
-    tuple val(file_id), path(wig_wce_b)
+    tuple val(file_id), path(wig_ip_a), path(wig_wce_a)
+    tuple val(file_id), path(wig_ip_b), path(wig_wce_b)
 
   output:
   tuple file_id, "${file_prefix}/pooled/*.wig" into wig
