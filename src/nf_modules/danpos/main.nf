@@ -55,7 +55,7 @@ danpos.py dpos -m ${m}
 workflow dpos_bw {
   take:
     fastq
-    bz_ip
+    bw_ip
     bw_wce
   main:
     dpos_wig(fastq, bigwig_to_wig(bw_ip), bigwig_to_wig(bw_wce))
