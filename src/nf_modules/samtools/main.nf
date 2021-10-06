@@ -18,7 +18,7 @@ process index_fasta {
 
   script:
 """
-if gzip -t file.gz; then
+if gzip -t ${fasta}; then
   zcat ${fasta} > ${fasta.simpleName}.fasta
   samtools faidx ${params.index_fasta}  ${fasta.simpleName}.fasta
 else
