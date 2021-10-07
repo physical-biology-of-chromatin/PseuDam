@@ -49,9 +49,10 @@ process bigwig_to_wig {
 
   script:
 """
-bigWigToWig ${params.bigwig_to_wig} \
+bigWigToBedGraph ${params.bigwig_to_wig} \
   ${bg} \
-  ${bg.simpleName}.wig
+  ${bg.simpleName}.bg
+awk '{if(NR>1) {if($1!=lastChrom){printf("variableStep chrom=%s\n",$1);lastChrom=$1;}print $2,$4}}' ${bg.simpleName}.bg > ${bg.simpleName}.wig
 """
 }
 
