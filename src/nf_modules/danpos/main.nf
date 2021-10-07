@@ -3,7 +3,7 @@ container_url = "biocontainers/danpos:${version}"
 
 include {
   bigwig2_to_wig2
-} from "./../ucsc/main.nf"
+} from "./../bioconvert/main.nf"
 
 params.dpos = "--smooth_width 0 -n N "
 params.dpos_out = ""
