@@ -74,11 +74,13 @@ process bigwig2_to_wig2 {
 
   script:
 """
-bigWigToWig ${params.bigwig_to_wig} \
+bigWigToBedGraph ${params.bigwig_to_wig} \
   ${bw_a} \
-  ${bw_a.simpleName}.wig
-bigWigToWig ${params.bigwig_to_wig} \
+  ${bw_a.simpleName}.bg
+awk '{if(NR>1) {if(\$1!=lastChrom){printf("variableStep chrom=%s\\n",\$1);lastChrom=\$1;}print \$2,\$4}}' ${bw_a.simpleName}.bg > ${bw_a.simpleName}.wig
+bigWigToBedGraph ${params.bigwig_to_wig} \
   ${bw_b} \
-  ${bw_b.simpleName}.wig
+  ${bw_b.simpleName}.bg
+awk '{if(NR>1) {if(\$1!=lastChrom){printf("variableStep chrom=%s\\n",\$1);lastChrom=\$1;}print \$2,\$4}}' ${bw_b.simpleName}.bg > ${bw_b.simpleName}.wig
 """
 }
