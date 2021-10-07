@@ -74,6 +74,28 @@ samtools view -@ ${task.cpus} -hb ${bam} -L ${bed} ${params.filter_bam} > \
 """
 }
 
+params.rm_from_bam = ""
+params.rm_from_bam_out = ""
+process filter_bam {
+  container = "${container_url}"
+  label "big_mem_multi_cpus"
+  tag "$file_id"
+  if (params.rm_from_bam_out != "") {
+    publishDir "results/${params.rm_from_bam_out}", mode: 'copy'
+  }
+
+  input:
+    tuple val(file_id), path(bam)
+    tuple val(bed_id), path(bed)
+
+  output:
+    tuple val(file_id), path("*_filtered.bam"), emit: bam
+  script:
+"""
+samtools view -@ ${task.cpus} ${params.filter_bam} -hb -L ${bed} -U ${bam.simpleName}_filtered.bam ${bam} >  /dev/null
+"""
+}
+
 params.filter_bam_mapped = "-F 4"
 params.filter_bam_mapped_out = ""
 process filter_bam_mapped {
