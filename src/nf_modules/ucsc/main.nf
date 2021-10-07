@@ -42,7 +42,7 @@ process bigwig_to_wig {
   }
 
   input:
-  tuple val(file_id) path(bg)
+  tuple val(file_id) path(bw)
 
   output:
   tuple val(file_id), path("*.wig"), emit: wig
@@ -50,9 +50,9 @@ process bigwig_to_wig {
   script:
 """
 bigWigToBedGraph ${params.bigwig_to_wig} \
-  ${bg} \
+  ${bw} \
   ${bg.simpleName}.bg
-awk '{if(NR>1) {if(\$1!=lastChrom){printf("variableStep chrom=%s\\n",\$1);lastChrom=\$1;}print \$2,\$4}}' ${bg.simpleName}.bg > ${bg.simpleName}.wig
+awk '{if(NR>1) {if(\$1!=lastChrom){printf("variableStep chrom=%s\\n",\$1);lastChrom=\$1;}print \$2,\$4}}' ${bw.simpleName}.bg > ${bw.simpleName}.wig
 """
 }
 
