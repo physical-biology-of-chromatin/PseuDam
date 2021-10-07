@@ -76,7 +76,7 @@ samtools view -@ ${task.cpus} -hb ${bam} -L ${bed} ${params.filter_bam} > \
 
 params.rm_from_bam = ""
 params.rm_from_bam_out = ""
-process filter_bam {
+process rm_from_bam {
   container = "${container_url}"
   label "big_mem_multi_cpus"
   tag "$file_id"
