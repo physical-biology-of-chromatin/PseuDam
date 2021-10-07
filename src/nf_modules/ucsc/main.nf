@@ -49,10 +49,10 @@ process bigwig_to_wig {
 
   script:
 """
-bigWigToBedGraph ${params.bigwig_to_wig} \
+bigWigToWig ${params.bigwig_to_wig} \
   ${bw} \
-  ${bg.simpleName}.bg
-awk '{if(NR>1) {if(\$1!=lastChrom){printf("variableStep chrom=%s span=1\\n",\$1);lastChrom=\$1;}print \$2,\$4}}' ${bw.simpleName}.bg > ${bw.simpleName}.wig
+  ${bg.simpleName}.raw
+awk '{if(NR>1) {if(\$1!=lastChrom){printf("variableStep chrom=%s span=1\\n",\$1);lastChrom=\$1;}print \$2,\$4}}' ${bw.simpleName}.raw > ${bw.simpleName}.wig
 """
 }
 
@@ -74,13 +74,13 @@ process bigwig2_to_wig2 {
 
   script:
 """
-bigWigToBedGraph ${params.bigwig_to_wig} \
+bigWigToWig ${params.bigwig_to_wig} \
   ${bw_a} \
-  ${bw_a.simpleName}.bg
-awk '{if(NR>1) {if(\$1!=lastChrom){printf("variableStep chrom=%s span=1\\n",\$1);lastChrom=\$1;}print \$2,\$4}}' ${bw_a.simpleName}.bg > ${bw_a.simpleName}.wig
+  ${bw_a.simpleName}.raw
+awk '{if(NR>1) {if(\$1!=lastChrom){printf("variableStep chrom=%s span=1\\n",\$1);lastChrom=\$1;}print \$2,\$4}}' ${bw_a.simpleName}.raw > ${bw_a.simpleName}.wig
 bigWigToBedGraph ${params.bigwig_to_wig} \
   ${bw_b} \
-  ${bw_b.simpleName}.bg
-awk '{if(NR>1) {if(\$1!=lastChrom){printf("variableStep chrom=%s span=1\\n",\$1);lastChrom=\$1;}print \$2,\$4}}' ${bw_b.simpleName}.bg > ${bw_b.simpleName}.wig
+  ${bw_b.simpleName}.raw
+awk '{if(NR>1) {if(\$1!=lastChrom){printf("variableStep chrom=%s span=1\\n",\$1);lastChrom=\$1;}print \$2,\$4}}' ${bw_b.simpleName}.raw > ${bw_b.simpleName}.wig
 """
 }
