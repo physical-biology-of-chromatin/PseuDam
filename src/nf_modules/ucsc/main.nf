@@ -94,7 +94,7 @@ process wig_to_bigwig {
   tuple val(file_id), path(w)
 
   output:
-  tuple val(file_id), path("${bw.simpleName}.bw"), emit: bw
+  tuple val(file_id), path("${w.simpleName}.bw"), emit: bw
 
   script:
 """
@@ -116,7 +116,7 @@ process wig2_to_bigwig2 {
   tuple val(file_id), path(w_a), path(w_b)
 
   output:
-  tuple val(file_id), path("${bw_a.simpleName}.bw"), path("${bw_b.simpleName}.bw"), emit: bw
+  tuple val(file_id), path("${w_a.simpleName}.bw"), path("${w_b.simpleName}.bw"), emit: bw
 
   script:
 """
