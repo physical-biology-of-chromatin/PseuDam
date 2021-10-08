@@ -51,7 +51,7 @@ process bigwig_to_wig {
   script:
 """
 bigWigToBedGraph ${bw} ${bw.simpleName}.bg
-bedgraph_to_wig.pl --bedgraph ${bw.simpleName}.bg --wig ${bw.simpleName}.wig --step 1
+bedgraph_to_wig.pl --bedgraph ${bw.simpleName}.bg --wig ${bw.simpleName}.wig --step 10
 """
 }
 
@@ -74,8 +74,8 @@ process bigwig2_to_wig2 {
   script:
 """
 bigWigToBedGraph ${bw_a} ${bw_a.simpleName}.bg
-bedgraph_to_wig.pl --bedgraph ${bw_a.simpleName}.bg --wig ${bw_a.simpleName}.wig --step 1
+bedgraph_to_wig.pl --bedgraph ${bw_a.simpleName}.bg --wig ${bw_a.simpleName}.wig --step 10
 bigWigToBedGraph ${bw_b} ${bw_b.simpleName}.bg
-bedgraph_to_wig.pl --bedgraph ${bw_b.simpleName}.bg --wig ${bw_b.simpleName}.wig --step 1
+bedgraph_to_wig.pl --bedgraph ${bw_b.simpleName}.bg --wig ${bw_b.simpleName}.wig --step 10
 """
 }
