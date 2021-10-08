@@ -3,7 +3,7 @@ container_url = "lbmc/ucsc:${version}"
 
 include {
   index_fasta
-} from './nf_modules/samtools/main'
+} from './../samtools/main'
 
 params.bedgraph_to_bigwig = ""
 params.bedgraph_to_bigwig_out = ""
