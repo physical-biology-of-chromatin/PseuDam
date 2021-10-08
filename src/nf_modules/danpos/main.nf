@@ -13,7 +13,7 @@ process dpos_bam {
   label "big_mem_mono_cpus"
   tag "$file_id"
   if (params.dpos_out != "") {
-    publishDir "results/${params.dpos_out}", mode: 'copy', pattern: "*/*"
+    publishDir "results/${params.dpos_out}", mode: 'copy'
   }
 
   input:
@@ -67,7 +67,7 @@ process dpos_wig {
   label "big_mem_mono_cpus"
   tag "$file_id"
   if (params.dpos_out != "") {
-    publishDir "results/${params.dpos_out}", mode: 'copy', pattern: "*/*"
+    publishDir "results/${params.dpos_out}", mode: 'copy'
   }
 
   input:
@@ -126,7 +126,7 @@ process dpos_wigvswig {
   label "big_mem_mono_cpus"
   tag "$file_id"
   if (params.dpos_out != "") {
-    publishDir "results/${params.dpos_out}", mode: 'copy', pattern: "*/*"
+    publishDir "results/${params.dpos_out}", mode: 'copy'
   }
 
   input:
@@ -172,8 +172,8 @@ process dpeak_bam {
   container = "${container_url}"
   label "big_mem_mono_cpus"
   tag "$file_id"
-  if (params.dpeak_out != "") {
-    publishDir "results/${params.dpeak_out}", mode: 'copy', pattern: "*/*"
+  if (params.dpeak_out != "") {:
+    publishDir "results/${params.dpeak_out}", mode: 'copy'
   }
 
   input:
@@ -228,7 +228,7 @@ process dpeak_wig {
   label "big_mem_mono_cpus"
   tag "$file_id"
   if (params.dpeak_out != "") {
-    publishDir "results/${params.dpeak_out}", mode: 'copy', pattern: "*/*"
+    publishDir "results/${params.dpeak_out}", mode: 'copy'
   }
 
   input:
@@ -288,7 +288,7 @@ process dpeak_wigvswig {
   label "big_mem_mono_cpus"
   tag "$file_id"
   if (params.dpeak_out != "") {
-    publishDir "results/${params.dpeak_out}", mode: 'copy', pattern: "*/*"
+    publishDir "results/${params.dpeak_out}", mode: 'copy'
   }
 
   input:
