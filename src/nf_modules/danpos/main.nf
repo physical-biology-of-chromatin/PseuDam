@@ -182,7 +182,7 @@ process dpeak_bam {
 
   output:
   tuple val(file_id), path("${file_prefix}/${bam_ip.simpleName}.bgsub.wig"), path("${file_prefix}/${bam_wce.simpleName}.wig"), emit: wig
-  tuple val(file_id), path("${file_prefix}/*.position.bed"), path("${file_prefix}/*.summit.bed"), emit: bed
+  tuple val(file_id), path("${file_prefix}/*.positions.bed"), path("${file_prefix}/*.summit.bed"), emit: bed
     tuple val(file_id), path("${file_prefix}/*.bed"), emit: bed
     tuple val(file_id), path("${file_prefix}"), emit: folder
 
@@ -243,7 +243,7 @@ process dpeak_wig {
 
   output:
   tuple val(file_id), path("${file_prefix}/${wig_ip.simpleName}.bgsub.wig"), path("${file_prefix}/${wig_wce.simpleName}.wig"), emit: wig
-  tuple val(file_id), path("${file_prefix}/*.position.bed"), path("${file_prefix}/*.summit.bed"), emit: bed
+  tuple val(file_id), path("${file_prefix}/*.positions.bed"), path("${file_prefix}/*.summit.bed"), emit: bed
   tuple val(file_id), path("${file_prefix}"), emit: folder
 
   script:
