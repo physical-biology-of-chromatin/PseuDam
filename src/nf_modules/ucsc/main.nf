@@ -117,8 +117,8 @@ process wig_to_bigwig_sub {
 
   script:
 """
-cut -f 1,2 ${fasta_idx} > ${fasta}.sizes
-wigToBigWig -clip ${w} ${fasta}.sizes ${w.simpleName}.bw
+cut -f 1,2 ${fasta_idx} > ${fasta_idx.simpleName}.sizes
+wigToBigWig -clip ${w} ${fasta_idx.simpleName}.sizes ${w.simpleName}.bw
 """
 }
 
@@ -156,8 +156,8 @@ process wig2_to_bigwig2_sub {
 
   script:
 """
-cut -f 1,2 ${fasta_idx} > ${fasta}.sizes
-wigToBigWig -clip ${w_a} ${fasta}.sizes ${w_a.simpleName}.bw
-wigToBigWig -clip ${w_b} ${fasta}.sizes ${w_b.simpleName}.bw
+cut -f 1,2 ${fasta_idx} > ${fasta_idx.simpleName}.sizes
+wigToBigWig -clip ${w_a} ${fasta_idx.simpleName}.sizes ${w_a.simpleName}.bw
+wigToBigWig -clip ${w_b} ${fasta_idx.simpleName}.sizes ${w_b.simpleName}.bw
 """
 }
