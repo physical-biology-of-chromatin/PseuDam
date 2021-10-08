@@ -172,7 +172,7 @@ process dpeak_bam {
   container = "${container_url}"
   label "big_mem_mono_cpus"
   tag "$file_id"
-  if (params.dpeak_out != "") {:
+  if (params.dpeak_out != "") {
     publishDir "results/${params.dpeak_out}", mode: 'copy'
   }
 
