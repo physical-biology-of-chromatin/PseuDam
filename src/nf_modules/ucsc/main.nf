@@ -1,6 +1,10 @@
 version = "407"
 container_url = "lbmc/ucsc:${version}"
 
+include {
+  index_fasta
+} from './nf_modules/samtools/main'
+
 params.bedgraph_to_bigwig = ""
 params.bedgraph_to_bigwig_out = ""
 process bedgraph_to_bigwig {
@@ -82,7 +86,22 @@ bedgraph_to_wig.pl --bedgraph ${bw_b.simpleName}.bg --wig ${bw_b.simpleName}.wig
 
 params.wig_to_bigwig = ""
 params.wig_to_bigwig_out = ""
-process wig_to_bigwig {
+
+workflow wig_to_bigwig {
+  take:
+    fasta
+    wig
+  main:
+    index_fasta(fasta)
+    wig_to_bigwig_sub(
+      wig,
+      index_fasta.out.index
+    )
+  emit:
+  bw = wig_to_bigwig_sub.out.bw
+}
+
+process wig_to_bigwig_sub {
   container = "${container_url}"
   label "big_mem_mono_cpus"
   tag "${file_id}"
@@ -98,13 +117,29 @@ process wig_to_bigwig {
 
   script:
 """
-wigToBigWig ${w} ${w.simpleName}.bw
+cut -f 1,2 ${fasta_idx} > ${fasta}.sizes
+wigToBigWig -clip ${w} ${fasta}.sizes ${w.simpleName}.bw
 """
 }
 
 params.wig2_to_bigwig2 = ""
 params.wig2_to_bigwig2_out = ""
-process wig2_to_bigwig2 {
+
+workflow wig2_to_bigwig2 {
+  take:
+    fasta
+    wigs
+  main:
+    index_fasta(fasta)
+    wig2_to_bigwig2_sub(
+      wigs,
+      index_fasta.out.index
+    )
+  emit:
+  bw = wig2_to_bigwig2_sub.out.bw
+}
+
+process wig2_to_bigwig2_sub {
   container = "${container_url}"
   label "big_mem_mono_cpus"
   tag "${file_id}"
@@ -114,13 +149,15 @@ process wig2_to_bigwig2 {
 
   input:
   tuple val(file_id), path(w_a), path(w_b)
+  tuple val(idx_id), path(fasta_idx)
 
   output:
   tuple val(file_id), path("${w_a.simpleName}.bw"), path("${w_b.simpleName}.bw"), emit: bw
 
   script:
 """
-wigToBigWig ${w_a} ${w_a.simpleName}.bw
-wigToBigWig ${w_b} ${w_b.simpleName}.bw
+cut -f 1,2 ${fasta_idx} > ${fasta}.sizes
+wigToBigWig -clip ${w_a} ${fasta}.sizes ${w_a.simpleName}.bw
+wigToBigWig -clip ${w_b} ${fasta}.sizes ${w_b.simpleName}.bw
 """
 }
