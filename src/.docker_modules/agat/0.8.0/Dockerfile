@@ -1,0 +1,1 @@
+FROM quay.io/biocontainers/agat:0.8.0--pl5262hdfd78af_0 
