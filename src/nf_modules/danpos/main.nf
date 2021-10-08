@@ -273,7 +273,7 @@ danpos.py dpeak -m ${m} \
 mv ${file_prefix}/pooled/* ${file_prefix}/
 rm -R ${file_prefix}/pooled
 awk -v FS='\t' -v OFS='\t' 'FNR > 1 { print \$1, \$2-1, \$3, "Interval_"NR-1, \$6, "+" }' ${file_prefix}/${wig_ip.simpleName}.bgsub.peaks.xls > ${file_prefix}/${wig_ip.simpleName}.bgsub.positions.bed
-awk -v FS='\t' -v OFS='\t' 'FNR > 1 { print \$1, \$4-1, \$4, "Interval_"NR-1, \$6, "+" }' ${file_prefix}/${wig_wce.simpleName}.bgsub.peaks.xls > ${file_prefix}/${wig_ip.simpleName}.bgsub.positions.summit.bed
+awk -v FS='\t' -v OFS='\t' 'FNR > 1 { print \$1, \$4-1, \$4, "Interval_"NR-1, \$6, "+" }' ${file_prefix}/${wig_ip.simpleName}.bgsub.peaks.xls > ${file_prefix}/${wig_ip.simpleName}.bgsub.positions.summit.bed
 """
 }
 
