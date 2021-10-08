@@ -18,6 +18,6 @@ process gff_to_bed {
 
   script:
 """
-agat_convert_sp_gff2bed.pl --gff ${gff} -o ${gff.simpleName}.bed
+agat_convert_sp_gff2bed.pl --gff ${gff} --sub cds -o ${gff.simpleName}.bed
 """
 }
