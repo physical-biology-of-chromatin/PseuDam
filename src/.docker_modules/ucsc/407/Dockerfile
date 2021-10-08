@@ -25,3 +25,6 @@ cd .. &&\
 mv userApps/bin/* /usr/bin/ &&\
 rm -R userApps.v${UCSC_VERSION}.src.tgz &&\
 rm -R userApps
+
+COPY bedgraph_to_wig.pl /usr/bin/
+RUN chmod +x /usr/bin/bedgraph_to_wig.pl
