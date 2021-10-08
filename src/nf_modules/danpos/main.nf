@@ -181,7 +181,8 @@ process dpeak_bam {
     tuple val(file_id), path(bam_ip), path(bam_wce)
 
   output:
-    tuple val(file_id), path("${file_prefix}/*.wig"), emit: wig
+  tuple val(file_id), path("${file_prefix}/${bam_ip.simpleName}.bgsub.wig"), path("${file_prefix}/${bam_wce.simpleName}.wig"), emit: wig
+  tuple val(file_id), path("${file_prefix}/*.position.bed"), path("${file_prefix}/*.summit.bed"), emit: bed
     tuple val(file_id), path("${file_prefix}/*.bed"), emit: bed
     tuple val(file_id), path("${file_prefix}"), emit: folder
 
@@ -241,8 +242,8 @@ process dpeak_wig {
     tuple val(file_id), path(wig_ip), path(wig_wce)
 
   output:
-  tuple val(file_id), path("${file_prefix}/*.wig"), emit: wig
-  tuple val(file_id), path("${file_prefix}/*.bed"), emit: bed
+  tuple val(file_id), path("${file_prefix}/${wig_ip.simpleName}.bgsub.wig"), path("${file_prefix}/${wig_wce.simpleName}.wig"), emit: wig
+  tuple val(file_id), path("${file_prefix}/*.position.bed"), path("${file_prefix}/*.summit.bed"), emit: bed
   tuple val(file_id), path("${file_prefix}"), emit: folder
 
   script:
@@ -272,7 +273,7 @@ danpos.py dpeak -m ${m} \
 mv ${file_prefix}/pooled/* ${file_prefix}/
 rm -R ${file_prefix}/pooled
 awk -v FS='\t' -v OFS='\t' 'FNR > 1 { print \$1, \$2-1, \$3, "Interval_"NR-1, \$6, "+" }' ${file_prefix}/${wig_ip.simpleName}.bgsub.peaks.xls > ${file_prefix}/${wig_ip.simpleName}.bgsub.positions.bed
-awk -v FS='\t' -v OFS='\t' 'FNR > 1 { print \$1, \$4-1, \$4, "Interval_"NR-1, \$6, "+" }' ${file_prefix}/${wig_ip.simpleName}.bgsub.peaks.xls > ${file_prefix}/${wig_ip.simpleName}.bgsub.positions.summit.bed
+awk -v FS='\t' -v OFS='\t' 'FNR > 1 { print \$1, \$4-1, \$4, "Interval_"NR-1, \$6, "+" }' ${file_prefix}/${wig_wce.simpleName}.bgsub.peaks.xls > ${file_prefix}/${wig_ip.simpleName}.bgsub.positions.summit.bed
 """
 }
 
