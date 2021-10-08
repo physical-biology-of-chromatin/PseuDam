@@ -1,4 +1,4 @@
-version = "0.4.3"
+version = "0.4.0"
 container_url = "lbmc/bioconvert:${version}"
 params.bigwig_to_wig = ""
 params.bigwig_to_wig_out = ""
