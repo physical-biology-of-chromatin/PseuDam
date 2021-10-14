@@ -37,12 +37,12 @@ sort -T ./ -k1,1 -k2,2n ${bg} > \
 
 params.wig_to_bedgraph = ""
 params.wig_to_bedgraph_out = ""
-process bigwig_to_wig {
+process wig_to_bedgraph {
   container = "${container_url}"
   label "big_mem_mono_cpus"
   tag "${file_id}"
-  if (params.bigwig_to_wig_out != "") {
-    publishDir "results/${params.bigwig_to_wig_out}", mode: 'copy'
+  if (params.wig_to_bedgraph_out != "") {
+    publishDir "results/${params.wig_to_bedgraph_out}", mode: 'copy'
   }
 
   input:
