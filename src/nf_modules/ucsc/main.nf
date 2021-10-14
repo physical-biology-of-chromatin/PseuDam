@@ -49,7 +49,7 @@ process bigwig_to_wig {
   tuple val(file_id) path(wig)
 
   output:
-  tuple val(file_id), path("*.bg"), emit: wig
+  tuple val(file_id), path("*.bg"), emit: bedgraph
 
   script:
 """
