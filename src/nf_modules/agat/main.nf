@@ -22,3 +22,25 @@ zcat ${gff} > ${gff.baseName}.gff
 agat_convert_sp_gff2bed.pl --gff ${gff.baseName}.gff --sub cds -o ${gff.simpleName}.bed
 """
 }
+
+params.gff_to_gtf = ""
+params.gff_to_gtf_out = ""
+process gff_to_gtf {
+  container = "${container_url}"
+  label "big_mem_mono_cpus"
+  tag "$file_id"
+  if (params.gff_to_gtf_out != "") {
+    publishDir "results/${params.gff_to_gtf_out}", mode: 'copy'
+  }
+
+  input:
+    tuple val(file_id), path(gff)
+  output:
+    tuple val(file_id), path("*.gtf"), emit: gtf
+
+  script:
+"""
+zcat ${gff} > ${gff.baseName}.gff
+agat_convert_sp_gff2gtf.pl --gff ${gff.baseName}.gff -o ${gff.simpleName}.gtf
+"""
+}
