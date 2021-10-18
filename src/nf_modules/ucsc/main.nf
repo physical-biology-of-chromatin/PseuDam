@@ -35,28 +35,6 @@ sort -T ./ -k1,1 -k2,2n ${bg} > \
 """
 }
 
-params.wig2bedgraph = ""
-params.wig2bedgraph_out = ""
-process wig2bedgraph {
-  container = "${container_url}"
-  label "big_mem_mono_cpus"
-  tag "${file_id}"
-  if (params.wig2bedgraph_out != "") {
-    publishDir "results/${params.wig2bedgraph_out}", mode: 'copy'
-  }
-
-  input:
-  tuple val(file_id) path(wig)
-
-  output:
-  tuple val(file_id), path("*.bg"), emit: bedgraph
-
-  script:
-"""
-wigToBedGraph ${wig} ${wig.simpleName}.bg
-"""
-}
-
 params.wig_to_bedgraph = ""
 params.wig_to_bedgraph_out = ""
 process wig_to_bedgraph {
