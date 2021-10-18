@@ -2,11 +2,27 @@ version = "v2.2.2_cv3"
 container_url = "biocontainers/danpos:${version}"
 
 include {
-  bigwig2_to_wig2
+  bigwig2_to_wig2;
+  wig_to_bedgraph
 } from "./../ucsc/main.nf"
 
 params.dpos = "--smooth_width 0 -n N "
 params.dpos_out = ""
+
+workflow dpos_bam_bg {
+  take:
+    fastq
+    bam
+
+  main:
+    dpos_bam(fastq, bam)
+    wig_to_bedgraph(dpos_bam.out.wig)
+
+  emit:
+    bedgraph = wig_to_bedgraph.out.bedgraph
+    wig = dpos_bam.out.wig
+    folder = dpos_bam.out.folder
+}
 
 process dpos_bam {
   container = "${container_url}"
