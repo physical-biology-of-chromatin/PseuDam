@@ -17,10 +17,10 @@ workflow dpos_bam_bg {
 
   main:
     dpos_bam(fastq, bam)
-    wig2_to_bedgraph2(dpos_bam.out.wig)
+    wig_to_bedgraph(dpos_bam.out.wig)
 
   emit:
-    bedgraph = wig2_to_bedgraph2.out.bedgraph
+    bedgraph = wig_to_bedgraph.out.bedgraph
     wig = dpos_bam.out.wig
     bed = dpos_bam.out.bed
     folder = dpos_bam.out.folder
@@ -36,10 +36,10 @@ process dpos_bam {
 
   input:
     tuple val(fastq_id), path(fastq)
-    tuple val(file_id), path(bam_ip), path(bam_wce)
+    tuple val(file_id), path(bam_ip)
 
   output:
-    tuple val(file_id), path("${file_prefix}/pooled/${bam_ip.simpleName}*.wig"), path("${file_prefix}/pooled/${bam_wce.simpleName}*.wig"), emit: wig
+    tuple val(file_id), path("${file_prefix}/pooled/${bam_ip.simpleName}*.wig"), emit: wig
   tuple val(file_id), path("${file_prefix}/*.positions.bed"), path("${file_prefix}/*.summit.bed"), emit: bed
     tuple val(file_id), path("${file_prefix}"), emit: folder
 
@@ -64,7 +64,6 @@ process dpos_bam {
 """
 danpos.py dpos -m ${m} \
   ${params.dpos} \
-  -b ${bam_wce} \
   -o ${file_prefix} \
   ${bam_ip}
 mv ${file_prefix}/pooled/* ${file_prefix}/
@@ -80,10 +79,10 @@ workflow dpos_bw {
     bw
   main:
     dpos_wig(fastq, bigwig2_to_wig2(bw))
-    wig2_to_bedgraph2(dpos_wig.out.wig)
+    wig_to_bedgraph(dpos_wig.out.wig)
 
   emit:
-  bedgraph = wig2_to_bedgraph2.out.bedgraph
+  bedgraph = wig_to_bedgraph.out.bedgraph
   wig = dpos_wig.out.wig
   bed = dpos_wig.out.bed
   folder = dpos_wig.out.folder
@@ -99,10 +98,10 @@ process dpos_wig {
 
   input:
     tuple val(fastq_id), path(fastq)
-    tuple val(file_id), path(wig_ip), path(wig_wce)
+    tuple val(file_id), path(wig_ip)
 
   output:
-    tuple val(file_id), path("${file_prefix}/pooled/${wig_ip.simpleName}*.wig"), path("${file_prefix}/pooled/${wig_wce.simpleName}*.wig"), emit: wig
+    tuple val(file_id), path("${file_prefix}/pooled/${wig_ip.simpleName}*.wig"), emit: wig
   tuple val(file_id), path("${file_prefix}/*.positions.bed"), path("${file_prefix}/*.summit.bed"), emit: bed
     tuple val(file_id), path("${file_prefix}"), emit: folder
 
@@ -127,7 +126,6 @@ process dpos_wig {
 """
 danpos.py dpos -m ${m} \
   ${params.dpos} \
-  -b ${wig_wce} \
   -o ${file_prefix} \
   ${wig_ip}
 mv ${file_prefix}/pooled/* ${file_prefix}/
@@ -148,10 +146,10 @@ workflow dwig_bwvsbw {
       bigwig2_to_wig2(bw_a),
       bigwig2_to_wig2(bw_b),
     )
-    wig2_to_bedgraph2(dpos_wigvswig.out.wig)
+    wig_to_bedgraph(dpos_wigvswig.out.wig)
 
   emit:
-  bedgraph = wig2_to_bedgraph2.out.bedgraph
+  bedgraph = wig_to_bedgraph.out.bedgraph
   wig = dpeak_wig.out.wig
   bed = dpeak_wig.out.bed
   folder = dpeak_wig.out.folder
@@ -167,11 +165,11 @@ process dpos_wigvswig {
 
   input:
     tuple val(fastq_id), path(fastq)
-    tuple val(file_id_a), path(wig_ip_a), path(wig_wce_a)
-    tuple val(file_id_b), path(wig_ip_b), path(wig_wce_b)
+    tuple val(file_id_a), path(wig_ip_a)
+    tuple val(file_id_b), path(wig_ip_b)
 
   output:
-    tuple val(file_id), path("${file_prefix}/pooled/${wig_ip_a.simpleName}*.wig"), path("${file_prefix}/pooled/${wig_wce_a.simpleName}*.wig"), emit: wig
+    tuple val(file_id), path("${file_prefix}/pooled/${wig_ip_a.simpleName}*.wig"), emit: wig
   tuple val(file_id), path("${file_prefix}/*.positions.bed"), path("${file_prefix}/*.summit.bed"), emit: bed
     tuple val(file_id_a), path("${file_prefix}"), emit: folder
 
@@ -196,7 +194,7 @@ process dpos_wigvswig {
 """
 danpos.py dpos -m ${m} \
   ${params.dpos} \
-  -b ${wig_ip_a}:${wig_wce_a},${wig_ip_b}:${wig_wce_b} \
+  -b ${wig_ip_a},${wig_ip_b} \
   -o ${file_prefix} \
   ${wig_ip_a}:${wig_ip_b}
 mv ${file_prefix}/pooled/* ${file_prefix}/
