@@ -57,6 +57,29 @@ wigToBedGraph ${wig} ${wig.simpleName}.bg
 """
 }
 
+params.wig2_to_bedgraph2 = ""
+params.wig2_to_bedgraph2_out = ""
+process wig2_to_bedgraph2 {
+  container = "${container_url}"
+  label "big_mem_mono_cpus"
+  tag "${file_id}"
+  if (params.wig2_to_bedgraph2_out != "") {
+    publishDir "results/${params.wig2_to_bedgraph2_out}", mode: 'copy'
+  }
+
+  input:
+  tuple val(file_id), path(wig_a), path(wig_b)
+
+  output:
+  tuple val(file_id), path("${wig_a.simpleName}.wig"), path("${wig_b.simpleName}.wig"), emit: wig
+
+  script:
+"""
+wigToBedGraph ${wig_a} ${wig_a.simpleName}.bg
+wigToBedGraph ${wig_b} ${wig_b.simpleName}.bg
+"""
+}
+
 params.bigwig_to_wig = ""
 params.bigwig_to_wig_out = ""
 process bigwig_to_wig {
