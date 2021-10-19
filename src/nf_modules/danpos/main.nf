@@ -39,7 +39,7 @@ process dpos_bam {
     tuple val(file_id), path(bam_ip)
 
   output:
-    tuple val(file_id), path("${file_prefix}/pooled/${bam_ip.simpleName}*.wig"), emit: wig
+    tuple val(file_id), path("${file_prefix}/${bam_ip.simpleName}*.wig"), emit: wig
   tuple val(file_id), path("${file_prefix}/*.positions.bed"), path("${file_prefix}/*.summit.bed"), emit: bed
     tuple val(file_id), path("${file_prefix}"), emit: folder
 
@@ -101,7 +101,7 @@ process dpos_wig {
     tuple val(file_id), path(wig_ip)
 
   output:
-    tuple val(file_id), path("${file_prefix}/pooled/${wig_ip.simpleName}*.wig"), emit: wig
+    tuple val(file_id), path("${file_prefix}/${wig_ip.simpleName}*.wig"), emit: wig
   tuple val(file_id), path("${file_prefix}/*.positions.bed"), path("${file_prefix}/*.summit.bed"), emit: bed
     tuple val(file_id), path("${file_prefix}"), emit: folder
 
@@ -169,7 +169,7 @@ process dpos_wigvswig {
     tuple val(file_id_b), path(wig_ip_b)
 
   output:
-    tuple val(file_id), path("${file_prefix}/pooled/${wig_ip_a.simpleName}*.wig"), emit: wig
+    tuple val(file_id), path("${file_prefix}/${wig_ip_a.simpleName}*.wig"), emit: wig
   tuple val(file_id), path("${file_prefix}/*.positions.bed"), path("${file_prefix}/*.summit.bed"), emit: bed
     tuple val(file_id_a), path("${file_prefix}"), emit: folder
 
@@ -220,7 +220,7 @@ process dpeak_bam {
     tuple val(file_id), path(bam_ip), path(bam_wce)
 
   output:
-    tuple val(file_id), path("${file_prefix}/pooled/${bam_ip.simpleName}*.wig"), path("${file_prefix}/pooled/${bam_wce.simpleName}*.wig"), emit: wig
+    tuple val(file_id), path("${file_prefix}/${bam_ip.simpleName}*.wig"), path("${file_prefix}/${bam_wce.simpleName}*.wig"), emit: wig
   tuple val(file_id), path("${file_prefix}/*.positions.bed"), path("${file_prefix}/*.summit.bed"), emit: bed
     tuple val(file_id), path("${file_prefix}/*.bed"), emit: bed
     tuple val(file_id), path("${file_prefix}"), emit: folder
