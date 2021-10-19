@@ -69,7 +69,7 @@ danpos.py dpos -m ${m} \
   ${bam_ip}
 mv ${file_prefix}/pooled/* ${file_prefix}/
 rm -R ${file_prefix}/pooled
-awk -v FS='\t' -v OFS='\t' 'FNR > 1 { print \$1, \$2-1, \$3, "Interval_"NR-1, \$6, "+" }' ${file_prefix}/${bam_ip.simpleName}.positions.xls > ${file_prefix}/${bam_ip.simpleName}.positions.bed
+awk -v FS='\t' -v OFS='\t' 'FNR > 1 { print \$1, \$2-1, \$3, "Interval_"NR-1, \$6, "+" }' ${file_prefix}/${bam_ip.simpleName}.bgsub.positions.xls > ${file_prefix}/${bam_ip.simpleName}.bgsub.positions.bed
 """
 }
 
