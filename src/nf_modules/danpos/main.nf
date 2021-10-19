@@ -64,7 +64,7 @@ process dpos_bam {
 """
 danpos.py dpos -m ${m} \
   ${params.dpos} \
-  -b ${bam_wce}
+  -b ${bam_wce} \
   -o ${file_prefix} \
   ${bam_ip}
 mv ${file_prefix}/pooled/* ${file_prefix}/
