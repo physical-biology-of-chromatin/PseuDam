@@ -71,7 +71,7 @@ process wig2_to_bedgraph2 {
   tuple val(file_id), path(wig_a), path(wig_b)
 
   output:
-  tuple val(file_id), path("${wig_a.simpleName}.wig"), path("${wig_b.simpleName}.wig"), emit: wig
+  tuple val(file_id), path("${wig_a.simpleName}.bg"), path("${wig_b.simpleName}.bg"), emit: bedgraph
 
   script:
 """
