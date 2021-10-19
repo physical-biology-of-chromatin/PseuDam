@@ -53,9 +53,7 @@ process wig_to_bedgraph {
 
   script:
 """
-wigToBigWig ${wig} ${wig.simpleName}.bw
-bigWigToBedGraph ${wig.simpleName}.bw ${wig.simpleName}.bg
-rm ${wig.simpleName}.bw
+awk '{print \$1"\\t"\$2-1"\\t"\$2"\\t"\$3}' ${wig} > ${wig.simpleName}.bg
 """
 }
 
@@ -77,12 +75,8 @@ process wig2_to_bedgraph2 {
 
   script:
 """
-wigToBigWig ${wig_a} ${wig_a.simpleName}.bw
-bigWigToBedGraph ${wig_a.simpleName}.bw ${wig_a.simpleName}.bg
-rm ${wig_a.simpleName}.bw
-wigToBigWig ${wig_b} ${wig_b.simpleName}.bw
-bigWigToBedGraph ${wig_b.simpleName}.bw ${wig_b.simpleName}.bg
-rm ${wig_b.simpleName}.bw
+awk '{print \$1"\\t"\$2-1"\\t"\$2"\\t"\$3}' ${wig_a} > ${wig_a.simpleName}.bg
+awk '{print \$1"\\t"\$2-1"\\t"\$2"\\t"\$3}' ${wig_b} > ${wig_b.simpleName}.bg
 """
 }
 
