@@ -46,10 +46,10 @@ process wig_to_bedgraph {
   }
 
   input:
-  tuple val(file_id) path(wig)
+  tuple val(file_id), path(wig)
 
   output:
-  tuple val(file_id), path("*.bg"), emit: bedgraph
+  tuple val(file_id), path("${wig.simpleName}.bg"), emit: bedgraph
 
   script:
 """
