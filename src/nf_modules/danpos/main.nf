@@ -17,10 +17,10 @@ workflow dpos_bam_bg {
 
   main:
     dpos_bam(fastq, bam)
-    wig_to_bedgraph(dpos_bam.out.wig)
+    wig2_to_bedgraph2(dpos_bam.out.wig)
 
   emit:
-    bedgraph = wig_to_bedgraph.out.bedgraph
+    bedgraph = wig2_to_bedgraph2.out.bedgraph
     wig = dpos_bam.out.wig
     bed = dpos_bam.out.bed
     folder = dpos_bam.out.folder
@@ -36,10 +36,10 @@ process dpos_bam {
 
   input:
     tuple val(fastq_id), path(fastq)
-    tuple val(file_id), path(bam_ip)
+    tuple val(file_id), path(bam_ip), path(bam_wce)
 
   output:
-    tuple val(file_id), path("${file_prefix}/${bam_ip.simpleName}*.wig"), emit: wig
+    tuple val(file_id), path("${file_prefix}/${bam_ip.simpleName}*.wig"), path("${file_prefix}/${bam_wce.simpleName}*.wig"), emit: wig
   tuple val(file_id), path("${file_prefix}/*.positions.bed"), emit: bed
     tuple val(file_id), path("${file_prefix}"), emit: folder
 
@@ -64,6 +64,7 @@ process dpos_bam {
 """
 danpos.py dpos -m ${m} \
   ${params.dpos} \
+  -b ${bam_wce}
   -o ${file_prefix} \
   ${bam_ip}
 mv ${file_prefix}/pooled/* ${file_prefix}/
