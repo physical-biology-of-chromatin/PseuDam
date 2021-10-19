@@ -16,11 +16,12 @@ workflow dpos_bam_bg {
 
   main:
     dpos_bam(fastq, bam)
-    wig_to_bedgraph(dpos_bam.out.wig)
+    wig2_to_bedgraph2(dpos_bam.out.wig)
 
   emit:
-    bedgraph = wig_to_bedgraph.out.bedgraph
+    bedgraph = wig2_to_bedgraph2.out.bedgraph
     wig = dpos_bam.out.wig
+    bed = dpos_bam.out.bed
     folder = dpos_bam.out.folder
 }
 
@@ -37,7 +38,7 @@ process dpos_bam {
     tuple val(file_id), path(bam_ip), path(bam_wce)
 
   output:
-    tuple val(file_id), path("${file_prefix}/pooled/*.wig"), emit: wig
+    tuple val(file_id), path("${file_prefix}/pooled/${bam_ip.simpleName}*.wig"), path("${file_prefix}/pooled/${bam_wce.simpleName}*.wig"), emit: wig
   tuple val(file_id), path("${file_prefix}/*.positions.bed"), path("${file_prefix}/*.summit.bed"), emit: bed
     tuple val(file_id), path("${file_prefix}"), emit: folder
 
@@ -78,8 +79,12 @@ workflow dpos_bw {
     bw
   main:
     dpos_wig(fastq, bigwig2_to_wig2(bw))
+    wig2_to_bedgraph2(dpos_wig.out.wig)
+
   emit:
+  bedgraph = wig2_to_bedgraph2.out.bedgraph
   wig = dpos_wig.out.wig
+  bed = dpos_wig.out.bed
   folder = dpos_wig.out.folder
 }
 
@@ -96,7 +101,7 @@ process dpos_wig {
     tuple val(file_id), path(wig_ip), path(wig_wce)
 
   output:
-    tuple val(file_id), path("${file_prefix}/pooled/*.wig"), emit: wig
+    tuple val(file_id), path("${file_prefix}/pooled/${wig_ip.simpleName}*.wig"), path("${file_prefix}/pooled/${wig_wce.simpleName}*.wig"), emit: wig
   tuple val(file_id), path("${file_prefix}/*.positions.bed"), path("${file_prefix}/*.summit.bed"), emit: bed
     tuple val(file_id), path("${file_prefix}"), emit: folder
 
@@ -142,8 +147,12 @@ workflow dwig_bwvsbw {
       bigwig2_to_wig2(bw_a),
       bigwig2_to_wig2(bw_b),
     )
+    wig2_to_bedgraph2(dpos_wigvswig.out.wig)
+
   emit:
+  bedgraph = wig2_to_bedgraph2.out.bedgraph
   wig = dpeak_wig.out.wig
+  bed = dpeak_wig.out.bed
   folder = dpeak_wig.out.folder
 }
 
@@ -161,7 +170,7 @@ process dpos_wigvswig {
     tuple val(file_id_b), path(wig_ip_b), path(wig_wce_b)
 
   output:
-    tuple val(file_id), path("${file_prefix}/pooled/*.wig"), emit: wig
+    tuple val(file_id), path("${file_prefix}/pooled/${wig_ip_a.simpleName}*.wig"), path("${file_prefix}/pooled/${wig_wce_a.simpleName}*.wig"), emit: wig
   tuple val(file_id), path("${file_prefix}/*.positions.bed"), path("${file_prefix}/*.summit.bed"), emit: bed
     tuple val(file_id_a), path("${file_prefix}"), emit: folder
 
@@ -212,7 +221,7 @@ process dpeak_bam {
     tuple val(file_id), path(bam_ip), path(bam_wce)
 
   output:
-  tuple val(file_id), path("${file_prefix}/${bam_ip.simpleName}.bgsub.wig"), path("${file_prefix}/${bam_wce.simpleName}.wig"), emit: wig
+    tuple val(file_id), path("${file_prefix}/pooled/${bam_ip.simpleName}*.wig"), path("${file_prefix}/pooled/${bam_wce.simpleName}*.wig"), emit: wig
   tuple val(file_id), path("${file_prefix}/*.positions.bed"), path("${file_prefix}/*.summit.bed"), emit: bed
     tuple val(file_id), path("${file_prefix}/*.bed"), emit: bed
     tuple val(file_id), path("${file_prefix}"), emit: folder
@@ -254,8 +263,12 @@ workflow dpeak_bw {
     bw
   main:
     dpeak_wig(fastq, bigwig2_to_wig2(bw))
+    wig2_to_bedgraph2(dpeak_wig.out.wig)
+
   emit:
+  bedgraph = wig2_to_bedgraph2.out.bedgraph
   wig = dpeak_wig.out.wig
+  bed = dpeak_wig.out.bed
   folder = dpeak_wig.out.folder
 }
 
@@ -319,8 +332,12 @@ workflow dpeak_bwvsbw {
       bigwig2_to_wig2(bw_a),
       bigwig2_to_wig2(bw_b),
     )
+    wig2_to_bedgraph2(dpeak_wigvswig.out.wig)
+
   emit:
+  bedgraph = wig2_to_bedgraph2.out.bedgraph
   wig = dpeak_wig.out.wig
+  bed = dpeak_wig.out.bed
   folder = dpeak_wig.out.folder
 }
 
@@ -339,7 +356,7 @@ process dpeak_wigvswig {
     tuple val(file_id_b), path(wig_ip_b), path(wig_wce_b)
 
   output:
-  tuple val(file_id_a), path("${file_prefix}/pooled/*.wig"), emit: wig
+  tuple val(file_id), path("${file_prefix}/${wig_ip_a.simpleName}.bgsub.wig"), path("${file_prefix}/${wig_wce_a.simpleName}.wig"), emit: wig
   tuple val(file_id), path("${file_prefix}/*.positions.bed"), path("${file_prefix}/*.summit.bed"), emit: bed
   tuple val(file_id_a), path("${file_prefix}"), emit: folder
 
