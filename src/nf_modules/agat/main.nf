@@ -19,7 +19,7 @@ process gff_to_bed {
   script:
 """
 zcat ${gff} > ${gff.baseName}.gff
-agat_convert_sp_gff2bed.pl --gff ${gff.baseName}.gff --sub cds -o ${gff.simpleName}.bed
+agat_convert_sp_gff2bed.pl ${params.gff_to_bed} --gff ${gff.baseName}.gff -o ${gff.simpleName}.bed
 """
 }
 
@@ -41,6 +41,6 @@ process gff_to_gtf {
   script:
 """
 zcat ${gff} > ${gff.baseName}.gff
-agat_convert_sp_gff2gtf.pl --gff ${gff.baseName}.gff -o ${gff.simpleName}.gtf
+agat_convert_sp_gff2gtf.pl ${params.gff_to_gtf} --gff ${gff.baseName}.gff -o ${gff.simpleName}.gtf
 """
 }
