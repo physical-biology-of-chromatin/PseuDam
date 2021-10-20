@@ -23,7 +23,6 @@ workflow dpos_bam_bg {
     bedgraph = wig2_to_bedgraph2.out.bedgraph
     wig = dpos_bam.out.wig
     bed = dpos_bam.out.bed
-    folder = dpos_bam.out.folder
 }
 
 process dpos_bam {
@@ -41,7 +40,6 @@ process dpos_bam {
   output:
     tuple val(file_id), path("${file_prefix}/${bam_ip.simpleName}*.wig"), path("${file_prefix}/${bam_wce.simpleName}*.wig"), emit: wig
   tuple val(file_id), path("${file_prefix}/*.positions.bed"), emit: bed
-    tuple val(file_id), path("${file_prefix}"), emit: folder
 
   script:
 
@@ -85,7 +83,6 @@ workflow dpos_bw {
   bedgraph = wig_to_bedgraph.out.bedgraph
   wig = dpos_wig.out.wig
   bed = dpos_wig.out.bed
-  folder = dpos_wig.out.folder
 }
 
 process dpos_wig {
@@ -103,7 +100,6 @@ process dpos_wig {
   output:
     tuple val(file_id), path("${file_prefix}/${wig_ip.simpleName}*.wig"), emit: wig
   tuple val(file_id), path("${file_prefix}/*.positions.bed"), emit: bed
-    tuple val(file_id), path("${file_prefix}"), emit: folder
 
   script:
 
@@ -151,7 +147,6 @@ workflow dwig_bwvsbw {
   bedgraph = wig_to_bedgraph.out.bedgraph
   wig = dpeak_wig.out.wig
   bed = dpeak_wig.out.bed
-  folder = dpeak_wig.out.folder
 }
 
 process dpos_wigvswig {
@@ -170,7 +165,6 @@ process dpos_wigvswig {
   output:
     tuple val(file_id), path("${file_prefix}/${wig_ip_a.simpleName}*.wig"), emit: wig
   tuple val(file_id), path("${file_prefix}/*.positions.bed"), emit: bed
-    tuple val(file_id_a), path("${file_prefix}"), emit: folder
 
   script:
 
@@ -221,7 +215,6 @@ process dpeak_bam {
     tuple val(file_id), path("${file_prefix}/${bam_ip.simpleName}*.wig"), path("${file_prefix}/${bam_wce.simpleName}*.wig"), emit: wig
   tuple val(file_id), path("${file_prefix}/*.positions.bed"), path("${file_prefix}/*.summit.bed"), emit: bed
     tuple val(file_id), path("${file_prefix}/*.bed"), emit: bed
-    tuple val(file_id), path("${file_prefix}"), emit: folder
 
   script:
 
@@ -266,7 +259,6 @@ workflow dpeak_bw {
   bedgraph = wig2_to_bedgraph2.out.bedgraph
   wig = dpeak_wig.out.wig
   bed = dpeak_wig.out.bed
-  folder = dpeak_wig.out.folder
 }
 
 
@@ -285,7 +277,6 @@ process dpeak_wig {
   output:
   tuple val(file_id), path("${file_prefix}/${wig_ip.simpleName}.bgsub.wig"), path("${file_prefix}/${wig_wce.simpleName}.wig"), emit: wig
   tuple val(file_id), path("${file_prefix}/*.positions.bed"), path("${file_prefix}/*.summit.bed"), emit: bed
-  tuple val(file_id), path("${file_prefix}"), emit: folder
 
   script:
 
@@ -335,7 +326,6 @@ workflow dpeak_bwvsbw {
   bedgraph = wig2_to_bedgraph2.out.bedgraph
   wig = dpeak_wig.out.wig
   bed = dpeak_wig.out.bed
-  folder = dpeak_wig.out.folder
 }
 
 
@@ -355,7 +345,6 @@ process dpeak_wigvswig {
   output:
   tuple val(file_id), path("${file_prefix}/${wig_ip_a.simpleName}.bgsub.wig"), path("${file_prefix}/${wig_wce_a.simpleName}.wig"), emit: wig
   tuple val(file_id), path("${file_prefix}/*.positions.bed"), path("${file_prefix}/*.summit.bed"), emit: bed
-  tuple val(file_id_a), path("${file_prefix}"), emit: folder
 
   script:
 
