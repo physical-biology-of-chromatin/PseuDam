@@ -155,6 +155,7 @@ process wig_to_bigwig_sub {
 
   input:
   tuple val(file_id), path(w)
+  tuple val(idx_id), path(fasta_idx)
 
   output:
   tuple val(file_id), path("${w.simpleName}.bw"), emit: bw
