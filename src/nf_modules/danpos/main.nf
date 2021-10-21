@@ -38,7 +38,7 @@ process dpos_bam {
     tuple val(file_id), path(bam_ip), path(bam_wce)
 
   output:
-    tuple val(file_id), path("${file_prefix}/${bam_ip.simpleName}*.wig"), path("${file_prefix}/${bam_wce.simpleName}*.wig"), emit: wig
+    tuple val(file_id), path("${file_prefix}/${bam_ip.simpleName}*.wig"), emit: wig
   tuple val(file_id), path("${file_prefix}/*.positions.bed"), emit: bed
 
   script:
@@ -212,7 +212,7 @@ process dpeak_bam {
     tuple val(file_id), path(bam_ip), path(bam_wce)
 
   output:
-    tuple val(file_id), path("${file_prefix}/${bam_ip.simpleName}*.wig"), path("${file_prefix}/${bam_wce.simpleName}*.wig"), emit: wig
+    tuple val(file_id), path("${file_prefix}/${bam_ip.simpleName}*.wig"), emit: wig
   tuple val(file_id), path("${file_prefix}/*.positions.bed"), path("${file_prefix}/*.summit.bed"), emit: bed
     tuple val(file_id), path("${file_prefix}/*.bed"), emit: bed
 
@@ -275,7 +275,7 @@ process dpeak_wig {
     tuple val(file_id), path(wig_ip), path(wig_wce)
 
   output:
-  tuple val(file_id), path("${file_prefix}/${wig_ip.simpleName}.bgsub.wig"), path("${file_prefix}/${wig_wce.simpleName}.wig"), emit: wig
+  tuple val(file_id), path("${file_prefix}/${wig_ip.simpleName}.bgsub.wig"), emit: wig
   tuple val(file_id), path("${file_prefix}/*.positions.bed"), path("${file_prefix}/*.summit.bed"), emit: bed
 
   script:
@@ -343,7 +343,7 @@ process dpeak_wigvswig {
     tuple val(file_id_b), path(wig_ip_b), path(wig_wce_b)
 
   output:
-  tuple val(file_id), path("${file_prefix}/${wig_ip_a.simpleName}.bgsub.wig"), path("${file_prefix}/${wig_wce_a.simpleName}.wig"), emit: wig
+  tuple val(file_id), path("${file_prefix}/${wig_ip_a.simpleName}.bgsub.wig"), emit: wig
   tuple val(file_id), path("${file_prefix}/*.positions.bed"), path("${file_prefix}/*.summit.bed"), emit: bed
 
   script:
