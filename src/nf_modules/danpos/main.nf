@@ -59,6 +59,9 @@ process dpos_bam {
   if (fastq.size() == 2){
     m = 1
   }
+  if (fastq.size() > 2 & fastq[0].size() == 2){
+    m = 1
+  }
 """
 danpos.py dpos -m ${m} \
   ${params.dpos} \
@@ -117,6 +120,9 @@ process dpos_wig {
 
   m = 0
   if (fastq.size() == 2){
+    m = 1
+  }
+  if (fastq.size() > 2 & fastq[0].size() == 2){
     m = 1
   }
 """
@@ -184,6 +190,9 @@ process dpos_wigvswig {
   if (fastq.size() == 2){
     m = 1
   }
+  if (fastq.size() > 2 & fastq[0].size() == 2){
+    m = 1
+  }
 """
 danpos.py dpos -m ${m} \
   ${params.dpos} \
@@ -232,6 +241,9 @@ process dpeak_bam {
 
   m = 0
   if (fastq.size() == 2){
+    m = 1
+  }
+  if (fastq.size() > 2 & fastq[0].size() == 2){
     m = 1
   }
 """
@@ -294,6 +306,9 @@ process dpeak_wig {
 
   m = 0
   if (fastq.size() == 2){
+    m = 1
+  }
+  if (fastq.size() > 2 & fastq[0].size() == 2){
     m = 1
   }
 """
@@ -362,6 +377,9 @@ process dpeak_wigvswig {
 
   m = 0
   if (fastq.size() == 2){
+    m = 1
+  }
+  if (fastq.size() > 2 & fastq[0].size() == 2){
     m = 1
   }
 """
