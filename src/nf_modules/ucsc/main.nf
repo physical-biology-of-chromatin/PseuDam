@@ -37,46 +37,80 @@ sort -T ./ -k1,1 -k2,2n ${bg} > \
 
 params.wig_to_bedgraph = ""
 params.wig_to_bedgraph_out = ""
-process wig_to_bedgraph {
+workflow wig_to_bedgraph {
+  take:
+    fasta
+    wig
+  main:
+    wig_to_bigwig(
+      fasta,
+      wig
+    )
+    wig_to_bedgraph(
+      wig_to_bigwig.out.bw
+    )
+  emit:
+  bg = wig_to_bigwig.out.bg
+}
+
+workflow wig2_to_bedgraph2 {
+  take:
+    fasta
+    wig
+  main:
+    wig2_to_bigwig2(
+      fasta,
+      wig
+    )
+    wig2_to_bedgraph2(
+      wig2_to_bigwig2.out.bw
+    )
+  emit:
+  bg = wig2_to_bigwig2.out.bg
+}
+
+params.bigwig_to_bedgraph = ""
+params.bigwig_to_bedgraph_out = ""
+process bigwig_to_bedgraph {
   container = "${container_url}"
   label "big_mem_mono_cpus"
   tag "${file_id}"
-  if (params.wig_to_bedgraph_out != "") {
-    publishDir "results/${params.wig_to_bedgraph_out}", mode: 'copy'
+  if (params.bigwig_to_bedgraph_out != "") {
+    publishDir "results/${params.bigwig_to_bedgraph_out}", mode: 'copy'
   }
 
   input:
-  tuple val(file_id), path(wig)
+  tuple val(file_id) path(bw)
 
   output:
-  tuple val(file_id), path("${wig.simpleName}.bg"), emit: bedgraph
+  tuple val(file_id), path("*.bg"), emit: bg
 
   script:
 """
-awk '{print \$1"\\t"\$2-1"\\t"\$2"\\t"\$3}' ${wig} > ${wig.simpleName}.bg
+bigWigToBedGraph ${bw} ${bw.simpleName}.bg
 """
 }
 
-params.wig2_to_bedgraph2 = ""
-params.wig2_to_bedgraph2_out = ""
-process wig2_to_bedgraph2 {
+params.bigwig2_to_bedgraph2 = ""
+params.bigwig2_to_bedgraph2_out = ""
+process bigwig2_to_bedgraph2 {
   container = "${container_url}"
   label "big_mem_mono_cpus"
   tag "${file_id}"
-  if (params.wig2_to_bedgraph2_out != "") {
-    publishDir "results/${params.wig2_to_bedgraph2_out}", mode: 'copy'
+  if (params.bigwig_to_bedgraph_out != "") {
+    publishDir "results/${params.bigwig_to_bedgraph_out}", mode: 'copy'
   }
 
   input:
-  tuple val(file_id), path(wig_a), path(wig_b)
+  tuple val(file_id), path(bw_a), path(bw_b)
 
   output:
-  tuple val(file_id), path("${wig_a.simpleName}.bg"), path("${wig_b.simpleName}.bg"), emit: bedgraph
+  tuple val(file_id), path("${bw_a.simpleName}.bg"), path("${bw_b.simpleName}.bg"), emit: bg
 
   script:
 """
-awk '{print \$1"\\t"\$2-1"\\t"\$2"\\t"\$3}' ${wig_a} > ${wig_a.simpleName}.bg
-awk '{print \$1"\\t"\$2-1"\\t"\$2"\\t"\$3}' ${wig_b} > ${wig_b.simpleName}.bg
+bigWigToBedGraph ${bw_a} ${bw_a.simpleName}.bg
+bigWigToBedGraph ${bw_b} ${bw_b.simpleName}.bg
 """
 }
 

@@ -12,12 +12,13 @@ params.dpos_out = ""
 
 workflow dpos_bam_bg {
   take:
+    fasta
     fastq
     bam
 
   main:
     dpos_bam(fastq, bam)
-    wig2_to_bedgraph2(dpos_bam.out.wig)
+    wig2_to_bedgraph2(fasta, dpos_bam.out.wig)
 
   emit:
     bedgraph = wig2_to_bedgraph2.out.bedgraph
@@ -249,10 +250,11 @@ awk -v FS='\t' -v OFS='\t' 'FNR > 1 { print \$1, \$4-1, \$4, "Interval_"NR-1, \$
 
 workflow dpeak_bw {
   take:
+    fasta
     fastq
     bw
   main:
-    dpeak_wig(fastq, bigwig2_to_wig2(bw))
+    dpeak_wig(fasta, fastq, bigwig2_to_wig2(bw))
     wig2_to_bedgraph2(dpeak_wig.out.wig)
 
   emit:
@@ -311,6 +313,7 @@ awk -v FS='\t' -v OFS='\t' 'FNR > 1 { print \$1, \$4-1, \$4, "Interval_"NR-1, \$
 
 workflow dpeak_bwvsbw {
   take:
+    fasta
     fastq
     bw_a
     bw_b
@@ -320,7 +323,7 @@ workflow dpeak_bwvsbw {
       bigwig2_to_wig2(bw_a),
       bigwig2_to_wig2(bw_b),
     )
-    wig2_to_bedgraph2(dpeak_wigvswig.out.wig)
+    wig2_to_bedgraph2(fasta, dpeak_wigvswig.out.wig)
 
   emit:
   bedgraph = wig2_to_bedgraph2.out.bedgraph
