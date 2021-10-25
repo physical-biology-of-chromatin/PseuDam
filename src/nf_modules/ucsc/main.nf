@@ -46,11 +46,11 @@ workflow wig_to_bedgraph {
       fasta,
       wig
     )
-    bigwig1_to_bedgraph1(
+    bigwig_to_bedgraph(
       wig_to_bigwig.out.bw
     )
   emit:
-  bg = bigwig1_to_bedgraph1.out.bg
+  bg = bigwig_to_bedgraph.out.bg
 }
 
 workflow wig2_to_bedgraph2 {
@@ -69,18 +69,18 @@ workflow wig2_to_bedgraph2 {
   bg = bigwig2_to_bedgraph2.out.bg
 }
 
-params.bigwig1_to_bedgraph1 = ""
-params.bigwig1_to_bedgraph1_out = ""
-process bigwig1_to_bedgraph1 {
+params.bigwig_to_bedgraph = ""
+params.bigwig_to_bedgraph_out = ""
+process bigwig_to_bedgraph {
   container = "${container_url}"
   label "big_mem_mono_cpus"
   tag "${file_id}"
-  if (params.bigwig1_to_bedgraph1_out != "") {
-    publishDir "results/${params.bigwig1_to_bedgraph1_out}", mode: 'copy'
+  if (params.bigwig_to_bedgraph_out != "") {
+    publishDir "results/${params.bigwig_to_bedgraph_out}", mode: 'copy'
   }
 
   input:
-  tuple val(file_id) path(bw)
+  tuple val(file_id), path(bw)
 
   output:
   tuple val(file_id), path("*.bg"), emit: bg
