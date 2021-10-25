@@ -46,7 +46,7 @@ workflow wig_to_bedgraph {
       fasta,
       wig
     )
-    wig_to_bedgraph(
+    bigwig_to_bedgraph(
       wig_to_bigwig.out.bw
     )
   emit:
@@ -62,7 +62,7 @@ workflow wig2_to_bedgraph2 {
       fasta,
       wig
     )
-    wig2_to_bedgraph2(
+    bigwig2_to_bedgraph2(
       wig2_to_bigwig2.out.bw
     )
   emit:
