@@ -50,7 +50,7 @@ workflow wig_to_bedgraph {
       wig_to_bigwig.out.bw
     )
   emit:
-  bg = wig_to_bigwig.out.bg
+  bg = bigwig_to_bedgraph.out.bg
 }
 
 workflow wig2_to_bedgraph2 {
@@ -66,7 +66,7 @@ workflow wig2_to_bedgraph2 {
       wig2_to_bigwig2.out.bw
     )
   emit:
-  bg = wig2_to_bigwig2.out.bg
+  bg = bigwig2_to_bedgraph2.out.bg
 }
 
 params.bigwig_to_bedgraph = ""
