@@ -34,7 +34,7 @@ process dpos_bam {
   }
 
   input:
-    tuple val(fastq)
+    val fastq 
     tuple val(file_id), path(bam_ip), path(bam_wce)
 
   output:
@@ -94,7 +94,7 @@ process dpos_wig {
   }
 
   input:
-    tuple val(fastq)
+    val fastq 
     tuple val(file_id), path(wig_ip)
 
   output:
@@ -158,7 +158,7 @@ process dpos_wigvswig {
   }
 
   input:
-    tuple val(fastq)
+    val fastq 
     tuple val(file_id_a), path(wig_ip_a)
     tuple val(file_id_b), path(wig_ip_b)
 
@@ -208,7 +208,7 @@ process dpeak_bam {
   }
 
   input:
-    tuple val(fastq)
+    val fastq 
     tuple val(file_id), path(bam_ip), path(bam_wce)
 
   output:
@@ -271,7 +271,7 @@ process dpeak_wig {
   }
 
   input:
-    tuple val(fastq)
+    val fastq 
     tuple val(file_id), path(wig_ip), path(wig_wce)
 
   output:
@@ -338,7 +338,7 @@ process dpeak_wigvswig {
   }
 
   input:
-    tuple val(fastq)
+    val fastq 
     tuple val(file_id_a), path(wig_ip_a), path(wig_wce_a)
     tuple val(file_id_b), path(wig_ip_b), path(wig_wce_b)
 
