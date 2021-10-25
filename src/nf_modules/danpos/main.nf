@@ -21,7 +21,7 @@ workflow dpos_bam_bg {
     wig2_to_bedgraph2(fasta, dpos_bam.out.wig)
 
   emit:
-    bedgraph = wig2_to_bedgraph2.out.bedgraph
+    bg = wig2_to_bedgraph2.out.bg
     wig = dpos_bam.out.wig
     bed = dpos_bam.out.bed
 }
@@ -82,7 +82,7 @@ workflow dpos_bw {
     wig_to_bedgraph(fasta, dpos_wig.out.wig)
 
   emit:
-  bedgraph = wig_to_bedgraph.out.bedgraph
+  bg = wig_to_bedgraph.out.bg
   wig = dpos_wig.out.wig
   bed = dpos_wig.out.bed
 }
@@ -147,7 +147,7 @@ workflow dwig_bwvsbw {
     wig_to_bedgraph(fasta, dpos_wigvswig.out.wig)
 
   emit:
-  bedgraph = wig_to_bedgraph.out.bedgraph
+  bg = wig_to_bedgraph.out.bg
   wig = dpeak_wig.out.wig
   bed = dpeak_wig.out.bed
 }
@@ -260,7 +260,7 @@ workflow dpeak_bw {
     wig2_to_bedgraph2(fasta, dpeak_wig.out.wig)
 
   emit:
-  bedgraph = wig2_to_bedgraph2.out.bedgraph
+  bg = wig2_to_bedgraph2.out.bg
   wig = dpeak_wig.out.wig
   bed = dpeak_wig.out.bed
 }
@@ -328,7 +328,7 @@ workflow dpeak_bwvsbw {
     wig2_to_bedgraph2(fasta, dpeak_wigvswig.out.wig)
 
   emit:
-  bedgraph = wig2_to_bedgraph2.out.bedgraph
+  bg = wig2_to_bedgraph2.out.bg
   wig = dpeak_wig.out.wig
   bed = dpeak_wig.out.bed
 }
