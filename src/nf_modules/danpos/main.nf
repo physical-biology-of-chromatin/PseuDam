@@ -78,8 +78,9 @@ workflow dpos_bw {
     fastq
     bw
   main:
-    dpos_wig(fastq, bigwig2_to_wig2(bw))
-    wig_to_bedgraph(fasta, dpos_wig.out.wig)
+    bigwig2_to_wig2(bw)
+    dpos_wig(fastq, bigwig2_to_wig2.out.wig)
+    wig_to_bedgraph(fasta, bigwig2_to_wig2.out.wig)
 
   emit:
   bg = wig_to_bedgraph.out.bg
