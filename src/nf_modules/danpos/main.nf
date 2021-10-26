@@ -98,10 +98,11 @@ process dpos_wig {
 
   input:
     val fastq 
-    tuple val(file_id), path(wig_ip)
+    tuple val(file_id), path(wig_ip), path(wig_wce)
 
   output:
     tuple val(file_id), path("${file_prefix}/*.positions.bed"), emit: bed
+    tuple val(file_id), path("${file_prefix}/${bam_ip.simpleName}*.wig"), path("${file_prefix}/${bam_wce.simpleName}*.wig"), emit: wig
 
   script:
 
@@ -124,6 +125,7 @@ process dpos_wig {
 """
 danpos.py dpos -m ${m} \
   ${params.dpos} \
+  -b ${wig_wce} \
   -o ${file_prefix} \
   ${wig_ip}
 mv ${file_prefix}/pooled/* ${file_prefix}/
