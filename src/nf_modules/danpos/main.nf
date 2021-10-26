@@ -148,7 +148,7 @@ workflow dpos_bw_no_b {
   emit:
   bg = wig_to_bedgraph.out.bg
   wig = bigwig_to_wig.out.wig
-  bed = dpos_wig.out.bed
+  bed = dpos_wig_no_b.out.bed
 }
 
 process dpos_wig_no_b {
