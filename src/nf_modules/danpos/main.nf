@@ -83,7 +83,7 @@ workflow dpos_bw {
 
   emit:
   bg = wig_to_bedgraph.out.bg
-  wig = dpos_wig.out.wig
+  wig = bigwig2_to_wig2.out.wig
   bed = dpos_wig.out.bed
 }
 
@@ -100,8 +100,7 @@ process dpos_wig {
     tuple val(file_id), path(wig_ip)
 
   output:
-    tuple val(file_id), path("${file_prefix}/${wig_ip.simpleName}*.wig"), emit: wig
-  tuple val(file_id), path("${file_prefix}/*.positions.bed"), emit: bed
+    tuple val(file_id), path("${file_prefix}/*.positions.bed"), emit: bed
 
   script:
 
