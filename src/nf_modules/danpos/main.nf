@@ -134,6 +134,66 @@ awk -v FS='\t' -v OFS='\t' 'FNR > 1 { print \$1, \$2-1, \$3, "Interval_"NR-1, \$
 """
 }
 
+workflow dpos_bw_no_b {
+  take:
+    fasta
+    fastq
+    bw
+  main:
+    bigwig_to_wig(bw)
+    dpos_wig_no_b(fastq, bigwig_to_wig.out.wig)
+    wig_to_bedgraph(fasta, bigwig_to_wig.out.wig)
+
+  emit:
+  bg = wig_to_bedgraph.out.bg
+  wig = bigwig_to_wig.out.wig
+  bed = dpos_wig.out.bed
+}
+
+process dpos_wig {
+  container = "${container_url}"
+  label "big_mem_mono_cpus"
+  tag "$file_id"
+  if (params.dpos_out != "") {
+    publishDir "results/${params.dpos_out}", mode: 'copy', overwrite: true
+  }
+
+  input:
+    val fastq 
+    tuple val(file_id), path(wig_ip), path(wig_wce)
+
+  output:
+    tuple val(file_id), path("${file_prefix}/*.positions.bed"), emit: bed
+
+  script:
+
+  switch(file_id) {
+    case {it instanceof List}:
+      file_prefix = file_id[0]
+    break
+    case {it instanceof Map}:
+      file_prefix = file_id.values()[0]
+    break
+    default:
+      file_prefix = file_id
+    break
+  }
+
+  m = 0
+  if (fastq[1].size() == 2){
+    m = 1
+  }
+"""
+danpos.py dpos -m ${m} \
+  ${params.dpos} \
+  -o ${file_prefix} \
+  ${wig_ip}
+mv ${file_prefix}/pooled/* ${file_prefix}/
+rm -R ${file_prefix}/pooled
+awk -v FS='\t' -v OFS='\t' 'FNR > 1 { print \$1, \$2-1, \$3, "Interval_"NR-1, \$6, "+" }' ${file_prefix}/${wig_ip.simpleName}.positions.xls > ${file_prefix}/${wig_ip.simpleName}.positions.bed
+"""
+}
+
 workflow dwig_bwvsbw {
   take:
     fasta
