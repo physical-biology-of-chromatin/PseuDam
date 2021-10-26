@@ -150,7 +150,7 @@ workflow dpos_bw_no_b {
   bed = dpos_wig.out.bed
 }
 
-process dpos_wig {
+process dpos_wig_no_b {
   container = "${container_url}"
   label "big_mem_mono_cpus"
   tag "$file_id"
