@@ -3,6 +3,7 @@ container_url = "biocontainers/danpos:${version}"
 
 include {
   bigwig2_to_wig2;
+  bigwig_to_wig;
   wig_to_bedgraph;
   wig2_to_bedgraph2
 } from "./../ucsc/main.nf"
