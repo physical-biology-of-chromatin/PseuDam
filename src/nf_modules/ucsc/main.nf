@@ -16,8 +16,8 @@ process bedgraph_to_bigwig {
   }
 
   input:
-  tuple val(file_id) path(bg)
-  tuple val(file_id) path(bed)
+  tuple val(file_id), path(bg)
+  tuple val(file_id), path(bed)
 
   output:
   tuple val(file_id), path("*.bw"), emit: bw
@@ -125,7 +125,7 @@ process bigwig_to_wig {
   }
 
   input:
-  tuple val(file_id) path(bw)
+  tuple val(file_id), path(bw)
 
   output:
   tuple val(file_id), path("*.wig"), emit: wig
