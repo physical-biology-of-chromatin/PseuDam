@@ -161,7 +161,7 @@ process dpos_wig_no_b {
 
   input:
     val fastq 
-    tuple val(file_id), path(wig_ip), path(wig_wce)
+    tuple val(file_id), path(wig_ip)
 
   output:
     tuple val(file_id), path("${file_prefix}/*.positions.bed"), emit: bed
