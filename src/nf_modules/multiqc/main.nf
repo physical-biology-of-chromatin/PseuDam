@@ -20,7 +20,7 @@ multiqc(
 )
 */
 
-version = "1.9"
+version = "1.11"
 container_url = "lbmc/multiqc:${version}"
 
 params.multiqc = ""
