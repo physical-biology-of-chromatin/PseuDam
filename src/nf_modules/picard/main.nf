@@ -15,7 +15,7 @@ process mark_duplicate {
     tuple val(file_id), path(bam)
   output:
     tuple val(file_id) , path("*.bam"), emit: bam
-    path "*_report.txt", emit: report
+    path "*_report.dupinfo.txt", emit: report
 
 
   script:
@@ -24,7 +24,7 @@ PicardCommandLine MarkDuplicates \
   ${params.mark_duplicate} \
   INPUT=${bam} \
   OUTPUT=${bam.baseName}_dedup.bam \
-  METRICS_FILE=${bam.baseName}_picard_dedup_report.txt &> \
+  METRICS_FILE=${bam.baseName}_picard_dedup_report.dupinfo.txt &> \
   picard_${bam.baseName}.log
 """
 }
