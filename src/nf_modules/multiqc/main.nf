@@ -41,7 +41,6 @@ workflow multiqc {
         it
       }
     }
-    .view()
     .unique()
     .flatten()
     .set { report_cleaned }
