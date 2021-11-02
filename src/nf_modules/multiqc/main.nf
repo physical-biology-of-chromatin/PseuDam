@@ -39,7 +39,6 @@ workflow multiqc {
     }
     .flatten()
     .unique()
-    .view()
     .set { report_cleaned }
     multiqc_default(report_cleaned.collect())
 
