@@ -31,14 +31,19 @@ workflow multiqc {
   main:
     report
     .map{it ->
-      if (it.size() > 1){
-        it[1]
+      if (it instanceof List){
+        if(it.size() > 1) {
+          it[1]
+        } else {
+          it[0]
+        }
       } else {
         it
       }
     }
-    .flatten()
+    .view()
     .unique()
+    .flatten()
     .set { report_cleaned }
     multiqc_default(report_cleaned.collect())
 
