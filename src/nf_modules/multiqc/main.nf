@@ -16,7 +16,7 @@ multiqc(
     report_b,
     report_c,
     report_d
-  ).collect()
+  )
 )
 */
 
@@ -29,8 +29,9 @@ workflow multiqc {
   take:
     report
   main:
-    report.map{
-      if (it instanceof List){
+    report
+    .map{it ->
+      if (it.size() > 1){
         it[1]
       } else {
         it
@@ -38,6 +39,7 @@ workflow multiqc {
     }
     .flatten()
     .unique()
+    .view()
     .set { report_cleaned }
     multiqc_default(report_cleaned.collect())
 
