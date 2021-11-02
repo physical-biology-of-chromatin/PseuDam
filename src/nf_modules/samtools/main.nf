@@ -272,7 +272,7 @@ process stats_bam {
     tuple val(file_id), path("*.tsv"), emit: tsv
   script:
 """
-samtools flagstat -@ ${task.cpus} ${params.stats_bam} -O tsv ${bam} > ${bam.simpleName}_stats.tsv
+samtools flagstat -@ ${task.cpus} ${params.stats_bam} -O tsv ${bam} > ${bam.simpleName}.flagstat.txt
 """
 }
 
