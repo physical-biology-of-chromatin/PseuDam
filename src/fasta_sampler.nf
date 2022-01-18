@@ -17,7 +17,6 @@ head ${fasta} > sample.fasta
 """
 }
 
-
 workflow{
   sample_fasta(fasta_file)
 }
