@@ -14,7 +14,7 @@ process sample_fasta {
 
   script:
 """
-head ${fasta} > sample.fasta
+head ${fasta} > ${fasta.simpleName}_sample.fasta
 """
 }
 
