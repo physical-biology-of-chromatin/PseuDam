@@ -7,5 +7,5 @@ channel
   .set { fastq_files }
 
 workflow {
-    fastp(fastp_files)
+    fastp(fastq_files)
 }
