@@ -7,6 +7,7 @@ channel
 process sample_fasta {
   input:
   path fasta
+  publishDir "results/sampling/", mode: 'copy'
 
   output:
   path "sample.fasta", emit: fasta_sample
