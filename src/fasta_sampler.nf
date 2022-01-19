@@ -5,14 +5,15 @@ channel
   .set { fasta_file }
 
 process sample_fasta {
-  
+
   input:
   path fasta
-  publishDir "results/sampling/", mode: 'copy'
+  
 
   output:
   path "sample.fasta", emit: fasta_sample
-
+  publishDir "results/sampling/", mode: 'copy'
+  
   script:
 """
 head ${fasta} > ${fasta.simpleName}_sample.fasta
