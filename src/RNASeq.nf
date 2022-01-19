@@ -2,7 +2,7 @@ nextflow.enable.dsl=2
 
 
 include { fastp } from "./nf_modules/fastp/main.nf"
-include { fasta_from_bed } from "./nef_modules/bedtools/main.nf"
+include { fasta_from_bed } from "./nf_modules/bedtools/main.nf"
 
 params.fastq = "data/fastq/*_{1,2}.fastq"
 
