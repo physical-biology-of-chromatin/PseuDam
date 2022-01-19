@@ -5,6 +5,7 @@ channel
   .set { fasta_file }
 
 process sample_fasta {
+  
   input:
   path fasta
   publishDir "results/sampling/", mode: 'copy'
