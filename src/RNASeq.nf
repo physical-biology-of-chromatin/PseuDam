@@ -7,7 +7,7 @@ include { fasta_from_bed } from "./nf_modules/bedtools/main.nf"
 params.fastq = "data/fastq/*_{1,2}.fastq"
 
 log.info "fasta file : ${params.fasta}"
-log info "bed file : ${params.bed}"
+log.info "bed file : ${params.bed}"
 
 channel
   .fromPath( params.fasta )
