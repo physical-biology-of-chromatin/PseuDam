@@ -22,6 +22,9 @@ log.info "genome file : ${params.genome}"
 params.genome = "data/genome/dm6.fa"
 params.reads = "data/reads/data.fastq"
 
+channel
+    .fromPath( params.genome )
+    .set {genome}
 
 /*
 channel
