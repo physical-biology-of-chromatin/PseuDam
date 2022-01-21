@@ -9,30 +9,37 @@ include { index_fasta, mapping_fastq } from "./nf_modules/bowtie2/main.nf"
 include { fasta_from_bed } from "./nef_modules/bedtool/main"
 
 
-params.fastq = "data/DamID/*_{1,2}.fastq"
+params.reads = "data/DamID/reads/*_{1,2}.fastq"
+params.genome = "data/DamID/genome/*_{1,2}.fasta"
 
+log.info "fastq files: ${params.fastq}"
 log.info "fasta file : ${params.fasta}"
 log.info "bed file : ${params.bed}"
 
+/*
 channel
     .fromPath( params.bed )
     .ifEmpty { error "Cannot find any bed files matching: ${params.bed}" }
     .map { it -> [it.simpleName, it]}
     .set { bed_files }
+*/
 
 channel
-    .fromFilePairs( params.fastq, size: -1)
-    .set { fastq_files }
+    .fromPath( params.reads, chekIfExists: true)
+    .set {reads}
 
 
 /*================================ workflow ================================*/
 
 workflow {
-    fastp(fastq_files)
-    fasta_from_bed(fasta_files, bed_files)
+    fastp(reads)
     //mapping
-    index_fasta(fasta_from_bed.out)
+    index_fasta(fasta)
     mapping_fastq(index_fasta.out.out.index.collect(), 
-                  fastq_files)
-    
+                  reads)
+
+
+workflow.onComplete {
+    println ( workflow.success "Au moins ça a pas planté, mais ça a surement pas marché quand même" )
+}
 }
