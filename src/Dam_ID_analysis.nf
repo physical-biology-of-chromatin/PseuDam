@@ -19,7 +19,7 @@ params.help             = false
 log.info "reads files : ${params.reads}"
 log.info "genome file : ${params.genome}"
 
-genome = file (params.genome)
+genome = params.genome
 
 
 /*
