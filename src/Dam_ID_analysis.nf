@@ -30,7 +30,7 @@ channel
 */
 
 channel
-    .fromPath( params.reads, chekIfExists: true)
+    .fromPath( params.reads )
     .set {reads}
 
 
