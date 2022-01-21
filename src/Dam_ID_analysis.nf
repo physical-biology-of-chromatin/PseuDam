@@ -14,16 +14,19 @@ include { fastp } from "./nf_modules/fastp/main.nf"
 include { index_fasta; mapping_fastq } from "./nf_modules/bowtie2/main.nf"
 
 
+
+
+params.genome = "data/genome/dm6.fa"
+params.reads = "data/reads/data.fastq"
+
+
 params.help             = false
 
 log.info "reads files : ${params.reads}"
 log.info "genome file : ${params.genome}"
 
-params.genome = "data/genome/dm6.fa"
-params.reads = "data/reads/data.fastq"
-
 channel
-    .fromPath( params.genome )
+    .fromPath(params.genome)
     .set {genome}
 
 /*
@@ -35,7 +38,7 @@ channel
 */
 
 channel
-    .fromPath( params.reads )
+    .fromFilePairs( params.reads, size: -1 )
     .set {reads}
 
 
@@ -46,9 +49,6 @@ workflow {
     //mapping
     index_fasta(genome)
     mapping_fastq(index_fasta.out.index.collect(), 
-                  reads)
+                  fastp.out.fastq)
 }
 
-workflow.onComplete {
-    println ( workflow.success "Au moins ça a pas planté, mais ça a surement pas marché quand même" )
-}
