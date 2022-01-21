@@ -20,6 +20,7 @@ log.info "reads files : ${params.reads}"
 log.info "genome file : ${params.genome}"
 
 
+
 /*
 channel
     .fromPath( params.bed )
@@ -38,7 +39,7 @@ channel
 workflow {
     fastp(reads)
     //mapping
-    index_fasta(genome)
+    index_fasta(params.genome)
     mapping_fastq(index_fasta.out.index.collect(), 
                   reads)
 }
