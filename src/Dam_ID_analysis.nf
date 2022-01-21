@@ -13,7 +13,7 @@ include { fastp } from "./nf_modules/fastp/main.nf"
 
 include { index_fasta; mapping_fastq } from "./nf_modules/bowtie2/main.nf"
 
-include { fasta_from_bed } from "./nef_modules/bedtool/main.nf"
+
 
 
 
