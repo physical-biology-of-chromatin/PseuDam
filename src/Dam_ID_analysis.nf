@@ -1,12 +1,19 @@
 nextflow.enable.dsl=2
+/*
+./nextflow src/Dam_ID_analysis.nf -profile docker --reads "data/reads/data.fastq --genome "data/genome/dm6.fa
+*/
+
+
+
+
 
 /*========================= modules import ================================*/
 
 include { fastp } from "./nf_modules/fastp/main.nf"
 
-include { index_fasta, mapping_fastq } from "./nf_modules/bowtie2/main.nf"
+include { index_fasta; mapping_fastq } from "./nf_modules/bowtie2/main.nf"
 
-include { fasta_from_bed } from "./nef_modules/bedtool/main"
+include { fasta_from_bed } from "./nef_modules/bedtool/main.nf"
 
 
 
@@ -35,9 +42,8 @@ workflow {
     index_fasta(fasta)
     mapping_fastq(index_fasta.out.out.index.collect(), 
                   reads)
-
+}
 
 workflow.onComplete {
     println ( workflow.success "Au moins ça a pas planté, mais ça a surement pas marché quand même" )
-}
 }
