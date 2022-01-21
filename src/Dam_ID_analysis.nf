@@ -39,7 +39,7 @@ channel
 workflow {
     fastp(reads)
     //mapping
-    index_fasta(fasta)
+    index_fasta(reads)
     mapping_fastq(index_fasta.out.out.index.collect(), 
                   reads)
 }
