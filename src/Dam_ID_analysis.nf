@@ -39,9 +39,9 @@ channel
 workflow {
     fastp(reads)
     //mapping
-    index_fasta(reads)
-    mapping_fastq(index_fasta.out.reads, 
-                  genome)
+    index_fasta(genome)
+    mapping_fastq(index_fasta.out.index.collect(), 
+                  reads)
 }
 
 workflow.onComplete {
