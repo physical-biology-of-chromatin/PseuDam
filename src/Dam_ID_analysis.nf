@@ -14,8 +14,7 @@ include { fastp } from "./nf_modules/fastp/main.nf"
 include { index_fasta; mapping_fastq } from "./nf_modules/bowtie2/main.nf"
 
 
-params.reads = ""
-params.genome = ""
+params.help             = false
 
 log.info "reads files : ${params.reads}"
 log.info "genome file : ${params.genome}"
