@@ -19,6 +19,7 @@ params.help             = false
 log.info "reads files : ${params.reads}"
 log.info "genome file : ${params.genome}"
 
+genome = file (params.genome)
 
 
 /*
@@ -39,7 +40,7 @@ channel
 workflow {
     fastp(reads)
     //mapping
-    index_fasta(params.genome)
+    index_fasta(genome)
     mapping_fastq(index_fasta.out.index.collect(), 
                   reads)
 }
