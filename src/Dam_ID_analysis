@@ -9,12 +9,10 @@ include { index_fasta, mapping_fastq } from "./nf_modules/bowtie2/main.nf"
 include { fasta_from_bed } from "./nef_modules/bedtool/main"
 
 
-params.reads = "data/DamID/reads/*_{1,2}.fastq"
-params.genome = "data/DamID/genome/*_{1,2}.fasta"
 
-log.info "fastq files: ${params.fastq}"
-log.info "fasta file : ${params.fasta}"
-log.info "bed file : ${params.bed}"
+log.info "reads files : ${params.reads}"
+log.info "genome file : ${params.genome}"
+
 
 /*
 channel
