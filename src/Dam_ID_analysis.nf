@@ -41,7 +41,7 @@ workflow {
     //mapping
     index_fasta(reads)
     mapping_fastq(index_fasta.out.out.index.collect(), 
-                  reads)
+                  genome)
 }
 
 workflow.onComplete {
