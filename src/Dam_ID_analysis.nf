@@ -19,7 +19,8 @@ params.help             = false
 log.info "reads files : ${params.reads}"
 log.info "genome file : ${params.genome}"
 
-genome = params.genome
+params.genome = "data/genome/dm6.fa"
+params.reads = "data/reads/data.fastq"
 
 
 /*
