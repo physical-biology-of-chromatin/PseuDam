@@ -16,7 +16,7 @@ include { index_fasta; mapping_fastq } from "./nf_modules/bowtie2/main.nf"
 
 
 
-params.genome = "data/genome/dm6.fa"
+params.genome = "data/genome/dm6.fasta"
 params.reads = "data/reads/data.fastq"
 
 
