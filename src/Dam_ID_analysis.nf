@@ -26,7 +26,7 @@ log.info "reads files : ${params.reads}"
 log.info "genome file : ${params.genome}"
 
 channel
-    .fromPath(params.genome)
+    .fromPath("data/genome/dm6.fasta")
     .set {genome}
 
 /*
@@ -38,7 +38,7 @@ channel
 */
 
 channel
-    .fromFilePairs( params.reads, size: -1 )
+    .fromFilePairs( "data/reads/data.fastq", size: -1 )
     .set {reads}
 
 
