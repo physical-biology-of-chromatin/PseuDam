@@ -4,3 +4,5 @@ nextflow
 work/
 results
 workspace.code-workspace
+src/data_G.fasta
+data_G.fasta
