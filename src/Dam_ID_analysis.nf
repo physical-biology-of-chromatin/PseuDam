@@ -11,43 +11,33 @@ nextflow.enable.dsl=2
 
 include { fastp } from "./nf_modules/fastp/main.nf"
 
-include { index_fasta; mapping_fastq } from "./nf_modules/bowtie2/main.nf"
+include { index_fasta; mapping_fastq } from "./nf_modules/bowtie2/main.nf" addParams(mapping_fastq_out: "mapping/")
 
 
 
 
-params.genome = "data/genome/dm6.fasta"
-params.reads = "data/reads/data.fastq"
+params.fasta = "data/genome/*_G.fasta"
+params.fastq = "data/reads/*_R.fastq"
 
 
-params.help             = false
-
-log.info "reads files : ${params.reads}"
-log.info "genome file : ${params.genome}"
 
 channel
-    .fromPath("data/genome/dm6.fasta")
-    .set {genome}
-
-/*
-channel
-    .fromPath( params.bed )
-    .ifEmpty { error "Cannot find any bed files matching: ${params.bed}" }
+    .fromPath(params.fasta)
+    .ifEmpty { error "Cannot find any fasta files matching: ${params.genome}" }
     .map { it -> [it.simpleName, it]}
-    .set { bed_files }
-*/
+    .set {fasta_files}
 
 channel
-    .fromFilePairs( "data/reads/data.fastq", size: -1 )
-    .set {reads}
+    .fromFilePairs(params.fastq, size: -1)
+    .set {fastq_files}
 
 
 /*================================ workflow ================================*/
 
 workflow {
-    fastp(reads)
+    fastp(fastq_files)
     //mapping
-    index_fasta(genome)
+    index_fasta(fasta_files)
     mapping_fastq(index_fasta.out.index.collect(), 
                   fastp.out.fastq)
 }
