@@ -69,9 +69,15 @@ for chrom, regions, name in zip(chromosomes, chrom_regions, id_list):
     if j >= 5:
         j = 0
         i += 1
-        
+    
+    pos = np.arange(1, int(max(regions)), 1 )
+    y = np.full(len(pos), 39)
+    print(len(pos))
+    print(len(y))
+    
     axes[i, j].set_title(name)
     axes[i, j].set_ylabel("site number / bin")
+    axes[i, j].plot(pos, y, color = "black")
     axes[i, j].plot(regions, chrom)
     j += 1
     
