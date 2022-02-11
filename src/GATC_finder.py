@@ -1,30 +1,22 @@
 import re
+import sys
+from Bio import SeqIO
 
-import matplotlib.pyplot as plt
-import numpy as np
-import pandas
-from Bio import SeqIO, motifs
-from Bio.Seq import Seq
-from Bio.SeqRecord import SeqRecord
+if len(sys.argv) != 3:
+    raise IndexError("Please enter 2 additional arguments to the function call")
 
+f = open(sys.argv[2], "w")
+motif = "GATC"
+pos_list = list()
 
-def main():
+for seq_record in SeqIO.parse(sys.argv[1], "fasta"):
+
+    chrom = seq_record.id
     
-    f = open("/home/nathan/projects/vscode_nextflow/nextflow-nathan/results/GATC/sites.bed", "w")
-    motif = "GATC"
-    pos_list = list()
-
-    for seq_record in SeqIO.parse("/home/nathan/projects/vscode_nextflow/nextflow-nathan/data/genome/data_G.fasta", "fasta"):
-        chrom = seq_record.id
-        
-        for match in re.finditer(motif, str(seq_record.seq)):
-            start_pos = match.start() +1
-            end_pos = match.end() + 1
+    for match in re.finditer(motif, str(seq_record.seq)):
+        start_pos = match.start() +1
+        end_pos = match.end() + 1
             
-            line = f"{chrom}\t{start_pos}\t{end_pos}\n"
+        line = f"{chrom}\t{start_pos}\t{end_pos}\n"
             
-            f.write(line)
-
-
-if __name__ == "__main__":
-    main()
+        f.write(line)
