@@ -1,7 +1,9 @@
-container
-
 params.genome = ""
-params.out_file = ""
+
+
+channel
+    .fromPath(params.genome)
+    .set(genome)
 
 process GATC_finder {
     container = "/home/nathan/projects/vscode_nextflow/nextflow-nathan/src/.docker_modules/GATC_finder"
@@ -10,12 +12,13 @@ process GATC_finder {
 }
 
     input:
-        val params.genome
-        val params.out_file
+        file fasta from genome
 
     output:
-        file "sites.bed"
+        file sites into gatc_sites
 
 """
-gatc_finder ${params.genome} ${params.out_file}
+docker run --volume ${fasta}:/genome.fa gatc_finder \
+
+    gatc_finder genome.fa
 """

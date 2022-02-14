@@ -6,7 +6,7 @@ if len(sys.argv) < 3:
     raise IndexError("Please enter 2 arguments")
 
 # Gets the arguments in the command line
-out_file_path = str(sys.argv[2])
+out_file_path = "/GATC_finder/sites"
 genome_file = str(sys.argv[1])
 
 # Opening the file to write the positions in
