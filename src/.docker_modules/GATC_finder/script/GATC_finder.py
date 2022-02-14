@@ -29,4 +29,4 @@ for seq_record in SeqIO.parse(genome_file, "fasta"):
         
         # Writes the position in the .bed file (chro/start/end)
         line = f"{chrom}\t{start_pos}\t{end_pos}\n"
-        f.write(line)   
+        f.write(line)
