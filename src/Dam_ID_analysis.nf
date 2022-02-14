@@ -4,21 +4,16 @@ nextflow.enable.dsl=2
 */
 
 
+include { fastp } from "./nf_modules/fastp/main.nf" 
+include { index_fasta ; mapping_fastq } from "./nf_modules/bowtie2/main.nf" addParams(mapping_fastq_out: "mapping/")
 
-
-
-/*========================= modules import ================================*/
-
-include { fastp } from "./nf_modules/fastp/main.nf"
-
-include { index_fasta; mapping_fastq } from "./nf_modules/bowtie2/main.nf" addParams(mapping_fastq_out: "mapping/")
-
+include { index_bam ; sort_bam} from "./nf_modules/samtools/main.nf" 
 
 
 
 params.fasta = "data/genome/*_G.fasta"
 params.fastq = "data/reads/*_R.fastq"
-
+params.bam = "results/mapping/*.bam"
 
 
 channel
@@ -32,13 +27,17 @@ channel
     .set {fastq_files}
 
 
+channel
+    .fromPath(params.bam)
+    .set{bam_file}
 /*================================ workflow ================================*/
 
 workflow {
     fastp(fastq_files)
-    //mapping
     index_fasta(fasta_files)
     mapping_fastq(index_fasta.out.index.collect(), 
                   fastp.out.fastq)
+    sort_bam(bam_file)
+    index_bam(sort_bam.out.bam)
 }
 
