@@ -1,23 +1,26 @@
-params.genome = ""
+container_url =  "nathanlecouvreur/gatc_finder"
+params.fasta = ""
 
 
 channel
-    .fromPath(params.genome)
-    .set(genome)
+    .fromPath(params.fasta)
+    .view()
+    .set{genome}
+
 
 process GATC_finder {
-    container = "/home/nathan/projects/vscode_nextflow/nextflow-nathan/src/.docker_modules/GATC_finder"
-    label "?"
-    tag "?"
-}
+    container = "${container_url}"
+
 
     input:
-        file fasta from genome
+        file genome from genome
 
     output:
         file sites into gatc_sites
 
+
 """
-docker run --volume ${fasta}:/genome.fa gatc_finder \
+docker run --volume ${genome}:/genome.fa gatc_finder \
     gatc_finder genome.fa
 """
+}

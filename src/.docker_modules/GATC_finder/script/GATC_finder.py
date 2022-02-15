@@ -2,11 +2,10 @@ import sys
 import re
 from Bio import SeqIO
 
-if len(sys.argv) < 3:
-    raise IndexError("Please enter 2 arguments")
+print("test")
 
 # Gets the arguments in the command line
-out_file_path = "/GATC_finder/sites"
+out_file_path = "/GATC_finder"
 genome_file = str(sys.argv[1])
 
 # Opening the file to write the positions in
