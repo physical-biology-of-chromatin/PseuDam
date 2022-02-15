@@ -19,6 +19,5 @@ process GATC_finder {
 
 """
 docker run --volume ${fasta}:/genome.fa gatc_finder \
-
     gatc_finder genome.fa
 """
