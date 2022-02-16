@@ -3,11 +3,6 @@ container_url =  "nathanlecouvreur/gatc_finder"
 params.fasta = ""
 
 
-channel
-    .fromPath(params.fasta)
-    .view()
-    .set{genome}
-
 
 process gatc_finder {
     container = "${container_url}"
