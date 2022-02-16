@@ -9,7 +9,7 @@ out_file_path = "/GATC_finder"
 genome_file = str(sys.argv[1])
 
 # Opening the file to write the positions in
-f = open(out_file_path, "w")
+f = open("sites.bed", "w")
 
 # Motif we are looking for
 motif = "GATC"

@@ -1,3 +1,4 @@
+nextflow.enable.dsl=2
 container_url =  "nathanlecouvreur/gatc_finder"
 params.fasta = ""
 
@@ -8,19 +9,20 @@ channel
     .set{genome}
 
 
-process GATC_finder {
+process gatc_finder {
     container = "${container_url}"
 
 
     input:
-        file genome from genome
+        path(genome)
 
     output:
-        file sites into gatc_sites
+        path "*.bed", emit: gatc_sites
 
-
+    script:
 """
 docker run --volume ${genome}:/genome.fa gatc_finder \
     gatc_finder genome.fa
+    
 """
 }

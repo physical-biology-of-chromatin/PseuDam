@@ -9,6 +9,7 @@ include { index_fasta ; mapping_fastq } from "./nf_modules/bowtie2/main.nf" addP
 
 include { index_bam ; sort_bam} from "./nf_modules/samtools/main.nf" 
 
+include { gatc_finder } from "./nf_modules/gatc_finder/main.nf"
 
 
 params.fasta = "data/genome/*_G.fasta"
@@ -30,14 +31,21 @@ channel
 channel
     .fromPath(params.bam)
     .set{bam_file}
+    
 /*================================ workflow ================================*/
 
 workflow {
+    gatc_finder(params.fasta)
+
     fastp(fastq_files)
+
     index_fasta(fasta_files)
+
     mapping_fastq(index_fasta.out.index.collect(), 
                   fastp.out.fastq)
+
     sort_bam(bam_file)
+
     index_bam(sort_bam.out.bam)
 }
 
