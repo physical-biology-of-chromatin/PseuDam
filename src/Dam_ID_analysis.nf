@@ -23,12 +23,7 @@ channel
 channel
     .fromFilePairs(params.fastq, size: -1)
     .set {fastq_files}
-
-
-channel
-    .fromPath(params.bam)
-    .set{bam_file}
-    
+ 
 /*================================ workflow ================================*/
 
 workflow {
@@ -43,6 +38,8 @@ workflow {
     sort_bam(mapping_fastq.out.bam)
 
     index_bam(sort_bam.out.bam)
+
+    multiqc(index_bam.out.bam_idx)
 
 }
 

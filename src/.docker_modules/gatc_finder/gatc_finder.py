@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 import re
 from Bio import SeqIO
 import argparse
@@ -13,9 +15,6 @@ args = parser.parse_args();
 # Gets the arguments in the command line
 genome_file = args.genome
 
-"""print(len(sys.argv))
-print(str(sys.argv))"""
-#genome_file = "/genome/dm6.fasta"
 
 print(genome_file)
 # Opening the file to write the positions in

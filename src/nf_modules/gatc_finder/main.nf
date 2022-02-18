@@ -6,14 +6,13 @@ process gatc_finder {
 
 
     input:
-        path(genome)
+        file(genome)
 
     output:
         path "*.bed", emit: gatc_sites
 
     script:
-
 """
-python3 gatc_finder.py --genome ${genome}
+gatc_finder.py --genome ${genome}
 """
 }
