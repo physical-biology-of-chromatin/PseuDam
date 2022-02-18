@@ -4,7 +4,9 @@ import matplotlib.pyplot as plt
 from Bio import SeqIO
 import math
 
-df = pd.read_csv("/home/nathan/projects/vscode_nextflow/nextflow-nathan/results/GATC/sites_yeast.bed", 
+
+
+df = pd.read_csv("/datas/nathan/vscode_nextflow/nextflow-nathan/results/GATC/sites_yeast.bed", 
                  header = None, 
                  sep = '\t')
 
@@ -20,7 +22,14 @@ chromosome_sites = list()
 sites = list()
 id_list = list()
 
-for rec in SeqIO.parse("/home/nathan/projects/vscode_nextflow/nextflow-nathan/data/genome/GCF_000146045.2_R64_genomic.fna",
+
+
+region_size = 20000
+at = 0.3085
+gc = 0.1915
+number_sites = region_size * gc * gc * at * at
+
+for rec in SeqIO.parse("/datas/nathan/vscode_nextflow/nextflow-nathan/data/genome/dm6.fasta",
                        "fasta"):
     seq = rec.seq
     chrom_length.append(len(seq))
@@ -41,9 +50,12 @@ for row in df.itertuples():
 
 chromosome_sites.append(sites)
 
+means_list = list()
+
 for sites in chromosome_sites:
     
-    region = np.linspace(1, max(sites) + 100, round((max(sites) + 100) / 10000))
+    region = np.linspace(1, max(sites) + 100, 
+                         math.ceil((max(sites) + 100) / region_size))
     chrom_regions.append(region)
     
     for site in sites:
@@ -59,27 +71,46 @@ for sites in chromosome_sites:
     sites_region = list()
     
 
-fig, axes = plt.subplots(math.ceil(len(chromosomes) / 5), 5 )
+
 
 i = 0
 j = 0
 
-for chrom, regions, name in zip(chromosomes, chrom_regions, id_list):
+for chrom, regions, name in zip(chromosomes, chrom_regions, range(len(chrom_regions))):
+    
     
     if j >= 5:
         j = 0
         i += 1
     
     pos = np.arange(1, int(max(regions)), 1 )
-    y = np.full(len(pos), 39)
-    print(len(pos))
-    print(len(y))
+    y = np.full(len(pos), number_sites)
     
-    axes[i, j].set_title(name)
-    axes[i, j].set_ylabel("site number / bin")
-    axes[i, j].plot(pos, y, color = "black")
-    axes[i, j].plot(regions, chrom)
+    plt.title(f"Chrom {name}")
+    plt.ylabel("site number / bin")
+    plt.plot(pos, y, color = "black")
+    plt.bar(regions, chrom, width = region_size, edgecolor = "black")
+
     j += 1
+
+    mean_sites = round(np.mean(chrom))
     
-plt.tight_layout(pad = 4.5)
-plt.show()
+    means_list.append(mean_sites)
+
+    
+    print(f"There is {mean_sites} sites per {region_size}b in the choromosome {name+1}")
+
+    plt.suptitle(f"number of GATC sites per {region_size} base")
+    
+    plt.savefig("/datas/nathan/vscode_nextflow/nextflow-nathan/results/sites analysis/chromosome_"
+                + str(name)
+                + "_region_"
+                + str(region_size / 1000)
+                + "kb"
+                + ".png")
+    plt.clf()
+
+mean_total = round(np.mean(means_list))
+print(f"there are {mean_total} every {region_size}b")
+print(f"the theoretical average number of sites per {region_size}b"
+      f" is {round(number_sites)}")

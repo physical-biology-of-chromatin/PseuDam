@@ -1,13 +1,23 @@
-import sys
 import re
 from Bio import SeqIO
+import argparse
+import sys
 
-print("test")
+
+
+#defines qrguments in the command line
+parser = argparse.ArgumentParser()
+parser.add_argument("--genome", action="store");
+args = parser.parse_args();
 
 # Gets the arguments in the command line
-out_file_path = "/GATC_finder"
-genome_file = str(sys.argv[1])
+genome_file = args.genome
 
+"""print(len(sys.argv))
+print(str(sys.argv))"""
+#genome_file = "/genome/dm6.fasta"
+
+print(genome_file)
 # Opening the file to write the positions in
 f = open("sites.bed", "w")
 

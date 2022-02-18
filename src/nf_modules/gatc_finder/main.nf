@@ -1,8 +1,5 @@
 nextflow.enable.dsl=2
 container_url =  "nathanlecouvreur/gatc_finder"
-params.fasta = ""
-
-
 
 process gatc_finder {
     container = "${container_url}"
@@ -15,9 +12,8 @@ process gatc_finder {
         path "*.bed", emit: gatc_sites
 
     script:
+
 """
-docker run --volume ${genome}:/genome.fa gatc_finder \
-    gatc_finder genome.fa
-    
+python3 gatc_finder.py --genome ${genome}
 """
 }

@@ -1,15 +1,15 @@
 FROM python:3.8-alpine
 
 RUN apk update \
-    && apk add make automake gcc g++ subversion python3-dev
+    && apk add g++
 
 RUN pip install numpy\
     && pip install biopython
 
-COPY script/ /script
+COPY gatc_finder.py .
 
-RUN adduser -D -u 1000 finder
-RUN chown -R finder /script
-USER finder
+RUN echo > sites.bed
 
-ENTRYPOINT [ "python","script/GATC_finder.py" ]
+
+
+ENTRYPOINT [ "" ]
