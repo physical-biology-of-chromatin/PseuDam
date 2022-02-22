@@ -1,8 +1,8 @@
-#!/usr/bin/env python
-
 import re
 from Bio import SeqIO
 import argparse
+import sys
+
 
 
 #defines qrguments in the command line
@@ -14,11 +14,9 @@ args = parser.parse_args();
 genome_file = args.genome
 
 
-print(genome_file)
-# Opening the file to write the positions (bed and GFF)
-f_1 = open("sites.bed", "w")
-f_2 = open("sites.gff", "w")
 
+# Opening the file to write the positions in
+f = open("/datas/nathan/vscode_nextflow/nextflow-nathan/results/GATC/sites_yeast_new.bed", "w")
 
 # Motif we are looking for
 motif = "GATC"
@@ -36,11 +34,7 @@ for seq_record in SeqIO.parse(genome_file, "fasta"):
         end_pos = match.end() + 1
         
         # Writes the position in the .bed file (chro/start/end)
-        line_f_1 = f"{chrom}\t{start_pos}\t{end_pos}\n"
-        f_1.write(line_f_1)
-        
-        # Writes the same thing but in gff format
-        line_f_2 = f"{chrom}\t.\tgatc_site\t{start_pos}\t{end_pos}\t.\t.\t.\t.\n"
-        f_2.write(line_f_2)
+        line = f"{chrom}\t{start_pos}\t{end_pos}\n"
+        f.write(line)
     
-f_1.close()
+f.close()

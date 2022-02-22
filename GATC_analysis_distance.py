@@ -6,7 +6,7 @@ import math
 
 
 
-df = pd.read_csv("/datas/nathan/vscode_nextflow/nextflow-nathan/results/GATC/sites_yeast.bed", 
+df = pd.read_csv("/datas/nathan/vscode_nextflow/nextflow-nathan/results/GATC/sites_yeast_new.bed", 
                  header = None, 
                  sep = '\t')
 

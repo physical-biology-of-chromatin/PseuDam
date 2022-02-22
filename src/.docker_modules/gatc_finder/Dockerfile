@@ -11,5 +11,3 @@ COPY gatc_finder.py /usr/bin/
 RUN chmod +x /usr/bin/*.py
 
 
-RUN echo > sites.bed
-

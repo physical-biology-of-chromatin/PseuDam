@@ -9,9 +9,11 @@ include { index_fasta ; mapping_fastq } from "./nf_modules/bowtie2/main.nf"
 include { index_bam ; sort_bam} from "./nf_modules/samtools/main.nf" 
 include { gatc_finder } from "./nf_modules/gatc_finder/main.nf"
 include { multiqc } from "./nf_modules/multiqc/main.nf" addParams(multiqc_out: "mapping/")
+include { htseq_count } from "./nf_modules/htseq_count/main.nf"
+
 
 params.fasta = "data/genome/*_G.fasta"
-params.fastq = "data/reads/*_R.fastq"
+params.fastq = "data/reads/*_R{1,2}.fastq"
 
 
 channel
@@ -32,6 +34,8 @@ workflow {
 
     index_fasta(fasta_files)
 
+    gatc_finder(params.fasta)
+
     mapping_fastq(index_fasta.out.index.collect(), 
                   fastp.out.fastq)
 
@@ -39,7 +43,13 @@ workflow {
 
     index_bam(sort_bam.out.bam)
 
-    multiqc(index_bam.out.bam_idx)
+    report_mapping = mapping_fastq.out.report
 
+    report_fastp = fastp.out.report
+
+    multiqc(report_mapping.mix(report_fastp))
+
+    htseq_count(index_bam.out.index, gatc_finder.out.gff)
+    
 }
 

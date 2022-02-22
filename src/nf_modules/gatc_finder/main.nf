@@ -9,9 +9,11 @@ process gatc_finder {
         file(genome)
 
     output:
-        path "*.bed", emit: gatc_sites
+        path "*.bed", emit: bed
+        path "*.gff", emit: gff
 
     script:
+
 """
 gatc_finder.py --genome ${genome}
 """
