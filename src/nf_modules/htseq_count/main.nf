@@ -1,22 +1,28 @@
 nextflow.enable.dsl=2
-container_url = "dmccloskey/htseq-count"
+container_url = "lbmc/htseq:0.13.5"
+
+params.htseq_count_out = ""
 
 process htseq_count {
     container = "${container_url}"
 
+  if (params.htseq_count_out != "") {
+    publishDir "results/${params.htseq_count_out}", mode: 'copy'
+  }
 
     input:
 
-        path(reads)
-        path(sites)
+        tuple val(file_id), path(bam), path(index)
+        tuple val(file_id), path(sites)
 
     output:
 
-        path "*.csv", emit: count
+        tuple val(file_id), path("*.count"), emit: count
 
     script:
 
 """
-htseq-count -f bam ${reads} ${sites}
+htseq-count -f bam -r pos ${bam} ${sites} \
+ > results.count
 """
 }

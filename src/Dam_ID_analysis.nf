@@ -1,6 +1,6 @@
 nextflow.enable.dsl=2
 /*
-./nextflow src/Dam_ID_analysis.nf -profile docker --reads "data/reads/data.fastq --genome "data/genome/dm6.fa
+./nextflow src/Dam_ID_analysis.nf -profile docker --fasta data/genome/dm6.fasta --fastq data/reads/data_R.fastq
 */
 
 
@@ -29,12 +29,12 @@ channel
 /*================================ workflow ================================*/
 
 workflow {
-    
+
     fastp(fastq_files)
 
     index_fasta(fasta_files)
 
-    gatc_finder(params.fasta)
+    gatc_finder(fasta_files)
 
     mapping_fastq(index_fasta.out.index.collect(), 
                   fastp.out.fastq)
@@ -49,7 +49,9 @@ workflow {
 
     multiqc(report_mapping.mix(report_fastp))
 
-    htseq_count(index_bam.out.index, gatc_finder.out.gff)
+    htseq_count(index_bam.out.bam_idx, 
+                gatc_finder.out.gff) 
+
     
 }
 

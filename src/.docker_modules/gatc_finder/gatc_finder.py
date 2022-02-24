@@ -13,12 +13,9 @@ args = parser.parse_args();
 # Gets the arguments in the command line
 genome_file = args.genome
 
-
-print(genome_file)
 # Opening the file to write the positions (bed and GFF)
 f_1 = open("sites.bed", "w")
 f_2 = open("sites.gff", "w")
-
 
 # Motif we are looking for
 motif = "GATC"
@@ -36,11 +33,11 @@ for seq_record in SeqIO.parse(genome_file, "fasta"):
         end_pos = match.end() + 1
         
         # Writes the position in the .bed file (chro/start/end)
-        line_f_1 = f"{chrom}\t{start_pos}\t{end_pos}\n"
+        line_f_1 = f"{chrom}\t{start_pos}\t{end_pos}\t.\t.\t.\t.\t.\t.\n"
         f_1.write(line_f_1)
         
         # Writes the same thing but in gff format
-        line_f_2 = f"{chrom}\t.\tgatc_site\t{start_pos}\t{end_pos}\t.\t.\t.\t.\n"
+        line_f_2 = f"{chrom}\tNC\tgatc_site\t{start_pos}\t{end_pos}\t.\t.\t.\tID\n"
         f_2.write(line_f_2)
     
 f_1.close()
