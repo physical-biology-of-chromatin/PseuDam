@@ -1,11 +1,17 @@
 
 nextflow.enable.dsl=2
 
-include { gatc_finder } from "./nf_modules/gatc_finder/main.nf"
-include { htseq_count } from "./nf_modules/htseq_count/main.nf"
+include {bed_to_gff} from "/datas/nathan/vscode_nextflow/nextflow-nathan/src/nf_modules/gffread/main.nf" 
+
+params.bed = "results/GATC/*_new.bed"
+
+channel
+    .fromPath(params.bed)
+    .set{bed}
+
 
 workflow {
-    gatc_finder(params.fasta)
-    
+    bed_to_gff(bed)
+    bed_to_gff.out.view()
 
 }

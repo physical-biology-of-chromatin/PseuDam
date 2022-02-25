@@ -29,3 +29,29 @@ process gffread {
   awk 'BEGIN {i = 1;} { if (\$1 ~ /^>/) { tmp = h[i]; h[i] = \$1; } else if (!a[\$1]) { s[i] = \$1; a[\$1] = "1"; i++; } else { h[i] = tmp; } } END { for (j = 1; j < i; j++) { print h[j]; print s[j]; } }' < dup_${file_prefix}.fasta | grep -v -e "^\$" > ${file_prefix}.fasta
   """
 }
+
+
+params.gff_to_bed_out = ""
+process bed_to_gff {
+  container = "${container_url}"
+  label "big_mem_mono_cpus"
+
+  if (params.gff_to_bed_out != "") {
+    publishDir "results/${params.gff_to_bed_out}", mode: 'copy'
+  }
+
+  input:
+
+  tuple val(file_id), path(bed)
+
+  output:
+
+  tuple val(file_id), path("*.gff"), emit: gff
+
+  script:
+
+  """
+  gffread -F --keep-exon-attrs ${bed} \
+  > output.gff
+  """
+}

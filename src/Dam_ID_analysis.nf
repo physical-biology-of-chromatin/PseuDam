@@ -10,7 +10,7 @@ include { index_bam ; sort_bam} from "./nf_modules/samtools/main.nf"
 include { gatc_finder } from "./nf_modules/gatc_finder/main.nf"
 include { multiqc } from "./nf_modules/multiqc/main.nf" addParams(multiqc_out: "mapping/")
 include { htseq_count } from "./nf_modules/htseq_count/main.nf"
-
+include { bed_to_gff } from "./nf_modules/gffread/main.nf"
 
 params.fasta = "data/genome/*_G.fasta"
 params.fastq = "data/reads/*_R{1,2}.fastq"
@@ -35,6 +35,8 @@ workflow {
     index_fasta(fasta_files)
 
     gatc_finder(fasta_files)
+
+    /* bed_to_gff(gatc_finder.out.bed) */
 
     mapping_fastq(index_fasta.out.index.collect(), 
                   fastp.out.fastq)
