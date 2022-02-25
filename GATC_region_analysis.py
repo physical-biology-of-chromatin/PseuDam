@@ -76,6 +76,8 @@ for window in window_sizes:
 
     plt.hist(data, bins = sites, edgecolor = "black")
 
+    plt.suptitle(f"window size = {window*2}")
+    
     path = ("/datas/nathan/vscode_nextflow/nextflow-nathan/results/sites analysis/"
             "region_analysis_window_size="
             + str(window*2))

@@ -94,7 +94,7 @@ for sites in chromosome_sites:
 i = 0
 j = 0
 
-for chrom, regions, name in zip(chromosomes, chrom_regions, range(len(chrom_regions))):
+for chrom, regions, name in zip(chromosomes, chrom_regions, range(1,len(chrom_regions)+1)):
     
     
     if j >= 5:

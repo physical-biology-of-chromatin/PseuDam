@@ -86,7 +86,7 @@ for chrom, regions, name in zip(chromosomes, chrom_regions, range(len(chrom_regi
     pos = np.arange(1, int(max(regions)), 1 )
     y = np.full(len(pos), number_sites)
     
-    plt.title(f"Chrom {name}")
+    plt.title(f"Chrom {name+1}")
     plt.ylabel("site number / bin")
     plt.plot(pos, y, color = "black")
     plt.bar(regions, chrom, width = region_size, edgecolor = "black")
@@ -103,7 +103,7 @@ for chrom, regions, name in zip(chromosomes, chrom_regions, range(len(chrom_regi
     plt.suptitle(f"number of GATC sites per {region_size} base")
     
     plt.savefig("/datas/nathan/vscode_nextflow/nextflow-nathan/results/sites analysis/chromosome_"
-                + str(name)
+                + str(name+1)
                 + "_region_"
                 + str(region_size / 1000)
                 + "kb"
