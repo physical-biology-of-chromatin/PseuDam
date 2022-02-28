@@ -23,6 +23,9 @@ f_2 = open("sites.gff", "w")
 motif = "GATC"
 
 i = 0
+site = list()
+sites_list = list()
+
 # Cycles through the parsed chromosomes from the fasta file
 for seq_record in SeqIO.parse(genome_file, "fasta"):
     
@@ -37,8 +40,26 @@ for seq_record in SeqIO.parse(genome_file, "fasta"):
         start_pos = match.start() +1
         end_pos = match.end() + 1
         
+        site.append(chrom)
+        site.append(start_pos)
+        site.append(end_pos)
+        
+        sites_list.append(site)
+        
+        site = list()
+        
+
+for i in range(2, len(sites_list)):
+    
+    if sites_list[i-1][0] == sites_list[i][0]:
+
+        bin_chrom = (sites_list[i-1][0])
+        bin_start = (sites_list[i-1][1])
+        bin_end = (sites_list[i][2])
+        
+        
         # Writes the position in the .bed file (chro/start/end)
-        line_f_1 = f"{chrom}\t{start_pos}\t{end_pos}\n"
+        line_f_1 = f"{bin_chrom}\t{bin_start}\t{bin_end}\n"
         f_1.write(line_f_1)
         
         

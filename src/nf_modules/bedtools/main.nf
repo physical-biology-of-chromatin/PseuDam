@@ -119,3 +119,29 @@ bedtools genomecov \
   -bg > ${bam.simpleName}.bg
 """
 }
+
+params.coverage_out = ""
+process coverage {
+  container = "${container_url}"
+  tag{bam_id}
+  if (params.coverage_out != "") {
+    publishDir "results/${params.coverage_out}", mode: 'copy'
+  }
+
+  input:
+  tuple val(bam_id), path(bam), path(index)
+  tuple val(bed_id), path(bed)
+
+  output:
+  tuple val(bam_id), path("*.bed.coverage")
+
+  script:
+  """
+  bedtools intersect -a ${bam} \
+                     -b ${bed} \
+                     -f 1.0 | \
+  bedtools coverage -a ${bed} \
+                    -b - \
+                    > ${bed}.coverage
+  """
+}
