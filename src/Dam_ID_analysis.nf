@@ -3,13 +3,12 @@ nextflow.enable.dsl=2
 ./nextflow src/Dam_ID_analysis.nf -profile docker --fasta data/genome/dm6.fasta --fastq data/reads/data_R.fastq
 */
 
-
 include { fastp } from "./nf_modules/fastp/main.nf" 
 include { index_fasta ; mapping_fastq } from "./nf_modules/bowtie2/main.nf" 
 include { index_bam ; sort_bam} from "./nf_modules/samtools/main.nf" 
 include { gatc_finder } from "./nf_modules/gatc_finder/main.nf"
 include { multiqc } from "./nf_modules/multiqc/main.nf" addParams(multiqc_out: "mapping/")
-include { coverage } from "./nf_modules/bedtools/main.nf" addParams(coverage_out: "coverage/")
+include { coverage ; intersect ; bam_to_bed} from "./nf_modules/bedtools/main.nf" addParams(coverage_out: "coverage/")
 include { bed_to_gff } from "./nf_modules/gffread/main.nf"
 
 params.fasta = "data/genome/*_G.fasta"
@@ -50,7 +49,11 @@ workflow {
 
     multiqc(report_mapping.mix(report_fastp))
 
-    coverage(index_bam.out.bam_idx,
+    bam_to_bed(index_bam.out.bam_idx)
+
+    intersect(bam_to_bed.out.reads, gatc_finder.out.bed)
+
+    coverage(intersect.out.intersect,
              gatc_finder.out.bed)
 }
 

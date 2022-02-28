@@ -120,28 +120,69 @@ bedtools genomecov \
 """
 }
 
+params.intersect_out = ""
+process intersect {
+  container = "${container_url}"
+  label "big_mem_mono_cpus"
+  tag "${bam_id}"
+  if (params.intersect_out != "") {
+    publishDir "results/${params.intersect_out}", mode: 'copy'
+  }
+
+  input:
+  tuple val(bam_id), path(bam)
+  tuple val(bed_id), path(bed)
+
+  output:
+  tuple val(bam_id), path("*.bed"), emit: intersect
+
+  script:
+  """
+  bedtools intersect -a ${bam} -b ${bed} -f 1.0 > intersect.bed
+  """
+}
+
+
 params.coverage_out = ""
 process coverage {
   container = "${container_url}"
-  tag{bam_id}
+  label "big_mem_mono_cpus"
+  tag "${intersect_id}"
   if (params.coverage_out != "") {
     publishDir "results/${params.coverage_out}", mode: 'copy'
   }
 
   input:
-  tuple val(bam_id), path(bam), path(index)
+  tuple val(intersect_id), path(intersect)
   tuple val(bed_id), path(bed)
 
   output:
-  tuple val(bam_id), path("*.bed.coverage")
+  tuple val(intersect_id), path("*.bed"), emit: coverage
 
   script:
   """
-  bedtools intersect -a ${bam} \
-                     -b ${bed} \
-                     -f 1.0 | \
-  bedtools coverage -a ${bed} \
-                    -b - \
-                    > ${bed}.coverage
+  bedtools coverage -a ${bed} -b ${intersect} > coverage.bed
+  """
+}
+
+
+params.bam_to_bed_out = ""
+process bam_to_bed {
+  container = "${container_url}"
+  label "big_mem_mono_cpus"
+  tag "${bam_id}"
+  if (params.coverage_out != "") {
+    publishDir "results/${params.bam_to_bed_out}", mode: 'copy'
+  }
+
+  input:
+  tuple val(bam_id), path(bam), path(index)
+
+  output:
+  tuple val(bam_id), path("*.bed"), emit: reads
+
+  script:
+  """
+  bedtools bamtobed -i ${bam} > ${bam_id}.bed
   """
 }
