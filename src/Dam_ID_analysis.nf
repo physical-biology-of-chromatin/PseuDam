@@ -3,17 +3,23 @@ nextflow.enable.dsl=2
 ./nextflow src/Dam_ID_analysis.nf -profile docker --fasta <reference genome> --fastq <genome>
 */
 
-include { fastp } from "./nf_modules/fastp/main.nf" 
-include { index_fasta ; mapping_fastq } from "./nf_modules/bowtie2/main.nf" 
-include { index_bam ; sort_bam} from "./nf_modules/samtools/main.nf" 
-include { gatc_finder } from "./nf_modules/gatc_finder/main.nf"
-include { multiqc } from "./nf_modules/multiqc/main.nf" addParams(multiqc_out: "mapping/")
-include { coverage ; intersect ; bam_to_bed} from "./nf_modules/bedtools/main.nf" addParams(coverage_out: "coverage/")
-include { bed_to_gff } from "./nf_modules/gffread/main.nf"
+include { fastp                             } from "./nf_modules/fastp/main.nf" 
+include { index_fasta ; mapping_fastq       } from "./nf_modules/bowtie2/main.nf" 
+include { index_bam ; sort_bam              } from "./nf_modules/samtools/main.nf" 
+include { gatc_finder                       } from "./nf_modules/gatc_finder/main.nf"
+include { multiqc                           } from "./nf_modules/multiqc/main.nf" addParams(multiqc_out: "mapping/")
+include { coverage ; intersect ; bam_to_bed } from "./nf_modules/bedtools/main.nf" addParams(coverage_out: "coverage/")
+include { bed_to_gff                        } from "./nf_modules/gffread/main.nf"
 
-params.fasta = "data/genome/*_G.fasta"
-params.fastq = "data/reads/*_R{1,2}.fastq"
-params.indexed = ""
+
+
+/* Input parameters */
+
+params.fasta = "data/genome/S288C_reference_sequence_R64-3-1_20210421.fsa"
+params.fastq = "data/reads/Dam_ID/*_{1,2}.fq"
+
+
+
 
 channel
     .fromPath(params.fasta)
@@ -24,11 +30,7 @@ channel
 channel
     .fromFilePairs(params.fastq, size: -1)
     .set {fastq_files}
- 
-channel
-    .fromPath(params.indexed)
-    .map{ it -> [it.simpleName, it]}
-    .set {indexed_file}
+
 
 /*================================ workflow ================================*/
 
@@ -41,19 +43,15 @@ workflow {
     /* Localisation of all the gatc sites in the reference genome and creation of the bins */
     gatc_finder(fasta_files)
 
-    if (params.indexed != ""){
-        /* mapping of the reads to the indexed genome */
-        mapping_fastq(indexed_file, 
-                      fastp.out.fastq)
-    }
-    else{
-        /* Indexing of the reference genome */
-        index_fasta(fasta_files)
 
-        /* mapping of the reads to the indexed genome */
-        mapping_fastq(index_fasta.out.fasta.collect(),
-                      fastp.out.fastq)
-    }
+
+    /* Indexing of the reference genome */
+    index_fasta(fasta_files)
+
+    /* mapping of the reads to the indexed genome */
+    mapping_fastq(index_fasta.out.index.collect(),
+                  fastp.out.fastq)
+
 
 
     /* sorting of the mapped reads */
