@@ -120,6 +120,7 @@ bedtools genomecov \
 """
 }
 
+params.intersect = ""
 params.intersect_out = ""
 process intersect {
   container = "${container_url}"
@@ -138,11 +139,13 @@ process intersect {
 
   script:
   """
-  bedtools intersect -a ${bam} -b ${bed} -f 1.0 > intersect.bed
+  bedtools intersect -a ${bam} -b ${bed} -f 1.0 \
+  ${params.intersect} \
+  > ${bam_id}_inter.bed
   """
 }
 
-
+params.coverage = ""
 params.coverage_out = ""
 process coverage {
   container = "${container_url}"
@@ -153,19 +156,21 @@ process coverage {
   }
 
   input:
-  tuple val(intersect_id), path(intersect)
+  tuple val(reads_id), path(reads)
   tuple val(bed_id), path(bed)
 
   output:
-  tuple val(intersect_id), path("*.bed"), emit: coverage
+  tuple val(reads_id), path("*.bed"), emit: coverage
 
   script:
   """
-  bedtools coverage -a ${bed} -b ${intersect} > coverage.bed
+  bedtools coverage -a ${bed} -b ${reads} \
+  ${params.coverage} \
+  > ${reads_id}_cov.bed
   """
 }
 
-
+params.bam_to_bed = ""
 params.bam_to_bed_out = ""
 process bam_to_bed {
   container = "${container_url}"
@@ -179,10 +184,12 @@ process bam_to_bed {
   tuple val(bam_id), path(bam), path(index)
 
   output:
-  tuple val(bam_id), path("*.bed"), emit: reads
+  tuple val(bam_id), path("*"), emit: reads
 
   script:
   """
-  bedtools bamtobed -i ${bam} > ${bam_id}.bed
+  bedtools bamtobed -i ${bam} \
+  ${params.bam_to_bed} \
+  > ${bam_id}.bed
   """
 }
