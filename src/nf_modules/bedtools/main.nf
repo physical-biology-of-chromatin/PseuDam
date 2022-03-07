@@ -150,7 +150,7 @@ params.coverage_out = ""
 process coverage {
   container = "${container_url}"
   label "big_mem_mono_cpus"
-  tag "${intersect_id}"
+  tag "${reads_id}"
   if (params.coverage_out != "") {
     publishDir "results/${params.coverage_out}", mode: 'copy'
   }
@@ -184,7 +184,7 @@ process bam_to_bed {
   tuple val(bam_id), path(bam), path(index)
 
   output:
-  tuple val(bam_id), path("*"), emit: reads
+  tuple val(bam_id), path("*.bed"), emit: reads
 
   script:
   """

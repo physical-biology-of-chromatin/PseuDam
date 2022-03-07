@@ -54,8 +54,8 @@ for i in range(2, len(sites_list)):
     if sites_list[i-1][0] == sites_list[i][0]:
 
         bin_chrom = (sites_list[i-1][0])
-        bin_start = (sites_list[i-1][1])
-        bin_end = (sites_list[i][2])
+        bin_start = (sites_list[i-1][2] - 1)
+        bin_end = (sites_list[i][1] + 1)
         
         
         # Writes the position in the .bed file (chro/start/end)
