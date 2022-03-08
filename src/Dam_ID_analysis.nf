@@ -17,7 +17,7 @@ include { bed_to_gff                        } from "./nf_modules/gffread/main.nf
 /* Input parameters */
 
 params.fasta = "data/genome/S288C_reference_sequence_R64-3-1_20210421.fsa"
-params.fastq = "data/reads/Dam_ID/test/*_{1,2}.fq"
+params.fastq = "data/reads/Dam_ID/*_{1,2}.fq"
 
 
 
