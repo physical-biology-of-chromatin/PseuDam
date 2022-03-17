@@ -3,7 +3,7 @@ container_url =  "nathanlecouvreur/gatc_finder"
 
 
 params.gatc_finder_out = ""
-
+params.gatc_finder = ""
 process gatc_finder {
     container = "${container_url}"
 
@@ -20,6 +20,6 @@ process gatc_finder {
 
     script:
 """
-gatc_finder.py --genome ${genome}
+gatc_finder.py --genome ${genome} ${params.gatc_finder}
 """
 }
