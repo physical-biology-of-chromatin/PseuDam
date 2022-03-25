@@ -131,19 +131,20 @@ process intersect {
   }
 
   input:
-  tuple val(bam_id), path(bam)
+  tuple val(bam_id), path(bam), path(index)
   tuple val(bed_id), path(bed)
 
   output:
-  tuple val(bam_id), path("*.bed"), emit: intersect
+  tuple val(bam_id), path("*.bam"), emit: intersect
 
   script:
   """
   bedtools intersect -a ${bam} -b ${bed} -f 1.0 \
   ${params.intersect} \
-  > ${bam_id}_inter.bed
+  > ${bam_id}.bam
   """
 }
+
 
 params.coverage = ""
 params.coverage_out = ""
@@ -164,11 +165,12 @@ process coverage {
 
   script:
   """
-  bedtools coverage -a ${bed} -b ${reads} \
-  ${params.coverage} \
+  bedtools coverage ${params.coverage} \
+  -a ${bed} -b ${reads} \
   > ${reads_id}_cov.bed
   """
 }
+
 
 params.bam_to_bed = ""
 params.bam_to_bed_out = ""
@@ -176,20 +178,30 @@ process bam_to_bed {
   container = "${container_url}"
   label "big_mem_mono_cpus"
   tag "${bam_id}"
-  if (params.coverage_out != "") {
+  if (params.bam_to_bed_out != "") 
     publishDir "results/${params.bam_to_bed_out}", mode: 'copy'
-  }
+  
 
   input:
   tuple val(bam_id), path(bam), path(index)
 
   output:
-  tuple val(bam_id), path("*.bed"), emit: reads
+  tuple val(bam_id), path("*.bedpe"), emit: read
 
   script:
+  if (params.bam_to_bed == "-bedpe") 
   """
   bedtools bamtobed -i ${bam} \
-  ${params.bam_to_bed} \
-  > ${bam_id}.bed
+  ${params.bam_to_bed}\
+  > ${bam_id}_inter.bedpe
   """
+  
+  
+  else
+  """
+  bedtools bamtobed -i ${bam} \
+  ${params.bam_to_bed}\
+  > ${bam_id}_inter.bed
+  """
+
 }

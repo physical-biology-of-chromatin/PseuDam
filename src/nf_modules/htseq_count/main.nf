@@ -1,6 +1,7 @@
 nextflow.enable.dsl=2
 container_url = "lbmc/htseq:0.13.5"
 
+params.htseq_count = ""
 params.htseq_count_out = ""
 
 process htseq_count {
@@ -12,17 +13,17 @@ process htseq_count {
 
     input:
 
-        tuple val(file_id), path(bam), path(index)
-        tuple val(file_id), path(sites)
+        tuple val(bam_id), path(bam), path(index)
+        tuple val(sites_id), path(sites)
 
     output:
 
-        tuple val(file_id), path("*.count"), emit: count
+        tuple val(bam_id), path("*"), emit: count
 
     script:
 
 """
-htseq-count -f bam -r pos ${bam} ${sites} \
- > results.count
+htseq-count -f bam -r pos ${bam} ${sites} ${params.htseq_count} \
+> ${bam_id}.txt
 """
 }
