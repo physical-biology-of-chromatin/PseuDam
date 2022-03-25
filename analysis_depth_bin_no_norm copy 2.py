@@ -165,7 +165,6 @@ for file in files_list:
             plt.ylabel("reads / frag_length")
             plt.xlabel("positions")
             
-            plt.ylim(1,6000)
             
             plt.title(sample_name)
 
