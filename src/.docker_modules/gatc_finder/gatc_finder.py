@@ -5,15 +5,25 @@ from Bio import SeqIO
 import argparse
 
 
-#defines qrguments in the command line
+#defines arguments for command line call
 parser = argparse.ArgumentParser()
-parser.add_argument("--genome", action="store")
-parser.add_argument("--overlap", action="store_true")
+
+parser.add_argument("--genome", action="store",
+                    help = "<path> Path to the fasta file containing the genome to analyse")
+
+parser.add_argument("--overlap", action="store_true",
+                    help = "Defines the fragment with the whole GATC sites")
+
+parser.add_argument("--overlap_size", action="store",
+                    help = ("<int> Number of bases to make the sites overlap\n"
+                            "(count starts at the last base of the first site and first base of the second site)"))
+
 args = parser.parse_args()
 
-# Gets the arguments in the command line
+# Gets the arguments from the command line
 genome_file = args.genome
 overlap = args.overlap
+overlap_size = args.overlap_size
 
 # Opening the file to write the positions (bed and GFF)
 f_bed = open("sites.bed", "w")
@@ -50,24 +60,40 @@ for seq_record in SeqIO.parse(genome_file, "fasta"):
         site = list()
         
 
+# If overlap is specified, uses a bigger overlap
+if overlap == True:
+    overlap_value = 10
+
+
+elif overlap_size is not None:
+    
+    while True:
+        try:
+            overlap_value = int(overlap_size)
+            break
+        except ValueError:
+            print("Please provide a number to --overlap_size")
+
+    overlap_value = int(overlap_size)
+    
+# If not sepcified takes only the whole gatc into account
+elif overlap == False:
+    overlap_value = 4
+
+
 for i in range(2, len(sites_list)):
     
     if sites_list[i-1][0] == sites_list[i][0]:
-        
-        # If overlap is specified, uses a bigger overlap
-        if overlap == True:
-            overlap_value = 10
-            
-        # If not sepcified takes only the whole gatc into account
-        elif overlap == False:
-            overlap_value = 4
-        
-        
-        
+    
         bin_chrom = (sites_list[i-1][0])
         bin_start = (sites_list[i-1][2] - overlap_value)
         bin_end = (sites_list[i][1] + overlap_value)
         
+        if bin_start < 0:
+            bin_start = 0
+        
+        if bin_end < 0:
+            bin_end = 1
         
         # Writes the position in the .bed file (chro/start/end)
         line_f_gff = f"{bin_chrom}\t{bin_start}\t{bin_end}\n"
@@ -77,7 +103,7 @@ for i in range(2, len(sites_list)):
         chrom_name = re.search("|(.+?)|", sites_list[i][0]).group(1)
 
         # Writes the same thing but in gff format
-        line_f_gff = f"{chrom_name}\tgatc_finder\tgatc_frag\t{bin_start}\t{bin_end}\t.\t.\t.\n"
+        line_f_gff = f"{chrom_name}\tgatc_finder\tgatc_frag\t{bin_start}\t{bin_end}\t.\t.\t.\t\n"
         f_gff.write(line_f_gff)
     
 f_bed.close()
