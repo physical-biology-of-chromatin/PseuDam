@@ -18,12 +18,16 @@ parser.add_argument("--overlap_size", action="store",
                     help = ("<int> Number of bases to make the sites overlap\n"
                             "(count starts at the last base of the first site and first base of the second site)"))
 
+parser.add_argument("--salmon", action="store_true",
+                    help = ("adds a unique identifier to each fragment to fir salmon's format"))
+
 args = parser.parse_args()
 
 # Gets the arguments from the command line
 genome_file = args.genome
 overlap = args.overlap
 overlap_size = args.overlap_size
+salmon = args.salmon
 
 # Opening the file to write the positions (bed and GFF)
 f_bed = open("sites.bed", "w")
@@ -80,10 +84,18 @@ elif overlap_size is not None:
 elif overlap == False:
     overlap_value = 4
 
+# Initializing the unique identifier for salmon
+if salmon == True:
+    identifier = 0
+else:
+    identifier = ""
 
 for i in range(2, len(sites_list)):
     
     if sites_list[i-1][0] == sites_list[i][0]:
+    
+        if salmon == True:
+            identifier += 1
     
         bin_chrom = (sites_list[i-1][0])
         bin_start = (sites_list[i-1][2] - overlap_value)
@@ -96,7 +108,7 @@ for i in range(2, len(sites_list)):
             bin_end = 1
         
         # Writes the position in the .bed file (chro/start/end)
-        line_f_gff = f"{bin_chrom}\t{bin_start}\t{bin_end}\n"
+        line_f_gff = f"{str(identifier)}{bin_chrom}\t{bin_start}\t{bin_end}\n"
         f_bed.write(line_f_gff)
         
         # Gets the chromosome name from the file
