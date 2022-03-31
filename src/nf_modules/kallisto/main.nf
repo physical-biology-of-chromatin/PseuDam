@@ -65,3 +65,46 @@ process mapping_fastq {
   ${reads[0]} &> ${file_prefix}_kallisto_mapping_report.txt
   """
 }
+
+
+params.mapping_fastq_pseudobam = "--bias --bootstrap-samples 100"
+params.mapping_fastq_pseudobam_out = ""
+process mapping_fastq_pseudobam {
+  container = "${container_url}"
+  label "big_mem_multi_cpus"
+  tag "$pair_id"
+  if (params.mapping_fastq_pseudobam_out != "") {
+    publishDir "results/${params.mapping_fastq_pseudobam_out}", mode: 'copy'
+  }
+
+  input:
+  tuple val(index_id), path(index)
+  tuple val(file_id), path(reads)
+
+  output:
+  tuple val(file_id), path("${file_prefix}"), emit: counts
+  tuple val(file_id), path("*_report.txt"), emit: report
+  tuple val(file_id), path("${file_prefix}/*.bam"), emit: pseudobam
+
+  script:
+  if (file_id instanceof List){
+    file_prefix = file_id[0]
+  } else {
+    file_prefix = file_id
+  }
+
+  if (reads.size() == 2)
+  """
+  mkdir ${file_prefix}
+  kallisto quant -i ${index} -t ${task.cpus} --pseudobam \
+  ${params.mapping_fastq} -o ${file_prefix} \
+  ${reads[0]} ${reads[1]} &> ${file_prefix}_kallisto_mapping_report.txt
+  """
+  else
+  """
+  mkdir ${file_prefix}
+  kallisto quant -i ${index} -t ${task.cpus} --single --pseudobam \
+  ${params.mapping_fastq} -o ${file_prefix} \
+  ${reads[0]} &> ${file_prefix}_kallisto_mapping_report.txt
+  """
+}
