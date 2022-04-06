@@ -17,6 +17,8 @@ OTHER OPTIONS:
 --salmon option will add an identifier in place of the chromosome name to the bed file
 --overlap option will cause the script to count the whole GATC site in the fragment
 --overlap_size option allows the user to input a custom overlap to the fragments
+TODO --outdir sets an output directory for the 3 files that are created in case you 
+              aren't using nextflow and don'want the files to be writen in root directory 
 
 DISCLAIMER:
 This program is designed to be used as a part of a nextflow pipeline, so it will 
@@ -60,6 +62,9 @@ overlap = True
 f_bed = open("sites.bed", "w")
 f_gff = open("sites.gff", "w")
 f_tsv = open("gene_id_DamID.tsv", "w")
+
+# Writting the first Headers of the tsv file
+f_tsv.write("TXNAME\tGENEID")
 
 # Motif we are looking for
 motif = "GATC"
@@ -123,27 +128,34 @@ else:
 
 gene_id_list = list()
 
+
+
 for i in range(1, len(sites_list)):
     
     if sites_list[i-1][0] == sites_list[i][0]:
     
         if salmon == True:
             identifier += 1
-    
+
+        # Transform individual sites information into GATC fragments
         bin_chrom = (sites_list[i-1][0])
         bin_start = (sites_list[i-1][2] - overlap_value)
         bin_end = (sites_list[i][1] + overlap_value)
         
+        
+        # In case a fragment is closer to the end or start than the overlap
         if bin_start < 0:
             bin_start = 0
         
         if bin_end < 0:
             bin_end = 1
         
+        # Create the kallisto target_id and associates the DamID geneID
         target_id = f"_{i-1}"
         gene_id = f"{sites_list[i][0]}_{bin_start}_{bin_end}"
         
-        gene_id_list.append([target_id, gene_id])
+        f_tsv.write(f"{target_id}\t{gene_id}\n")
+        
         
         # Writes the position in the .bed file (chro/start/end)
         line_f_bed = f"{str(identifier)}{bin_chrom}\t{bin_start}\t{bin_end}\n"
@@ -155,10 +167,7 @@ for i in range(1, len(sites_list)):
         # Writes the same thing but in gff format
         line_f_gff = f"{chrom_name}\tgatc_finder\tgatc_frag\t{bin_start}\t{bin_end}\t.\t.\t.\t\n"
         f_gff.write(line_f_gff)
-        
-        
-f_tsv.write("TXNAME\tGENEID")
-[f_tsv.write(f"{id[0]}\t{id[1]}\n") for id in gene_id_list]
-
 
 f_bed.close()
+f_gff.close()
+f_tsv.close()
