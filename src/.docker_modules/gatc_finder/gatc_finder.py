@@ -54,10 +54,6 @@ overlap_size = args.overlap_size
 salmon = args.salmon
 
 
-genome_file = "/datas/nathan/vscode_nextflow/nextflow-nathan/data/genome/S288C_reference_sequence_R64-3-1_20210421_12less.fsa"
-
-overlap = True
-
 # Opening the file to write the positions (bed and GFF)
 f_bed = open("sites.bed", "w")
 f_gff = open("sites.gff", "w")
@@ -76,12 +72,16 @@ sites_list = list()
 # Cycles through the parsed chromosomes from the fasta file
 for seq_record in SeqIO.parse(genome_file, "fasta"):
     
+    """
+    TODO find the reason Kallisto is refusing the literal chromosome
     # Gets the id of the chormosome in the file
     chrom = seq_record.description
     chrom = (re.search("\](.+?)\[", chrom[::-1]).group(1))[::-1]
     chrom = re.search("=(.+?)$", chrom).group(1)
     chrom = f"chrom_{chrom}"
-        
+    """   
+    
+    chrom = seq_record.id
         
     # Cycle throught all the motif that are found in the chromosome
     for match in re.finditer(motif, str(seq_record.seq)):

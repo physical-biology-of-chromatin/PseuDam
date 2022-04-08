@@ -1,9 +1,13 @@
+from collections import Counter
 from operator import truediv
 import pandas as pd
 import matplotlib.pyplot as plt
 import re
 import random
 import numpy as np
+import statistics
+
+
 
 files = [
          "/datas/nathan/vscode_nextflow/nextflow-nathan/results/pseudo/test/yes/N_3RG3D2_EKDL220001512-1a_H2C2YDSX3_L3/abundance.tsv",
@@ -41,10 +45,9 @@ df_mapping = pd.read_csv(mapping_results,
                          sep = "\t",
                          header = 0)
 
-region_start = 450000
-region_stop = 470000
 
-window = 40000
+
+window = 100000
 
 draw_number = 10000
 
@@ -66,23 +69,25 @@ chrom_list = [
     "ref|NC_001148|",
 ]
 
-chrom_names = [
-    "1",
-    "2",
-    "3",
-    "4",
-    "5",
-    "6",
-    "7",
-    "8",
-    "9",
-    "10",
-    "11",
-    "13",
-    "14",
-    "15",
-    "16",
-]
+chrom_names = {
+    "ref|NC_001133|" : "chrom 1",
+    "ref|NC_001134|" : "chrom 2",
+    "ref|NC_001135|" : "chrom 3",
+    "ref|NC_001136|" : "chrom 4",
+    "ref|NC_001137|" : "chrom 5",
+    "ref|NC_001138|" : "chrom 6",
+    "ref|NC_001139|" : "chrom 7",
+    "ref|NC_001140|" : "chrom 8",
+    "ref|NC_001141|" : "chrom 9",
+    "ref|NC_001142|" : "chrom 10",
+    "ref|NC_001143|" : "chrom 11",
+    "ref|NC_001144|" : "chrom 12",
+    "ref|NC_001145|" : "chrom 13",
+    "ref|NC_001146|" : "chrom 14",
+    "ref|NC_001147|" : "chrom 15",
+    "ref|NC_001148|" : "chrom 16",
+    "ref|NC_001224|" : "mitoch",
+}
 
 ratio_file_list = list()
 
@@ -91,7 +96,15 @@ row = 0
 
 ratio_mean = list()
 
+draws = 10000
+
+values_list = list()
+
+values_file_list = list()
+
 for file_pseudo in files:
+    
+    values_list = list()
     
     df_pseudo = pd.read_csv(file_pseudo,
                             sep = "\t",
@@ -115,25 +128,37 @@ for file_pseudo in files:
                     column = "stop",
                     value = df_sites[2])
 
-    
     df_pseudo = df_pseudo[df_pseudo["chrom"] != "ref|NC_001144|"]
-    df_pseudo = df_pseudo[df_pseudo["chrom"] != "ref|NC_001135|"]
+    
+    total = df_pseudo["est_counts"].sum()
+    
+    df_pseudo = df_pseudo[df_pseudo["chrom"] == "ref|NC_001135|"]
 
-    #df_pseudo = df_pseudo[df_pseudo["est_counts"] > 1]
+    
+    df_pseudo = df_pseudo[df_pseudo["start"] > 88000]
+    df_pseudo = df_pseudo[df_pseudo["stop"] < 96000]
+
 
     df_pseudo.reset_index(drop = True,
                           inplace=True)
 
-    print(df_pseudo["est_counts"].mean())
+    for draw in range(draws):    
+        value = random.choices(df_pseudo["est_counts"])
+        
+        values_list.append(value / df_pseudo["est_counts"].sum())
 
-    ratio_file = df_pseudo["est_counts"].mean() / df_pseudo["est_counts"].sum()
+    values_file_list.append(values_list)
+    
+    ratio_file = float(df_pseudo["est_counts"].mean() / df_pseudo["est_counts"].sum())
 
-    print(ratio_file)
+
 
     ratio_file_list.append(ratio_file)
 
 
-z_factor = ratio_file_list[0] / ratio_file_list[1]
+z_factor = np.sum(values_file_list[0]) / np.sum(values_file_list[1])
+
+
 
 
 
@@ -176,6 +201,50 @@ df_noise.insert(2,
 
 
 
+sizes_count = Counter(list((df_signal["length"])))
+
+print(statistics.median(sizes_count))
+
+
+
+
+df_signal = df_signal[df_signal["chrom"] != "ref|NC_001144|"]
+df_noise = df_noise[df_noise["chrom"] != "ref|NC_001144|"]
+
+df_peak = df_signal[df_signal["chrom"] == "ref|NC_001135|"]
+df_peak = df_peak[df_peak["start"] > 85000]
+df_peak = df_peak[df_peak["stop"] < 98000]
+
+
+df_signal_z = df_signal
+
+
+df_noise_z = df_noise
+
+
+
+df_signal_z["norm"] = df_signal_z["est_counts"] / df_signal_z["est_counts"].sum()
+df_noise_z["norm"] = df_noise_z["est_counts"] / df_noise_z["est_counts"].sum()
+
+df_noise_z = df_noise_z.drop(list(df_peak.index.values))
+df_signal_z = df_signal_z.drop(list(df_peak.index.values))
+
+
+df_signal_z = df_signal_z[df_signal_z["chrom"] != "ref|NC_001144|"]
+
+
+df_noise_z = df_noise_z[df_noise_z["chrom"] != "ref|NC_001144|"]
+
+
+z_factor = df_signal_z["norm"].sum() / df_noise_z["norm"].sum()
+
+reads_bins_signal = list()
+reads_bins_noise = list()
+
+
+print(z_factor)
+
+
 df_noise = df_noise[df_noise["chrom"] == "ref|NC_001135|"]
 df_signal = df_signal[df_signal["chrom"] == "ref|NC_001135|"]
 
@@ -187,12 +256,10 @@ df_signal = df_signal[df_signal["stop"] < 92000 + window/2]
 
 
 
+"""
 bins = np.arange((92000 - window/2) - bin_size,
                  (92000 + window/2) + bin_size,
                  bin_size)
-
-reads_bins_signal = list()
-reads_bins_noise = list()
 
 for bin in bins:
     df_bin_signal = df_signal[df_signal["stop"] > bin]
@@ -208,7 +275,8 @@ for bin in bins:
 
 reads_ratio_bins = list(map(truediv, reads_bins_signal, reads_bins_noise))
 
-print(z_factor)
+"""
+
 
 middle = ((df_noise["stop"] - df_noise["start"])/2) + df_noise["start"]
 ratio = df_signal["est_counts"] / df_noise["est_counts"]
@@ -231,7 +299,7 @@ plt.bar(middle,
         width=width,
         color = ["red" if i < 0 else "blue" for i in np.log2(ratio)])
 
-
+plt.show()
 
 
 

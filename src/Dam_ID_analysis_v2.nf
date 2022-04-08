@@ -1,19 +1,19 @@
 nextflow.enable.dsl=2
 
-include { fastp                             } from "./nf_modules/fastp/main.nf"
-include { gatc_finder                       } from "./nf_modules/gatc_finder/main.nf" addParams(gatc_finder_out: "sites/")
-include { index_fasta; mapping_fastq        } from "./nf_modules/kallisto/main.nf"    addParams(mapping_fastq_out: "pseudo/")
-include { multiqc                           } from "./nf_modules/multiqc/main.nf"     addParams(multiqc_out: "mapping/")
-include { fasta_from_bed                    } from "./nf_modules/bedtools/main.nf"
+include { fastp                   } from "./nf_modules/fastp/main.nf"       
+include { gatc_finder             } from "./nf_modules/gatc_finder/main.nf" addParams(gatc_finder_out: "Dam_ID/sites/")
+include { index_fasta; mapping_fastq} from "./nf_modules/kallisto/main.nf"    addParams(mapping_fastq_out: "Dam_ID/counts/")
+include { multiqc                 } from "./nf_modules/multiqc/main.nf"     addParams(multiqc_out: "Dam_ID/reports/")
+include { fasta_from_bed          } from "./nf_modules/bedtools/main.nf"    
 
 
 params.fasta = "data/genome/S288C_reference_sequence_R64-3-1_20210421.fsa"
 params.fastq = "data/reads/Dam_ID/*_{1,2}.fq"
-
+params.sites = "results/sites/test/yes/sites.bed"
 
 channel
     .fromPath(params.fasta)
-    .ifEmpty { error "Cannot find any fasta files matching: ${params.genome}" }
+    .ifEmpty { error "Cannot find any fasta files matching: ${params.fasta}" }
     .map { it -> [it.simpleName, it]}
     .set {fasta_files}
 
@@ -26,12 +26,12 @@ workflow {
 
     gatc_finder(fasta_files)
 
-    fastp(fastq_files)
-
     fasta_from_bed(fasta_files,
                    gatc_finder.out.bed)
 
     index_fasta(fasta_from_bed.out.fasta)
+
+    fastp(fastq_files)
 
     mapping_fastq(index_fasta.out.index.collect(),
                   fastp.out.fastq)
@@ -40,5 +40,6 @@ workflow {
 
     report_fastp = fastp.out.report
 
-    multiqc(report_mapping.mix(report_fastp))    
+    multiqc(report_mapping.mix(report_fastp))
+
 }

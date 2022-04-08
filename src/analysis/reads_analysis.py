@@ -100,6 +100,7 @@ for file_pseudo in files:
                     value = df_sites[2])
 
     df_12 = df_pseudo[df_pseudo["chrom"] == "ref|NC_001144|"]
+    
     df_12 = df_12[df_12["start"] > region_start]
     df_12 = df_12[df_12["stop"] < region_stop]
     

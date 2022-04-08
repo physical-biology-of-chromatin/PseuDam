@@ -51,6 +51,9 @@ chrom_names = [
 
 bootstraps_number = 10000
 
+fig, ax = plt.subplots(2)
+
+row = 0
 
 for file in file_signal:
 
@@ -75,14 +78,20 @@ for file in file_signal:
 
     # Removing the chromosome 12
     df_pseudo = df_pseudo[df_pseudo["chrom"] != "ref|NC_001144|"]
-    df_pseudo = df_pseudo[df_pseudo["est_counts"] > 1]
+    #df_pseudo = df_pseudo[df_pseudo["est_counts"] > 1]
 
-    plt.figure(file)
+    sample_name = re.search("N_(.+?)_", file).group(1)
 
-    plt.yscale("log")
-    plt.xlim(-100,140000)
+    ax[row].set_xlim(0,20)
+    
+    ax[row].hist(df_pseudo["est_counts"] / df_pseudo["length"] ,
+            bins = 200)
 
-    plt.hist(df_pseudo["est_counts"] ,
-            bins = 50)
+    ax[row].set_title(sample_name)
+    
 
+    row += 1
+
+fig.suptitle("distribution of reads/length")
+    
 plt.show()

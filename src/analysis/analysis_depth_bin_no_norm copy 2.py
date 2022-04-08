@@ -4,7 +4,6 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 
-
 files_list = [
 "/datas/nathan/vscode_nextflow/nextflow-nathan/results/coverage_frag/N_2RG1_EKDL220001501-1a_H2LFNDSX3_fused_cov.bed",
 "/datas/nathan/vscode_nextflow/nextflow-nathan/results/coverage_frag/N_2RG2_EKDL220001502-1a_H2C2YDSX3_L3_cov.bed",
