@@ -1,7 +1,7 @@
 nextflow.enable.dsl=2
 
 include { fastp                   } from "./nf_modules/fastp/main.nf"       
-include { gatc_finder             } from "./nf_modules/gatc_finder/main.nf" addParams(gatc_finder_out: "Dam_ID/sites/")
+include { gatc_finder             } from "./nf_modules/gatc_finder/main.nf" addParams(gatc_finder_out: "Dam_ID/sites/", gatc_finder: "--overlap")
 include { index_fasta; mapping_fastq} from "./nf_modules/kallisto/main.nf"    addParams(mapping_fastq_out: "Dam_ID/counts/")
 include { multiqc                 } from "./nf_modules/multiqc/main.nf"     addParams(multiqc_out: "Dam_ID/reports/")
 include { fasta_from_bed          } from "./nf_modules/bedtools/main.nf"    
@@ -9,7 +9,6 @@ include { fasta_from_bed          } from "./nf_modules/bedtools/main.nf"
 
 params.fasta = "data/genome/S288C_reference_sequence_R64-3-1_20210421.fsa"
 params.fastq = "data/reads/Dam_ID/*_{1,2}.fq"
-params.sites = "results/sites/test/yes/sites.bed"
 
 channel
     .fromPath(params.fasta)
