@@ -9,7 +9,7 @@ import numpy as np
 #####################################################################
 
 
-def binning_deseq2_fixed_size(df_in, 
+def binning_deseq_fixed_size(df_in, 
                               condition, 
                               bin_size,
                               chrom = "chrom_3", 
@@ -312,7 +312,8 @@ def binning_deseq_reads(df_in,
         
         epsilon (int): number of reads in each bin
         
-        chrom (str, optional): chromosome to bin on. Defaults to "chrom_3".
+        chrom (str, optional): chromosome to bin on. If = all bins all the chromsomomes in 
+        the dataset. Defaults to "chrom_3".
         
         region_start (int, optional): start of the binning region. Defaults to 0.
         
@@ -326,11 +327,22 @@ def binning_deseq_reads(df_in,
     #TODO decide if the last bin should be included even if not full
     #     (included for now)
     
+    if type(df_in) != pd.DataFrame:
+        raise TypeError("df_in must be a pandas dataframe")
+        
+        
+    chrom_list = list()
     
-    if (region_end and region_start) == 0: 
+    if chrom == "all": 
+        chrom_list = df_in["chrom"].unique()
+        
+        
+        
+    elif (region_end and region_start) == 0: 
         df_in = df_in[(df_in["chrom"] == chrom)]
-
-    
+        chrom_list.append(chrom)
+        
+        
     elif region_start >= region_end:
         raise ValueError("Region_end can't be equal or inferior to region start") 
     
@@ -338,9 +350,15 @@ def binning_deseq_reads(df_in,
         df_in = df_in[(df_in["chrom"] == chrom)
                       & (df_in["start"] > region_start)
                       & (df_in["stop"] < region_end)]        
-
+        chrom_list.append(chrom)
     
     df_bins = pd.DataFrame()
+    df_bins["start"] = np.zeros(len(df_in))
+    df_bins["stop"] = np.zeros(len(df_in))
+    df_bins["value"] = np.zeros(len(df_in))
+    df_bins["chrom"] = np.zeros(len(df_in))
+    df_bins["gatc"] = np.zeros(len(df_in))
+    
     
     bin_start = 0
     bin_end = 0
@@ -350,38 +368,57 @@ def binning_deseq_reads(df_in,
 
     gatc_number = 0
 
-    for index, row in df_in.iterrows():
+    
+
+    for chromosome in chrom_list:
         
-        gatc_number += 1
+        df_chrom = df_in
         
-        if bin_end == 0:
-            bin_start = df_in["start"]
+        bin_start = 0
+        bin_end = 0
+        bin_value = 0
+        gatc_number = 0
+        
+        if chrom == "all":
+            df_chrom = df_in[(df_in["chrom"] == chromosome)]
+            
+        df_chrom.sort_values("start", inplace = True)
+        
+        for index, row in df_chrom.iterrows():
+            
             gatc_number += 1
-        
-        bin_value += row[condition]
-        bin_end = df_in["stop"]
-        
-        if bin_value >= epsilon:
             
-            df_bins["value"][bin_number] = bin_value
-            df_bins["start"][bin_number] = bin_start
-            df_bins["stop"][bin_number] = bin_end
-            df_bins["gatc"][bin_number] = gatc_number
+            if bin_end == 0:
+                bin_start = row["start"]
+                gatc_number += 1
             
+            bin_value += row[condition]
+            bin_end = row["stop"]
             
-            bin_end = 0
-            bin_start = 0
-            bin_value = 0            
-            gatc_number = 0
-            
-            bin_number += 1 
+            if bin_value >= epsilon:
+                
+                df_bins["value"][bin_number] = bin_value
+                df_bins["start"][bin_number] = bin_start
+                df_bins["stop"][bin_number] = bin_end
+                df_bins["gatc"][bin_number] = gatc_number
+                df_bins["chrom"][bin_number] = chromosome
+                
+                bin_end = 0
+                bin_start = 0
+                bin_value = 0            
+                gatc_number = 0
+                
+                bin_number += 1 
 
         df_bins["value"][bin_number] = bin_value
         df_bins["start"][bin_number] = bin_start
         df_bins["stop"][bin_number] = bin_end
         df_bins["gatc"][bin_number] = gatc_number
-    
-                      
+        bin_number += 1
+        
+        
+    df_bins = df_bins[df_bins["stop"] != 0]
+        
     return df_bins
 
 
@@ -412,10 +449,22 @@ def binning_kallisto_reads(df_in,
     #TODO decide if the last bin should be included even if not full
     #     (included for now)
     
-    if (region_end and region_start) == 0: 
-        df_in = df_in[(df_in["chrom"] == chrom)]
-
+    if type(df_in) != pd.DataFrame:
+        raise TypeError("df_in must be a pandas dataframe")
+        
+        
+    chrom_list = list()
     
+    if chrom == "all": 
+        chrom_list = df_in["chrom"].unique()
+        
+        
+        
+    elif (region_end and region_start) == 0: 
+        df_in = df_in[(df_in["chrom"] == chrom)]
+        chrom_list.append(chrom)
+        
+        
     elif region_start >= region_end:
         raise ValueError("Region_end can't be equal or inferior to region start") 
     
@@ -423,8 +472,15 @@ def binning_kallisto_reads(df_in,
         df_in = df_in[(df_in["chrom"] == chrom)
                       & (df_in["start"] > region_start)
                       & (df_in["stop"] < region_end)]        
+        chrom_list.append(chrom)
     
     df_bins = pd.DataFrame()
+    df_bins["start"] = np.zeros(len(df_in))
+    df_bins["stop"] = np.zeros(len(df_in))
+    df_bins["value"] = np.zeros(len(df_in))
+    df_bins["chrom"] = np.zeros(len(df_in))
+    df_bins["gatc"] = np.zeros(len(df_in))
+    
     
     bin_start = 0
     bin_end = 0
@@ -434,40 +490,58 @@ def binning_kallisto_reads(df_in,
 
     gatc_number = 0
 
-    for index, row in df_in.iterrows():
+    
+
+    for chromosome in chrom_list:
         
-        gatc_number += 1
+        df_chrom = df_in
         
-        if bin_end == 0:
-            bin_start = df_in["start"]
+        bin_start = 0
+        bin_end = 0
+        bin_value = 0
+        gatc_number = 0
+        
+        if chrom == "all":
+            df_chrom = df_in[(df_in["chrom"] == chromosome)]
+            
+        df_chrom.sort_values("start", inplace = True)
+        
+        for index, row in df_chrom.iterrows():
+            
             gatc_number += 1
-        
-        bin_value += row["est_counts"]
-        bin_end = df_in["stop"]
-        
-        if bin_value >= epsilon:
             
-            df_bins["value"][bin_number] = bin_value
-            df_bins["start"][bin_number] = bin_start
-            df_bins["stop"][bin_number] = bin_end
-            df_bins["gatc"][bin_number] = gatc_number
+            if bin_end == 0:
+                bin_start = row["start"]
+                gatc_number += 1
             
+            bin_value += row["est_count"]
+            bin_end = row["stop"]
             
-            bin_end = 0
-            bin_start = 0
-            bin_value = 0            
-            gatc_number = 0
-            
-            bin_number += 1 
+            if bin_value >= epsilon:
+                
+                df_bins["value"][bin_number] = bin_value
+                df_bins["start"][bin_number] = bin_start
+                df_bins["stop"][bin_number] = bin_end
+                df_bins["gatc"][bin_number] = gatc_number
+                df_bins["chrom"][bin_number] = chromosome
+                
+                bin_end = 0
+                bin_start = 0
+                bin_value = 0            
+                gatc_number = 0
+                
+                bin_number += 1 
 
         df_bins["value"][bin_number] = bin_value
         df_bins["start"][bin_number] = bin_start
         df_bins["stop"][bin_number] = bin_end
         df_bins["gatc"][bin_number] = gatc_number
-    
-                     
+        bin_number += 1
+        
+        
+    df_bins = df_bins[df_bins["stop"] != 0]
+        
     return df_bins
-
 
 
 #####################################################################
@@ -477,7 +551,7 @@ def binning_kallisto_reads(df_in,
 #####################################################################
 
 
-def binning_deseq_reads(df_in, 
+def binning_deseq_gatc(df_in, 
                        condition, 
                        epsilon, 
                        chrom = "chrom_3",
@@ -507,19 +581,35 @@ def binning_deseq_reads(df_in,
 
 
 
-    if (region_end and region_start) == 0: 
-        df_in = df_in[(df_in["chrom"] == chrom)]
-
+    if type(df_in) != pd.DataFrame:
+        raise TypeError("df_in must be a pandas dataframe")
+        
+        
+    chrom_list = list()
     
+    if chrom == "all": 
+        chrom_list = df_in["chrom"].unique()
+        
+    
+    elif (region_end and region_start) == 0: 
+        df_in = df_in[(df_in["chrom"] == chrom)]
+        chrom_list.append(chrom)
+        
+        
     elif region_start >= region_end:
         raise ValueError("Region_end can't be equal or inferior to region start") 
     
     else:
         df_in = df_in[(df_in["chrom"] == chrom)
                       & (df_in["start"] > region_start)
-                      & (df_in["stop"] < region_end)]  
-
+                      & (df_in["stop"] < region_end)]        
+        chrom_list.append(chrom)
+    
     df_bins = pd.DataFrame()
+    df_bins["start"] = np.zeros(len(df_in))
+    df_bins["stop"] = np.zeros(len(df_in))
+    df_bins["value"] = np.zeros(len(df_in))
+    df_bins["chrom"] = np.zeros(len(df_in))
     
     bin_start = 0
     bin_end = 0
@@ -529,34 +619,53 @@ def binning_deseq_reads(df_in,
 
     gatc_number = 0
 
+    for chromosome in chrom_list:
+        df_chrom = df_in
+        
+        bin_start = 0
+        bin_end = 0
+        bin_value = 0
+        gatc_number = 0
 
-    for index, row in df_in.iterrows():
-        
-        gatc_number += 1
-        
-        if bin_end == 0:
-            bin_start = row["start"]
+        if chrom == "all":
+            df_chrom = df_in[(df_in["chrom"] == chromosome)]
             
-        bin_end = row["stop"]
-        bin_value += row[condition]
-        
-        if gatc_number >= epsilon:
-            
-            df_bins["start"][bin_number] = bin_end
-            df_bins["stop"][bin_number] = bin_start
-            df_bins["value"][bin_number] = bin_value
-            
-            bin_start = 0
-            bin_end = 0
-            bin_value = 0
-            gatc_number = 0
-            
-            bin_number += 1
-        
-    df_bins["start"][bin_number] = bin_end
-    df_bins["stop"][bin_number] = bin_start
-    df_bins["value"][bin_number] = bin_value
+        df_chrom.sort_values("start", inplace = True)
 
+        for index, row in df_chrom.iterrows():
+            
+            gatc_number += 1
+            
+            if bin_end == 0:
+                bin_start = row["start"]
+                
+            bin_end = row["stop"]
+            bin_value += row[condition]
+            
+            if gatc_number >= epsilon:
+                
+                df_bins["start"][bin_number] = bin_end
+                df_bins["stop"][bin_number] = bin_start
+                df_bins["value"][bin_number] = bin_value
+                df_bins["chrom"][bin_number] = chromosome
+                
+                bin_start = 0
+                bin_end = 0
+                bin_value = 0
+                gatc_number = 0
+                
+                bin_number += 1
+            
+        df_bins["start"][bin_number] = bin_end
+        df_bins["stop"][bin_number] = bin_start
+        df_bins["value"][bin_number] = bin_value
+        df_bins["chrom"][bin_number] = chromosome
+        
+        bin_number += 1
+
+    df_bins = df_bins[df_bins["stop"] != 0]
+    
+    
     return df_bins
 
 
@@ -642,3 +751,98 @@ def binning_kallisto_gatc(df_in,
     df_bins["value"][bin_number] = bin_value
 
     return df_bins
+
+
+#####################################################################
+#                                                                   #
+#                             Utilities                             #
+#                                                                   #
+#####################################################################
+
+
+def binning_application_deseq(df_in, df_control, condition):
+    """ Applies a binning to other conditions
+
+    Args:
+        df_in (pd dataframe): Dataframe to bin
+        
+        df_control (pd dataframe): Dataframe to get the bins from
+
+    Returns:
+        pd dataframe: Binned dataframe
+    """
+    
+    df_bins = pd.DataFrame(df_control[["start", "stop", "chrom"]])
+    
+    df_bins["value"] = np.zeros([len(df_bins)])
+    
+    
+    for index, row in df_bins.iterrows():
+        
+        
+        df_temp = df_in[(df_in["start"] >= row["start"])
+                        & (df_in["stop"] <= row["stop"])
+                        & (df_in["chrom"] == row["chrom"])]
+        
+        df_bins["value"][index] = df_temp[condition].sum()
+        
+
+    return df_bins
+
+
+def tx2gene_geneid_generator_df(df_in, path_out = None):
+    """Creates a geneid dataframe for DESeq2 from an existing dataframe
+    and saves it if a path if given
+
+    Args:
+        df_in (pd dataframe): _description_
+        path_out (string, optional): Path to save the geneIDs to. Defaults to None.
+
+    Returns:
+        pd dataframe: dataframe containing the geneIDs and the txnames
+    """
+    
+    
+    df_tx2gene = pd.DataFrame()
+
+    sample_name = [chrom_name for chrom_name in list(df_in["chrom"])]
+
+    start = [str(start) for start in list(df_in["start"])]
+
+    stop = [str(stop) for stop in list(df_in["stop"])]
+
+    gene_names = list(map(lambda sample_name, start, stop: sample_name + "_" + start + "_" + stop,
+                        sample_name, 
+                        start, 
+                        stop))
+
+    df_tx2gene["TXNAME"] = [("_" + str(i)) for i in range(len(gene_names))]
+
+    df_tx2gene["GENEID"] = gene_names
+
+    if path_out == None:
+        pass
+    elif type(path_out) == str:
+        df_tx2gene.to_csv(path_out, sep = "\t", index = False)
+    
+    return df_tx2gene
+
+
+def abundance_file_conversion(df_in, path):
+    """Transforms a binned dataframe into an abundance file
+    usable as an input for DESeq2
+
+    Args:
+        df_in (pd dataframe): binned dataframe
+        path (string): path to the location to save the file
+    """
+    
+    df_abundance = pd.DataFrame()
+    
+    df_abundance["length"] = df_in["stop"] - df_in["start"]
+    df_abundance["eff_length"] = np.zeros(len(df_in))
+    df_abundance["est_counts"] = df_in["value"]
+    df_abundance["tpm"] = np.zeros(len(df_in))
+    df_abundance["target_id"] = [("_"+str(i)) for i in range(len(df_in))]
+    
+    df_abundance.to_csv(path, sep = "\t", header = True)
