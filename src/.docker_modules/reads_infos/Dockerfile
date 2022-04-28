@@ -5,12 +5,9 @@ RUN apk update \
     && apk add --no-cache bash
 
 RUN pip install numpy\
-    && pip install biopython\
-    && pip install pandas
+    && pip install biopython
 
-COPY gatc_finder.py /usr/bin/
-COPY frag_length.py /usr/bin/
-
+COPY reads_infos.py /usr/bin/
 RUN chmod +x /usr/bin/*.py
 
 

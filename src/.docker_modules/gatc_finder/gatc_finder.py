@@ -23,13 +23,17 @@ TODO --outdir sets an output directory for the 3 files that are created in case 
 DISCLAIMER:
 This program is designed to be used as a part of a nextflow pipeline, so it will 
 output the files in root directory
+
+TODO adapt to get all genomes
 """
 
 import re
 from Bio import SeqIO
 import argparse
+import numpy as np
 
-#defines arguments for command line call
+
+# Defines arguments for command line call
 parser = argparse.ArgumentParser()
 
 parser.add_argument("--genome", action="store",
@@ -54,6 +58,10 @@ overlap_size = args.overlap_size
 salmon = args.salmon
 
 
+# TODO remove when debug is done
+#genome_file = "/datas/nathan/vscode_nextflow/nextflow-nathan/data/genome/GCA_000002985.3.fasta"
+#genome_file = "/datas/nathan/vscode_nextflow/nextflow-nathan/data/genome/S288C_reference_sequence_R64-3-1_20210421.fsa"
+
 # Opening the file to write the positions (bed and GFF)
 f_bed = open("sites.bed", "w")
 f_gff = open("sites.gff", "w")
@@ -72,17 +80,21 @@ sites_list = list()
 # Cycles through the parsed chromosomes from the fasta file
 for seq_record in SeqIO.parse(genome_file, "fasta"):
     
-    """
-    TODO find the reason Kallisto is refusing the literal chromosome
-    # Gets the id of the chormosome in the file
-    chrom = seq_record.description
-    chrom = (re.search("\](.+?)\[", chrom[::-1]).group(1))[::-1]
-    chrom = re.search("=(.+?)$", chrom).group(1)
-    chrom = f"chrom_{chrom}"
-    """   
+
     
-    chrom = seq_record.id
-        
+    """
+    # Gets the id of the chormosome in the file
+    # TODO reintroduce the readable chromosome name
+    chrom_name = seq_record.description
+    chrom_name = (re.search("\](.+?)\[", chrom_name[::-1]).group(1))[::-1]
+    chrom_name = re.search("=(.+?)$", chrom_name).group(1)
+    chrom_name = f"chrom_{chrom_name}"
+    """
+    
+    chrom_name = seq_record.name
+    
+    chrom_id = seq_record.id
+
     # Cycle throught all the motif that are found in the chromosome
     for match in re.finditer(motif, str(seq_record.seq)):
         
@@ -91,9 +103,10 @@ for seq_record in SeqIO.parse(genome_file, "fasta"):
         start_pos = match.start() +1
         end_pos = match.end() + 1
         
-        site.append(chrom)
+        site.append(chrom_id)
         site.append(start_pos)
         site.append(end_pos)
+        site.append(chrom_name)
         
         sites_list.append(site)
         
@@ -128,7 +141,7 @@ else:
 
 gene_id_list = list()
 
-
+length_list = list()
 
 for i in range(1, len(sites_list)):
     
@@ -141,7 +154,7 @@ for i in range(1, len(sites_list)):
         bin_chrom = (sites_list[i-1][0])
         bin_start = (sites_list[i-1][2] - overlap_value)
         bin_end = (sites_list[i][1] + overlap_value)
-        
+        bin_chrom_name = (sites_list[i-1][3])
         
         # In case a fragment is closer to the end or start than the overlap
         if bin_start < 0:
@@ -156,9 +169,14 @@ for i in range(1, len(sites_list)):
         
         f_tsv.write(f"{target_id}\t{gene_id}\n")
         
+        length = bin_end - bin_start
+        length_list.append(length)
         
         # Writes the position in the .bed file (chro/start/end)
-        line_f_bed = f"{str(identifier)}{bin_chrom}\t{bin_start}\t{bin_end}\n"
+        line_f_bed = (f"{str(identifier)}{bin_chrom}"
+                      f"\t{bin_start}"
+                      f"\t{bin_end}"
+                      f"\t{bin_chrom_name}_{bin_start}_{bin_end}\n")
         f_bed.write(line_f_bed)
         
         # Gets the chromosome name from the file
@@ -167,6 +185,10 @@ for i in range(1, len(sites_list)):
         # Writes the same thing but in gff format
         line_f_gff = f"{chrom_name}\tgatc_finder\tgatc_frag\t{bin_start}\t{bin_end}\t.\t.\t.\t\n"
         f_gff.write(line_f_gff)
+
+
+print(np.mean(length_list))
+print(np.std(length_list))
 
 f_bed.close()
 f_gff.close()
