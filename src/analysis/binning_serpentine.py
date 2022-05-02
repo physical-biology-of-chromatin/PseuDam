@@ -1,9 +1,11 @@
-from packages.binning import (binning_serpentine_kalisto, bed_fragments_generation, mean_replicates, sleuth_zeros_addition)
-from packages.Dam_ID_utilities import (kallisto_abundance_extraction, sleuth_norm_extraction)
-import pandas as pd
 import numpy as np
+import pandas as pd
 
-
+from packages.binning import (bed_fragments_generation,
+                              binning_serpentine_kalisto, mean_replicates,
+                              sleuth_zeros_addition)
+from packages.Dam_ID_utilities import (kallisto_abundance_extraction,
+                                       sleuth_norm_extraction)
 
 
 def main():
