@@ -37,13 +37,144 @@ def position_extraction(df):
     return df
 
 
+def kallisto_abundance_reformating(file_abundance):
+    """Extracts the fragments' position from an abudance.tsv file from kallisto
+
+    Args:
+        df (pd dataframe): your DESeq2 extracted dataframe
+
+    Returns:
+        pandas dataframe: your df with positions (chrom, start, stop)
+    """
+
+    df = pd.read_csv(file_abundance,
+                     sep = "\t",
+                     header = 0)
+    
+    # If the first letter is c takes everything until the second _ if it starts with an m takes until the first _
+    df["chrom"] = [re.search("^([^_]*_[^_]*)_.*$", id).group(1) 
+                    if id[0] == "c" 
+                    else re.search("^(.+?)_", id).group(1) 
+                    if id[0] == "m" 
+                    else "wth" for id in df["target_id"]]
+
+
+    # Reverses everything then gets eveything between the 2 first _
+    df["start"] = [int((re.search("_(.+?)_", id[::-1]).group(1))[::-1]) for id in df["target_id"]]
+
+    # Reverses the list then takes until the first _
+    df["stop"] = [int((re.search("^(.+?)_", id[::-1]).group(1))[::-1]) for id in df["target_id"]]    
+
+    df["length"] = df["stop"] - df["start"]
+
+    return df
+
+def kallisto_abundance_extraction(file_abundance, chrom_dic):
+    """Extracts the fragments' position from an abudance.tsv file from kallisto
+
+    Args:
+        df (pd dataframe): your DESeq2 extracted dataframe
+
+    Returns:
+        pandas dataframe: your df with positions (chrom, start, stop)
+    """
+
+    df = pd.read_csv(file_abundance,
+                     sep = "\t",
+                     header = 0,
+                     index_col = False,
+                     )
+    
+    # If the first letter is c takes everything until the second _ if it starts with an m takes until the first _
+    df["chrom"] = [chrom_dic[re.search("^(.+?)_", id).group(1)] 
+                   for id in df["target_id"]]
+
+
+    # Reverses everything then gets eveything between the 2 first _
+    df["start"] = [int((re.search("_(.+?)_", id[::-1]).group(1))[::-1]) for id in df["target_id"]]
+
+    # Reverses the list then takes until the first _
+    df["stop"] = [int((re.search("^(.+?)_", id[::-1]).group(1))[::-1]) for id in df["target_id"]]    
+
+    df["length"] = df["stop"] - df["start"]
+
+    return df
+
+
+def sleuth_norm_extraction(file_abundance, chrom_dic):
+    """Extracts the fragments' position from an abudance.tsv file from kallisto
+
+    Args:
+        df (pd dataframe): your DESeq2 extracted dataframe
+
+    Returns:
+        pandas dataframe: your df with positions (chrom, start, stop)
+    """
+
+    df = pd.read_csv(file_abundance,
+                     sep = ",",
+                     header = 0,
+                     index_col = False,
+                     )
+    
+    # If the first letter is c takes everything until the second _ if it starts with an m takes until the first _
+    df["chrom"] = [chrom_dic[re.search("^(.+?)_", id).group(1)] 
+                   for id in df["target_id"]]
+
+
+    # Reverses everything then gets eveything between the 2 first _
+    df["start"] = [int((re.search("_(.+?)_", id[::-1]).group(1))[::-1]) for id in df["target_id"]]
+
+    # Reverses the list then takes until the first _
+    df["stop"] = [int((re.search("^(.+?)_", id[::-1]).group(1))[::-1]) for id in df["target_id"]]    
+
+    df["length"] = df["stop"] - df["start"]
+
+    return df
+
+
+
+def sleuth_output_reformating(file_sleuth):
+    """Extracts the fragments' position from  sleuth analsyis output file 
+
+    Args:
+        df (pd dataframe): your DESeq2 extracted dataframe
+
+    Returns:
+        pandas dataframe: your df with positions (chrom, start, stop)
+    """
+
+    df = pd.read_csv(file_sleuth,
+                     sep = ",",
+                     header = 0)
+    
+    # If the first letter is c takes everything until the second _ if it starts with an m takes until the first _
+    df["chrom"] = [re.search("^([^_]*_[^_]*)_.*$", id).group(1) 
+                   if id[0] == "c" 
+                   else re.search("^(.+?)_", id).group(1) 
+                   if id[0] == "m" 
+                   else "wth" for id in df["target_id"]]
+
+
+    # Reverses everything then gets eveything between the 2 first _
+    df["start"] = [int((re.search("_(.+?)_", id[::-1]).group(1))[::-1]) for id in df["target_id"]]
+
+    # Reverses the list then takes until the first _
+    df["stop"] = [int((re.search("^(.+?)_", id[::-1]).group(1))[::-1]) for id in df["target_id"]]    
+
+    df["length"] = df["stop"] - df["start"]
+
+    return df
+
 
 def kallisto_outup_reformating(file_df, file_sites, chrom_names = {}):
     """Adds chrom, start and stop columns to the kallisto pipeline output
 
     Args:
         file_df (path): kallisto anbundance.tsv output path
+
         file_sites (path): path to the output .bed of GATC_finder
+        
         chrom_names (dict, optional): dictionnary of chrom names to convert from IDs. Defaults to {}.
 
     Returns:
