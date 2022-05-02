@@ -24,7 +24,6 @@ DISCLAIMER:
 This program is designed to be used as a part of a nextflow pipeline, so it will 
 output the files in root directory
 
-TODO adapt to get all genomes
 """
 
 import re
