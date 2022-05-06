@@ -17,8 +17,7 @@ OTHER OPTIONS:
 --salmon option will add an identifier in place of the chromosome name to the bed file
 --overlap option will cause the script to count the whole GATC site in the fragment
 --overlap_size option allows the user to input a custom overlap to the fragments
-TODO --outdir sets an output directory for the 3 files that are created in case you 
-              aren't using nextflow and don'want the files to be writen in root directory 
+
 
 DISCLAIMER:
 This program is designed to be used as a part of a nextflow pipeline, so it will 
@@ -26,10 +25,11 @@ output the files in root directory
 
 """
 
-import re
-from Bio import SeqIO
 import argparse
+import re
+
 import numpy as np
+from Bio import SeqIO
 
 
 # Defines arguments for command line call
@@ -57,10 +57,6 @@ overlap_size = args.overlap_size
 salmon = args.salmon
 
 
-# TODO remove when debug is done
-#genome_file = "/datas/nathan/vscode_nextflow/nextflow-nathan/data/genome/GCA_000002985.3.fasta"
-#genome_file = "/datas/nathan/vscode_nextflow/nextflow-nathan/data/genome/S288C_reference_sequence_R64-3-1_20210421.fsa"
-
 # Opening the file to write the positions (bed and GFF)
 f_bed = open("sites.bed", "w")
 f_gff = open("sites.gff", "w")
@@ -79,16 +75,6 @@ sites_list = list()
 # Cycles through the parsed chromosomes from the fasta file
 for seq_record in SeqIO.parse(genome_file, "fasta"):
     
-
-    
-    """
-    # Gets the id of the chormosome in the file
-    # TODO reintroduce the readable chromosome name
-    chrom_name = seq_record.description
-    chrom_name = (re.search("\](.+?)\[", chrom_name[::-1]).group(1))[::-1]
-    chrom_name = re.search("=(.+?)$", chrom_name).group(1)
-    chrom_name = f"chrom_{chrom_name}"
-    """
     
     chrom_name = seq_record.name
     
@@ -175,7 +161,7 @@ for i in range(1, len(sites_list)):
         line_f_bed = (f"{str(identifier)}{bin_chrom}"
                       f"\t{bin_start}"
                       f"\t{bin_end}"
-                      f"\t{bin_chrom_name}_{bin_start}_{bin_end}\n")
+                      f"\t{bin_chrom_name}__{bin_start}__{bin_end}\n")
         f_bed.write(line_f_bed)
         
         # Gets the chromosome name from the file
