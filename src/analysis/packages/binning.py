@@ -800,7 +800,8 @@ def binning_kallisto_gatc(df_in,
 def binning_serpentine_kalisto(df_test_mean,
                                df_control_mean,
                                epsilon,
-                               teta):
+                               teta,
+                               m_length = 3000):
     """Bins the given test and control datasets from kallisto abundance output
     using a 1D version of the serpentine algortithm from L. Baudry et al. 
     genome analysis 2020
@@ -810,41 +811,27 @@ def binning_serpentine_kalisto(df_test_mean,
         df_control (list of dataframes): list of df containing the control condition datas
         epsilon (int): lower threshold value
         teta (int): higher threshold value
+        m_length(int): maximum length of a bin. Defaults to 3000
 
     Returns:
-        pd dataframe: df containing the binned control condition
-        pd dataframe: df containing the binned test condition
+        pd Dataframe : dataframe containing the binned fragments
     """
 
-    df_bins_test = pd.DataFrame()
-    df_bins_control = pd.DataFrame()
+    df_bins = pd.DataFrame()
 
 
     chrom_list = list()
-    
-
 
 
     chrom_list = df_control_mean["chrom"].unique()
-        
 
 
-
-    df_bins_test["chrom"] = np.zeros(len(df_test_mean), dtype = str)
-    df_bins_test["est_counts"] = np.zeros(len(df_test_mean))
-    df_bins_test["start"] = np.zeros(len(df_test_mean))
-    df_bins_test["stop"] = np.zeros(len(df_test_mean))
-    df_bins_test["length"] = np.zeros(len(df_test_mean))
+    df_bins["chrom"] = np.zeros(len(df_test_mean), dtype = str)
+    df_bins["start"] = np.zeros(len(df_test_mean))
+    df_bins["stop"] = np.zeros(len(df_test_mean))
+    df_bins["length"] = np.zeros(len(df_test_mean))
 
 
-    df_bins_control["chrom"] = np.zeros(len(df_test_mean), dtype = str)
-    df_bins_control["est_counts"] = np.zeros(len(df_test_mean))
-    df_bins_control["start"] = np.zeros(len(df_test_mean))
-    df_bins_control["stop"] = np.zeros(len(df_test_mean))
-    df_bins_control["length"] = np.zeros(len(df_test_mean))
-
-        
-    
 
     i = 0
     
@@ -869,33 +856,27 @@ def binning_serpentine_kalisto(df_test_mean,
               row_control)) in zip(df_test_chrom_mean.iterrows(),
                                    df_control_chrom_mean.iterrows()):
 
-            value_test += row_test["est_counts"]
-            value_control += row_control["est_counts"]
-            #chrom_pos = row_test["chrom"]
-            
-            
+
             if stop_pos == 0:
                 start_pos = row_test["start"]
             
             stop_pos = row_test["stop"]
+
+            value_test += row_test["est_counts"]
+            value_control += row_control["est_counts"]
+            #chrom_pos = row_test["chrom"]
+
 
             if ((value_control > teta 
                 or value_test > teta) 
                 and (value_control > epsilon 
                     and value_test > epsilon)):
                 
-                df_bins_test.at[i, "chrom"] = chrom
-                df_bins_test.at[i, "est_counts"] = value_test
-                df_bins_test.at[i, "start"] = start_pos
-                df_bins_test.at[i, "stop"] = stop_pos
-                df_bins_test.at[i, "length"] = stop_pos - start_pos
-                
-                
-                df_bins_control.at[i, "chrom"] = chrom
-                df_bins_control.at[i, "est_counts"] = value_control
-                df_bins_control.at[i, "start"] = start_pos
-                df_bins_control.at[i, "stop"] = stop_pos
-                df_bins_control.at[i, "length"] = stop_pos - start_pos
+                df_bins.at[i, "chrom"] = chrom
+                df_bins.at[i, "start"] = start_pos
+                df_bins.at[i, "stop"] = stop_pos
+                df_bins.at[i, "length"] = stop_pos - start_pos
+
         
                 value_test = 0
                 value_control = 0
@@ -904,18 +885,33 @@ def binning_serpentine_kalisto(df_test_mean,
                 
                 i += 1
 
-        df_bins_control = df_bins_control[df_bins_control["stop"] != 0]
-        df_bins_test = df_bins_test[df_bins_test["stop"] != 0]
+            if (start_pos - stop_pos) > m_length:
+                
+                df_bins.at[i, "chrom"] = chrom
+                df_bins.at[i, "start"] = start_pos
+                df_bins.at[i, "stop"] = stop_pos
+                df_bins.at[i, "length"] = stop_pos - start_pos
 
-        df_bins_control["start"] = df_bins_control["start"].astype(int)
-        df_bins_test["start"] = df_bins_test["start"].astype(int)
         
-        df_bins_control["stop"] = df_bins_control["stop"].astype(int)
-        df_bins_test["stop"] = df_bins_test["stop"].astype(int)
+                value_test = 0
+                value_control = 0
+                start_pos = 0
+                stop_pos = 0
+                
+                i += 1
+            
+        df_bins = df_bins[df_bins["stop"] != 0]
+
+        df_bins["start"] = df_bins["start"].astype(int)
+        
+
+        df_bins["stop"] = df_bins["stop"].astype(int)
+        
+        
         
         
 
-    return (df_bins_control, df_bins_test)
+    return df_bins
 
 
 def mean_replicates(replicates_list):
@@ -942,105 +938,6 @@ def mean_replicates(replicates_list):
     return df_list_mean
     
     
-def binning_serpentine_deseq(df_test,
-                               df_control,
-                               epsilon,
-                               teta,
-                               condition):
-    """Bins the given test and control datasets from DESeq2 outup
-    using a 1D version of the serpentine algortithm from L. Baudry et al. 
-    genome analysis 2020
-
-    Args:
-        df_test (pd dataframe): df containing the test condition datas
-        df_control (pd dataframe): df containing the control condition datas
-        epsilon (int): lower threshold value
-        teta (int): higher threshold value
-        condition (string) : condition in the DESeq2 file to bin from
-
-
-    Raises:
-        TypeError: _description_
-        ValueError: _description_
-
-    Returns:
-        pd dataframe: df containing the binned control condition
-        pd dataframe: df containing the binned test condition
-    """
-
-    df_bins_test = pd.DataFrame()
-    df_bins_control = pd.DataFrame()
-
-    if type(df_control) != pd.DataFrame or type(df_test) != pd.DataFrame:
-        raise TypeError("df_control and df_test must be pandas dataframes")
-    
-    
-
-    chrom_list = list()
-    
-    
-    chrom_list = df_control["chrom"].unique()
-        
-
-    df_bins_test[["value", "start", "stop", "length"]] = np.zeros(len(df_test))
-    df_bins_control["value", "start", "stop", "length"] = np.zeros(len(df_test))
-
-        
-    
-    value_test = 0
-    value_control = 0
-    
-    stop_pos = 0
-    
-    i = 0
-    
-    
-    for chrom in chrom_list:
-        
-        
-        for ((index_test,
-            row_test),
-            (index_control,
-            row_control)) in zip(df_test.iterrows(),
-                                df_control.iterrows()):
-        
-            value_test += row_test[condition]
-            value_control += row_control[condition]
-            
-            if stop_pos == 0:
-                start_pos = row_test["start"]
-            
-            stop_pos = row_test["stop"]
-
-            if ((value_control > teta 
-                or value_test > teta) 
-                and (value_control > epsilon 
-                    and value_test > epsilon)):
-                
-                df_bins_test["value"][i] = value_test
-                df_bins_test["start"][i] = start_pos
-                df_bins_test["stop"][i] = stop_pos
-                df_bins_test["length"][i] = stop_pos - start_pos
-                
-                
-                df_bins_control["value"][i] = value_control
-                df_bins_control["start"][i] = start_pos
-                df_bins_control["stop"][i] = stop_pos
-                df_bins_control["length"][i] = stop_pos - start_pos
-        
-                value_test = 0
-                value_control = 0
-                start_pos = 0
-                stop_pos = 0
-                
-                i += 1
-
-        df_bins_control = df_bins_control[df_bins_control["stop"] != 0]
-        df_bins_test = df_bins_test[df_bins_test["stop"] != 0]
-    
-    return (df_bins_control, df_bins_test)
-
-
 #####################################################################
 #                                                                   #
 #                             Utilities                             #
@@ -1166,7 +1063,7 @@ def abundance_file_conversion(df_in, path, path_tx2gene = None):
         
 
 
-def bed_fragments_generation(df_in, path, path_tx2gene = None):
+def bed_fragments_generation(df_in, path, chrom_dic, path_tx2gene = None):
     """Generates a .bed file using a binned dataframe
 
     Args:
@@ -1177,23 +1074,17 @@ def bed_fragments_generation(df_in, path, path_tx2gene = None):
     
     
     df_bed = pd.DataFrame()
-    
-    chrom_names_celegans = {
-    "chromosome_I" : "ENA|BX284601|BX284601.5",
-    "chromosome_II" : "ENA|BX284602|BX284602.5",
-    "chromosome_III" : "ENA|BX284603|BX284603.4",
-    "chromosome_IV" : "ENA|BX284604|BX284604.4",
-    "chromosome_V" : "ENA|BX284605|BX284605.5",
-    "chromosome_X" : "ENA|BX284606|BX284606.5"
-    }
+
+
+    chrom_dic = {v: k for k, v in chrom_dic.items()}
     
     
-    df_bed["chrom"] = [chrom_names_celegans[name] 
+    df_bed["chrom"] = [chrom_dic[name] 
                        for name 
                        in df_in["chrom"]]
     df_bed["start"] = df_in["start"]
     df_bed["stop"] = df_in["stop"]
-    df_bed["name"] = [chrom+"_"+str(int(start))+"_"+str(int(end)) 
+    df_bed["name"] = [chrom+"__"+str(int(start))+"__"+str(int(end)) 
                       for chrom, start, end 
                       in zip(df_in["chrom"], 
                              df_in["start"], 
@@ -1245,17 +1136,7 @@ def binning_application_kallisto(df_in, df_control):
 
 
 
-def sleuth_zeros_addition(df_in, bed_file):
-
-    chrom_names_celegans = {
-    "ENA|BX284601|BX284601.5" : "chromosome_I",
-    "ENA|BX284602|BX284602.5" : "chromosome_II",
-    "ENA|BX284603|BX284603.4" : "chromosome_III",
-    "ENA|BX284604|BX284604.4" : "chromosome_IV",
-    "ENA|BX284605|BX284605.5" : "chromosome_V",
-    "ENA|BX284606|BX284606.5" : "chromosome_X"
-    }
-
+def sleuth_zeros_addition(df_in, bed_file, chrom_dic):
 
 
     bed = pd.read_csv(bed_file, header = None, sep = "\t")
@@ -1265,7 +1146,7 @@ def sleuth_zeros_addition(df_in, bed_file):
                                 2 : "stop",
                                 3 : "target_id"})
     
-    bed["chrom"] = [chrom_names_celegans[name] 
+    bed["chrom"] = [chrom_dic[name] 
                     for name 
                     in bed["chrom"]]
     bed["length"] = [stop - start for start, stop in zip(bed["start"], bed["stop"])]
@@ -1309,34 +1190,11 @@ def sleuth_zeros_addition(df_in, bed_file):
     return df_out
 
 
+
+
 #####################################################################
 #                                                                   #
-#                          Binning Analysis                         #
+#                                MAIN                               #
 #                                                                   #
 #####################################################################
 
-
-def binning_stats(df_in, show = True):
-    
-    try:
-        test = df_in["length"]
-    except KeyError:
-        print("Warning : your df doesn't have a length column")
-        df_in["length"] = df_in["stop"] - df_in["start"]
-    
-    fig, ax = plt.subplots()    
-    
-    ax.hist(df_in["length"],
-             bins = 200)
-    ax.set_title(f"mean = {df_in['length'].mean()}\n"
-                 f"median = {df_in['length'].median()}\n"
-                 f"std = {df_in['length'].std()}")
-    ax.set_ylabel("Number of fragments")
-    ax.set_xlabel("Fragment length")
-    
-    if show is True:
-        plt.show()
-    
-    return fig
-    
-    
