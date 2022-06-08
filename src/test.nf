@@ -1,17 +1,18 @@
 
 nextflow.enable.dsl=2
 
-include {bed_to_gff} from "/datas/nathan/vscode_nextflow/nextflow-nathan/src/nf_modules/gffread/main.nf" 
+include {gatc_finder; frag_length} from "/datas/nathan/vscode_nextflow/nextflow-nathan/src/nf_modules/gatc_finder/main.nf" 
 
-params.bed = "results/GATC/*_new.bed"
+params.fasta = "/datas/nathan/vscode_nextflow/nextflow-nathan/data/genome/GCA_000002985.3.fasta"
 
 channel
-    .fromPath(params.bed)
-    .set{bed}
+    .fromFilePairs(params.fasta, size: -1)
+    .set {fasta_files}
 
 
 workflow {
-    bed_to_gff(bed)
-    bed_to_gff.out.view()
-
+    gatc_finder(fasta_files)
+    frag_length(gatc_finder.out.bed)
+    frag_length.out.mean.view()
+    frag_length.out.std.view()
 }

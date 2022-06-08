@@ -7,3 +7,6 @@ workspace.code-workspace
 src/data_G.fasta
 data_G.fasta
 src/test.py
+4C_400.txt
+.gitignore
+4C_400.txt.gz

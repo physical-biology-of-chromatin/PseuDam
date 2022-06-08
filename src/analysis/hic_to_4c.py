@@ -8,8 +8,13 @@ from matplotlib import cm
 
 start = timeit.default_timer()
 
+
+
+# [[chrom index, start of the region, stop of the region], ....]
 input0 = [[3,80000,100000]]
+
 res = 6400
+
 val = 'resolutions'
 
 with h5py.File("/datas/nathan/vscode_nextflow/nextflow-nathan/data/HiC/GSE151553_A364_merged.mcool", "r") as h5f:
@@ -52,6 +57,9 @@ with h5py.File("/datas/nathan/vscode_nextflow/nextflow-nathan/data/HiC/GSE151553
         HiC = np.zeros((length_whole_chromosome, length_matrix))
         
         """
+        # decodes the chromosome name
+        # I just input it's index in the file
+        
         for i in range(len(chroms_name)):
             
             if (chroms_name[i].decode('UTF-8')==ch):
@@ -71,9 +79,9 @@ with h5py.File("/datas/nathan/vscode_nextflow/nextflow-nathan/data/HiC/GSE151553
         whole_start = bin1_offset[0]
         whole_stop = bin1_offset[int(length_whole_chromosome/res)]
         
+        # Iterates trhought the bin of the selected region
         for i in range(arr_start,arr_end+1):
-            
-
+        
             bin2=bin2_t[i]
             
             count=count_t[i]
@@ -103,6 +111,7 @@ with h5py.File("/datas/nathan/vscode_nextflow/nextflow-nathan/data/HiC/GSE151553
         stop = timeit.default_timer()
 
         print('Time: ', stop - start)  
+        
         
         plt.show()
         

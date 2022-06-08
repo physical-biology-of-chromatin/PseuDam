@@ -885,7 +885,7 @@ def binning_serpentine_kalisto(df_test_mean,
                 
                 i += 1
 
-            if (start_pos - stop_pos) > m_length:
+            if (stop_pos - start_pos) > m_length:
                 
                 df_bins.at[i, "chrom"] = chrom
                 df_bins.at[i, "start"] = start_pos
@@ -1145,6 +1145,7 @@ def sleuth_zeros_addition(df_in, bed_file, chrom_dic):
                                 1 : "start",
                                 2 : "stop",
                                 3 : "target_id"})
+    
     
     bed["chrom"] = [chrom_dic[name] 
                     for name 

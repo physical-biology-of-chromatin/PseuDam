@@ -1,49 +1,41 @@
-# nextflow pipeline
+# DamID pipeline
 
-This repository is a template and a library repository to help you build nextflow pipeline.
-You can fork this repository to build your own pipeline.
+* This DamID pipeline is designed to treat single-end and paired-end fastq files in a novel way by using the DamID experiments property of having all reads in windows between 2 GATC sites. This experimental particularity allows us to treat the same way as RNAseq datas. We use Kallisto to pseudoalign the reads to a fasta file containing all the GATC fragments in a given reference genome.
 
-## Getting the last updates
+* The pipeline executes the following steps :
 
-To get the last commits from this repository into your fork use the following commands:
+* - Quality control and adapter trimming using fastp (ref)
+* - Creation of a bed file of the GATC fragments with gatc_finder
+* - Creation of a fasta files from the bed file with fasta_from_bed from bedtools
+* - Indexing of the fragments contained in the fasta files by Kallisto
+* - Pseudomapping of the reads to the fragments by Kallisto
+* - Generation of a global report with multiqc ()
 
-For the first time:
-```sh
-git remote add upstream git@gitbio.ens-lyon.fr:LBMC/nextflow.git
-git pull upstream master
-```
 
-Then to make an update:
-```sh
-git pull upstream master
-git merge upstream/master
-```
+* requirements to launch the pipeline :
+* - Docker installed
 
-## Getting Started
+* The pipeline is launched using the following command :
 
-These instructions will get you a copy of the project as a template when you want to build your own pipeline.
+* ./nextflow src/Dam_ID_analysis.nf -profile docker \
+* -fastq "path/to/reads.fastq" \
+* -fasta "path/to/genome.fasta" \
+* -length int : mean fragments' length* (If you do not have this information use the average length of the reads)
+* -std int : standard deviation of the fragments' length* (If you do not have this information use les than 10% of the mean length)
 
-[you can follow them here.](doc/getting_started.md)
+* * : nescessary only if you are processing single end datas. Kallisto computes it by itself if with paired end datas
 
-## Building your pipeline
 
-You can follow the [building your pipeline guide](./doc/building_your_pipeline.md) for a gentle introduction to `nextflow` and taking advantage of this template to build your pipelines.
 
-## Existing Nextflow pipeline
 
-Before starting a new project, you can check if someone else didn’t already to the work !
-- [on the nextflow project page](./doc/nf_projects.md)
-- [on the nf-core project](https://nf-co.re/pipelines)
 
-## Contributing
-
-If you want to add more tools to this project, please read the [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ## Authors
 
 * **Laurent Modolo** - *Initial work*
 
-See also the list of [contributors](https://gitbio.ens-lyon.fr/pipelines/nextflow/graphs/master) who participated in this project.
+* **Nathan Lecouvreur** - *DamID pipeline*
+
 
 ## License
 

@@ -366,6 +366,41 @@ def gff_to_abundance(file_bed, path):
     df_abundance.to_csv(path, sep = "\t", header = True, index = False)
 
 
+def bed_to_abundance(file_bed, path):
+    
+    df_bed = pd.read_csv(file_bed, sep = "\t", header = None)
+
+    df_abundance = pd.DataFrame()
+    
+    df_abundance["target_id"] = [f"chr{chrom}"+"_"+str(int(start))+"_"+str(int(end)) 
+                                 for chrom, start, end 
+                                 in zip(df_bed[0], 
+                                        df_bed[1], 
+                                        df_bed[2])]
+
+
+
+    df_abundance["length"] = [int(stop - start) for stop, start in zip(df_bed[2], df_bed[1])]
+    
+    df_abundance["eff_length"] = [length / 150 
+                                  if (length / 150) >= 1
+                                  else 1
+                                  for length in df_abundance["length"]]      
+    
+
+    df_abundance["est_counts"] = df_bed[4]
+    
+
+    
+    rpk_list = df_abundance["est_counts"] / 10000000
+    
+    df_abundance["tpm"] = [rpk / rpk_list.sum() for rpk in rpk_list]
+    
+    
+    
+    df_abundance.to_csv(path, sep = "\t", header = True, index = False)
+
+
 def bed_sites_chrom_reformating(path_bed, path_out):
     
     df_bed = pd.read_csv(path_bed, header=None, sep="\t")
@@ -385,8 +420,3 @@ def bed_sites_chrom_reformating(path_bed, path_out):
     df_bed.to_csv(path_out, header = None, index = False, sep = "\t")
     
     
-    
-bed_sites_chrom_reformating("/datas/nathan/test_pipeline/test/sites.bed", "/datas/nathan/test_pipeline/test/sites_reform.bed")
-
-    
-#gff_to_abundance("/datas/nathan/test_pipeline/dpy7_L2_rep1.gff", "/datas/nathan/test_pipeline/abundance.tsv")
