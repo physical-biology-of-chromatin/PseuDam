@@ -1,0 +1,445 @@
+---
+title: "PseuDam sleuth analysis"
+output: html_notebook
+---
+
+To use this statistical analysis, the output files from Kallisto must be organised in a specific manner.
+They must be located in a directory of the given shape :
+
+- your/data/directory
+  -counts
+    -sample1
+      -abundance.h5
+    -sample2
+    -...
+  -utils
+    -samples_sleuth.txt
+    
+The samples_sleuth.txt file must contain the experimental scheme as follows :
+
+sample    condition
+sample_1    control
+sample_2    control
+sample_3    test
+....
+sample_i    test
+
+
+```{r}
+# Imports
+
+# Installs the modified version of sleuth
+install.packages(pkgname.tar.gz, repos = NULL, type ="source")
+
+library(ggplot2)
+library(ggpointdensity)
+library(glue)
+```
+
+The first steps of the analysis is to load the abundance.h5 files and to assign the experimental design to the files.
+
+
+```{r}
+# data importation
+
+dir <- "data/directory/"
+
+dir_res <- "results/directory"
+
+condition_name <- "My_condition"
+
+sample_id <- dir(file.path(dir,"counts"))
+
+
+kal_dirs <- file.path(dir,
+                      "counts",
+                      sample_id,
+                      "abundance.h5")
+
+
+```
+
+The dataframe containing the files is then transformed to fit sleuth prep and be transformed into a sleuth object.
+The normalization is performed at this step and the data transformation is set to log2(x+0.5) to be more easily readable.
+During the creation of the sleuth object, the data are normalized by performing a size factor to account for the library size.
+
+```{r}
+
+s2c <- read.table(file.path(dir,
+                            "utils",
+                            "samples_sleuth.txt"),
+                  header = TRUE,
+                  stringsAsFactors = FALSE)
+
+s2c <- dplyr::select(s2c, 
+                     sample, 
+                     condition)
+
+s2c <- dplyr::mutate(s2c, 
+                     path = kal_dirs)
+
+library(sleuth)
+
+sleuth_obj <- sleuth_prep(s2c,
+                         ~condition,
+                         transform_fun_counts = function(x) log2(x + 0.5),
+                         num_cores = 8)
+```
+
+The sleuth object is then fitted to a statistical model with a simple fit to the experimental scheme defined in the samples_sleuth.
+
+
+```{r}
+# Creating a copy of the sleuth object
+so <- sleuth_obj
+
+
+# fitting the sleuth object with a simple fit
+so <- sleuth_fit(so)
+
+```
+
+A Wald test is then performed on the model, comparing the LFCs of the test and control conditions.
+The resutls of this test are displayed as a dataframe containing multiple informations on each framgent.
+The most important ones being :
+- b = Wald Test specific estimator of the LFC between the samples. It is used as the LFC
+- qval = Adjusted pvalues using the Benjamini-Hochberg procedure
+
+```{r}
+oe <- sleuth_wt(so,
+                which_beta = "conditiontest",
+                teta_0 = 0,
+                bilateral = TRUE)
+
+
+sleuth_results_oe <- sleuth_results(oe,
+                                    test = "conditiontest",
+                                    show_all = TRUE)
+```
+
+
+With the Wald Test computed, we can view the data with a volcano plot, presenting on x the beta values and on y the -log10 of the qvalues for each fragment, the colors represent if the qvalues reach the \alpha threshold or not.
+
+```{r}
+library(ggplot2)
+
+
+volc <- plot_volcano(oe, test = "conditiontest", test_type = "wt", which_model = "full",
+             sig_level = 0.05, point_alpha = 0.6, sig_color = "red",
+             highlight = NULL)
+
+volc <- (volc 
+         + geom_vline(xintercept = c(1,-1))
+         + ggtitle("Seam L4 transcriptome"))
+
+volc
+```
+
+
+From the sleuth object, the normalized and un-normalized data can be extracted to view the effect of the normalization
+
+
+```{r}
+# extracting norm counts and raw counts
+
+SNM <- kallisto_table(so, 
+                      use_filtered = TRUE, 
+                      normalized = TRUE, 
+                      include_covariates = TRUE)
+
+new_df_norm <- split(SNM, 
+                     SNM$sample, 
+                     drop = TRUE)
+
+table_test_1_norm <- data.frame(new_df_norm[s2c$sample[3]])
+colnames(table_test_1_norm) <- c("target_id", "sample", "est_counts", "tpm", "eff_len", "len", "condition")
+
+table_test_2_norm <- data.frame(new_df_norm[s2c$sample[4]])
+colnames(table_test_2_norm) <- c("target_id", "sample", "est_counts", "tpm", "eff_len", "len", "condition")
+#table_test_3_norm <- new_df_norm$`3RG1D3`
+
+table_control_1_norm <- data.frame(new_df_norm[s2c$sample[1]])
+colnames(table_control_1_norm) <- c("target_id", "sample", "est_counts", "tpm", "eff_len", "len", "condition")
+
+table_control_2_norm <- data.frame(new_df_norm[s2c$sample[2]])
+colnames(table_control_2_norm) <- c("target_id", "sample", "est_counts", "tpm", "eff_len", "len", "condition")
+
+
+# Get raw datas
+SNM <- kallisto_table(so, 
+                      use_filtered = TRUE, 
+                      normalized = FALSE, 
+                      include_covariates = TRUE)
+
+new_df_raw <- split(SNM, 
+                    SNM$sample, 
+                    drop = TRUE)
+
+
+table_test_1_raw <- data.frame(new_df_raw[s2c$sample[3]])
+colnames(table_test_1_raw) <- c("target_id", "est_counts", "tpm", "eff_len", "len", "condition")
+
+table_test_2_raw <- data.frame(new_df_raw[s2c$sample[4]])
+colnames(table_test_2_raw) <- c("target_id", "est_counts", "tpm", "eff_len", "len", "condition")
+#table_test_3_raw <- new_df_raw$`3RG1D3`
+
+
+table_control_1_raw <- data.frame(new_df_raw[s2c$sample[1]])
+colnames(table_control_1_raw) <- c("target_id", "est_counts", "tpm", "eff_len", "len", "condition")
+
+table_control_2_raw <- data.frame(new_df_raw[s2c$sample[2]])
+colnames(table_control_2_raw) <- c("target_id", "est_counts", "tpm", "eff_len", "len", "condition")
+
+
+```
+
+
+
+
+
+
+
+
+
+
+```{r}
+# Saving all the datas from the sleuth analysis
+
+# Saving the results output
+write.csv(sleuth_results_oe,
+          paste(dir_res, "/sleuth_results.csv",
+                sep = ""), 
+          row.names = FALSE)
+
+write.csv(table_control_1_norm,
+          paste(dir_res, 
+                glue("/counts_norm/{condition_name}_control_1.csv"), 
+                sep = ""),
+          row.names = FALSE)
+
+write.csv(table_control_2_norm,
+          paste(dir_res, 
+                glue("/counts_norm/{condition_name}_control_2.csv"), 
+                sep = ""), 
+          row.names = FALSE)
+
+write.csv(table_test_1_norm,
+          paste(dir_res,
+                glue("/counts_norm/{condition_name}_test_1.csv"),
+                sep = ""),
+          row.names = FALSE)
+
+write.csv(table_test_2_norm,
+          paste(dir_res, 
+                glue("/counts_norm/{condition_name}_test_2.csv")
+                , sep = ""), 
+          row.names = FALSE)
+
+write.csv(table_control_1_raw,
+          paste(dir_res, 
+                glue("/counts/{condition_name}_control_rep1.csv"), 
+                sep = ""),
+          row.names = FALSE)
+
+write.csv(table_control_2_raw,
+          paste(dir_res, 
+                glue("/counts/{condition_name}_control_rep2.csv"), 
+                sep = ""), 
+          row.names = FALSE)
+
+write.csv(table_test_1_raw,
+          paste(dir_res,
+                glue("/counts/{condition_name}_test_rep1.csv"), 
+                sep = ""),
+          row.names = FALSE)
+
+write.csv(table_test_2_raw,
+          paste(dir_res, 
+                glue("/counts/{condition_name}_test_rep2.csv"), 
+                sep = ""), 
+          row.names = FALSE)
+```
+
+```{r}
+# norm_test_1 vs norm_ctrl_1
+
+scatter_norm <- (ggplot(mapping = aes(x = table_control_1_norm$est_counts,
+                                      y = table_test_1_norm$est_counts))
+                 + geom_pointdensity()
+                 + scale_color_viridis_c()
+                 + geom_abline(slope = 1, intercept = 0)
+                 + xlab("Normalized counts Dam-only")
+                 + ylab("Normalized counts Dam-rpd6")
+                 + ggtitle("Normalized counts Seam L4 Dam-only vs Dam-rpb6")
+                 + scale_y_continuous(trans = "log10")
+                 + scale_x_continuous(trans = "log10")
+                 + theme(axis.line = element_line()))
+
+scatter_norm
+
+ggsave(file.path(dir_res, "Normalized_dam-only_vs_dam-rpb6.eps"))
+
+```
+
+```{r}
+# no_norm_test_1 vs no_norm_ctrl_1
+
+scatter_norm <- (ggplot(mapping = aes(x = table_control_1_raw$est_counts,
+                                      y = table_test_1_raw$est_counts))
+                 + geom_pointdensity()
+                 + scale_color_viridis_c()
+                 + geom_abline(slope = 1, intercept = 0)
+                 + xlab("raw counts Dam-only")
+                 + ylab("raw counts Dam-rpd6")
+                 + ggtitle("Raw counts Seam L4 Dam-only vs Dam-rpb6")
+                 + scale_y_continuous(trans = "log10")
+                 + scale_x_continuous(trans = "log10")
+                 + theme(axis.line = element_line()))
+
+scatter_norm
+
+ggsave(file.path(dir_res, "Raw_dam-only_vs_dam-rpb6.eps"))
+```
+```{r}
+# Bedgraphs generation
+
+main <- function(df_results, path_out, title){
+  
+  
+  
+  # # Code for the old target_ids with chrom names
+  # if (!"start" %in% colnames(df_results)){
+  # 
+  #   df_results$chrom <- stri_extract(df_results$target_id,
+  #                                           regex = ("[^_]*_[^_]*"))
+  # 
+  #   start_stop <- stri_reverse(stri_extract(stri_reverse(df_results$target_id),
+  #                                           regex = ("[^_]*_[^_]*")))
+  # 
+  #   df_results$start <- as.integer(stri_extract(start_stop,
+  #                                               regex = ("[^_]*")))
+  # 
+  #   df_results$stop <- as.integer(stri_reverse(stri_extract(stri_reverse(start_stop),
+  #                                                           regex = ("[^_]*"))))
+  #
+  # }
+  
+  
+  
+  # #Code for the old target_ids with chrom ids
+  # if (!"start" %in% colnames(df_results)){
+  # 
+  #   df_results$chrom <- stri_extract(df_results$target_id,
+  #                                    regex = ("[^_]*"))
+  #   print(df_results$chrom)
+  #   
+  #   
+  #   df_results$start <- as.integer(stri_extract(df_results$target_id,
+  #                                               regex = ("(?<=_)(.*?)(?=_)")))
+  # 
+  #   df_results$stop <- as.integer(stri_reverse(stri_extract(stri_reverse(df_results$target_id),
+  #                                                          regex = ("[^_]*"))))
+  # 
+  # }
+  
+  
+
+  #Code for the new target_ids
+  if (!"start" %in% colnames(df_results)){
+  
+    df_results$chrom <- stri_extract(df_results$target_id,
+                                     regex = (".+?(?=__)"))
+  
+    print(df_results$chrom)
+  
+    df_results$start <- as.integer(stri_extract(df_results$target_id,
+                                                regex = ("(?<=__)(.*?)(?=__)")))
+  
+    df_results$stop <- as.integer(stri_reverse(stri_extract(stri_reverse(df_results$target_id),
+                                                            regex = ("[^__]*"))))
+  }
+    
+  
+  
+  # Bedgraph generation
+  
+  # qval    
+  bed_qval <- data.frame()
+  
+  bed_qval <- data.frame(matrix(ncol = 4, nrow = nrow(df_results)))
+  
+  colnames(bed_qval) <- c("chrom", "start", "stop", "qval")
+  
+  bed_qval$chrom <- df_results$chrom
+  bed_qval$start <- df_results$start
+  bed_qval$stop <- df_results$stop
+
+  bed_qval$qval <- -log10(df_results$qval)
+  
+  
+  bed_qval <- bed_qval[!is.nan(bed_qval$qval), ]
+  bed_qval <- bed_qval[!is.na(bed_qval$qval), ] 
+  
+  
+  
+  
+  bed_qval_line <- glue("track type=bedGraph name=qval_{title} description=wlad_test_adjusted_pvalue_for_{title} visibility=full color=200,100,0 altColor=0,100,200 graphType=bar")
+  
+  
+  write(bed_qval_line,
+        file.path(path_out, glue("qval_{title}.bedgraph")),
+        sep = "\t")
+  
+  
+  
+  write.table(bed_qval,
+              file.path(path_out, glue("qval_{title}.bedgraph")),
+              sep = "\t",
+              col.names = FALSE,
+              row.names = FALSE,
+              quote = FALSE,
+              append = TRUE)
+
+  
+  # lfc
+  bed_lfc_line <- glue("track type=bedGraph name=lfc_{title} description=lfc_for_{title}_condition visibility=full color=200,100,0 altColor=0,100,200 graphType=bar")
+  
+  
+  bed_lfc <- data.frame(matrix(ncol = 4, nrow = nrow(df_results)))
+  
+  colnames(bed_lfc) <- c("chrom", "start", "stop", "lfc")
+  
+  bed_lfc$chrom <- df_results$chrom
+  bed_lfc$start <- df_results$start
+  bed_lfc$stop <- df_results$stop
+  bed_lfc$lfc <- df_results$b
+  
+  bed_lfc <- bed_lfc[!is.nan(bed_lfc$lfc), ]
+  bed_lfc <- bed_lfc[!is.na(bed_lfc$lfc), ]
+  
+  
+  write(bed_lfc_line,
+        file.path(path_out, glue("lfc_{title}.bedgraph")),
+        sep = "\t")    
+  
+  
+  write.table(bed_lfc,
+              file.path(path_out, glue("lfc_{title}.bedgraph")),
+              sep = "\t",
+              col.names = FALSE,
+              row.names = FALSE,
+              append = TRUE,
+              quote = FALSE)  
+}
+
+
+library("stringi")
+library("glue")
+
+    
+main(sleuth_results_oe, dir_res, condition_name)
+    
+    
+```
+
+
